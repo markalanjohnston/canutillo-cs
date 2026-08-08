@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Loop — Issue #1, August 2026 | Fundamentals of Computer Science, Canutillo HS</title>
+<meta name="description" content="Issue #1 of The Loop, the family newsletter for Mr. Johnston's Fundamentals of Computer Science class at Canutillo High School. English and Spanish.">
+<meta property="og:title" content="The Loop — Issue #1, August 2026">
+<meta property="og:description" content="Week one in Room H120: computer science without computers, meet Hopper, and a binary puzzle with a prize.">
+<meta property="og:type" content="article">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="icon" href="../../assets/img/chs-eagle-logo.svg">
+<script>document.documentElement.classList.remove('no-js');</script>
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap">
+    <a href="../../">
+      <img src="../../assets/img/CANUTILLO-ISD-LOGO.png" alt="Canutillo ISD">
+      <span class="who">Fundamentals of Computer Science
+        <span>Mr. Johnston &middot; Canutillo High School &middot; Room H120</span></span>
+    </a>
+  </div>
+</header>
+
+<div class="mast">
+  <div class="wrap">
+    <h1 class="loop">THE L<span class="oo"></span><span class="oo"></span>P</h1>
+    <p class="tag" lang="en">Points of Pride from Room H120 — keeping our families in the loop</p>
+    <p class="tag" lang="es">Puntos de orgullo del salón H120 — para mantener a nuestras familias al tanto</p>
+    <p class="meta"><span lang="en">Issue #1 &middot; August 2026</span><span lang="es">Edici&oacute;n #1 &middot; Agosto 2026</span></p>
+  </div>
+</div>
+
+<div class="langbar">
+  <div class="wrap">
+    <button class="langbtn" id="btn-en" aria-pressed="true" onclick="setLang('en')">English</button>
+    <button class="langbtn" id="btn-es" aria-pressed="false" onclick="setLang('es')">Español</button>
+    <a class="pdf" href="the-loop-issue-01.pdf">📄 PDF</a>
+  </div>
+</div>
+
+<main class="wrap">
+
+<!-- ============ WELCOME ============ -->
+<section class="sec">
+  <div lang="en">
+    <h2>Welcome, families!</h2>
+    <img class="headshot" src="../../assets/img/johnston.png" alt="Mr. Johnston">
+    <p>This is <b>The Loop</b> — our class newsletter. The name is a promise (you'll always be in
+    the loop) and a wink: a <i>loop</i> is one of the first ideas every programmer learns. We
+    haven't gotten there yet — save that question for a few weeks from now.</p>
+    <p>I'm <b>Mr. Johnston</b>: 12th-year teacher, Air Force veteran, robotics coach who has taken
+    student teams to the VEX World Championship, and a working software developer — I build real
+    apps that schools use.</p>
+    <p>Here's what makes this year special: <b>I didn't replace a teacher. This program is
+    brand-new</b>, created to rebuild computer science at CHS — which makes your students its
+    <b>founding class</b>. Some of them chose this course on purpose; some found it on their
+    schedule by surprise. Either way, I take it as <i>my</i> job to make it the most useful class
+    they didn't ask for.</p>
+  </div>
+  <div lang="es">
+    <h2>¡Bienvenidas, familias!</h2>
+    <img class="headshot" src="../../assets/img/johnston.png" alt="Sr. Johnston">
+    <p>Este es <b>The Loop</b> — el boletín de nuestra clase. El nombre es una promesa (siempre
+    estarán <i>al tanto</i>, "in the loop") y un guiño: un <i>loop</i> (ciclo) es una de las
+    primeras ideas que aprende todo programador. Todavía no llegamos a ese tema — guarden esa
+    pregunta para dentro de unas semanas.</p>
+    <p>Soy el <b>Sr. Johnston</b>: maestro con 12 años de experiencia, veterano de la Fuerza Aérea,
+    entrenador de robótica que ha llevado equipos estudiantiles al Campeonato Mundial de VEX, y
+    desarrollador de software — creo aplicaciones reales que usan las escuelas.</p>
+    <p>Esto es lo que hace especial este año: <b>no reemplacé a ningún maestro. Este programa es
+    completamente nuevo</b>, creado para reconstruir las ciencias de la computación en CHS — lo
+    cual convierte a sus estudiantes en su <b>generación fundadora</b>. Algunos eligieron esta
+    clase a propósito; otros la encontraron en su horario por sorpresa. En ambos casos, considero
+    que es <i>mi</i> trabajo hacer de esta la clase más útil que nunca pidieron.</p>
+  </div>
+</section>
+
+<!-- ============ ASK YOUR STUDENT ============ -->
+<div class="callout">
+  <div lang="en">
+    <h3>💬 Ask your student about…</h3>
+    <ul>
+      <li>the <b>hand gestures</b> for input → process → output (yes, we have choreography)</li>
+      <li>what <b>algorithm</b>, <b>bug</b>, and <b>debug</b> mean</li>
+      <li>writing a program with <b>only six commands</b> — then watching a classmate execute it, exactly as written</li>
+      <li>the <b>toast test</b> — why a computer needs every single step spelled out</li>
+    </ul>
+    <p class="note">Our classes run on a two-day rotation, so a couple of periods reach the newest
+    activities at their next class meeting. If your student says "we haven't done that one yet" —
+    they're right, and it's coming.</p>
+  </div>
+  <div lang="es">
+    <h3>💬 Pregúntele a su estudiante sobre…</h3>
+    <ul>
+      <li>los <b>gestos con las manos</b> para input → process → output (entrada, proceso, salida — sí, tenemos coreografía)</li>
+      <li>qué significan <b>algorithm</b> (algoritmo), <b>bug</b> (error) y <b>debug</b> (depurar)</li>
+      <li>cómo escribieron un programa con <b>solo seis comandos</b> — y luego vieron a un compañero ejecutarlo, exactamente como estaba escrito</li>
+      <li>la <b>prueba del pan tostado</b> — por qué una computadora necesita cada paso explicado</li>
+    </ul>
+    <p class="note">Nuestras clases siguen una rotación de dos días, así que algunos períodos llegan
+    a las actividades más nuevas en su siguiente clase. Si su estudiante dice "eso todavía no lo
+    hemos hecho" — tiene razón, y ya viene.</p>
+  </div>
+</div>
+
+<!-- ============ LOW-TECH WEEK ============ -->
+<section class="sec">
+  <div lang="en">
+    <h2>A low-tech week of high-tech thinking</h2>
+    <p>We spent week one doing serious computer science <b>without touching a computer</b>.
+    Students sorted cards into "computer / not a computer / it's complicated" piles and voted with
+    ABCD answer cards — and when time allowed, some classes turned the room itself into the answer,
+    walking to the "computer" side or the "not a computer" side and defending their choice. They
+    hunted the bugs in my famously flawed toast-making instructions. And in the <b>Mark II
+    Mission</b>, students wrote programs using only six commands — then executed instructions
+    <i>another student</i> wrote, square by square on a grid, and debugged what went wrong.
+    Construct, execute, debug: the full cycle.</p>
+    <p>Screens arrive soon. Thinking came first — and your students already think like
+    programmers.</p>
+    <figure>
+      <img src="img/card-sort.jpg" alt="Students sorting cards with ABCD voting cards on a desk">
+      <figcaption>Card sorts + ABCD cards: low-tech tools, high-level debates. (A $12 toaster vs. a
+      smart bulb — which one is "smarter"?)</figcaption>
+    </figure>
+  </div>
+  <div lang="es">
+    <h2>Una semana sin pantallas, llena de pensamiento tecnológico</h2>
+    <p>Pasamos la primera semana haciendo ciencias de la computación en serio <b>sin tocar una
+    computadora</b>. Los estudiantes clasificaron tarjetas en montones de "es computadora / no es
+    computadora / es complicado" y votaron con tarjetas ABCD — y cuando el tiempo lo permitió,
+    algunas clases convirtieron el salón mismo en la respuesta, caminando al lado de "computadora"
+    o al lado de "no es computadora" y defendiendo su decisión. Buscaron los errores en mis famosas
+    (y defectuosas) instrucciones para hacer pan tostado. Y en la <b>Misión Mark II</b>, los
+    estudiantes escribieron programas usando solo seis comandos — y luego ejecutaron instrucciones
+    escritas por <i>otro estudiante</i>, cuadro por cuadro en una cuadrícula, depurando lo que
+    salía mal. Construir, ejecutar, depurar: el ciclo completo.</p>
+    <p>Las pantallas llegan pronto. El pensamiento llegó primero — y sus estudiantes ya piensan
+    como programadores.</p>
+    <figure>
+      <img src="img/card-sort.jpg" alt="Estudiantes clasificando tarjetas con tarjetas de votación ABCD">
+      <figcaption>Tarjetas de clasificación + tarjetas ABCD: herramientas sencillas, debates de
+      alto nivel. (¿Un tostador de $12 o un foco inteligente — cuál es más "listo"?)</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ HOPPER ============ -->
+<section class="sec">
+  <div lang="en">
+    <h2>Meet Hopper 🦋</h2>
+    <img class="hopper-mini" src="img/hopper.jpg" alt="Hopper, our plush luna moth mascot">
+    <p>In 1947, engineers found a real moth inside Harvard's Mark II computer and taped it into the
+    logbook — the first literal computer "bug." Grace Hopper's team made the story legendary. Our
+    class mascot, <b>Hopper the moth</b>, keeps it alive: students take turns as Hopper's keeper and
+    sign our commit log, answering one question — <i>what did you DEBUG today?</i></p>
+    <p>One student emailed me before day one to say they'd never done computer science but couldn't
+    wait to start. Perfect. This class was built for exactly that.</p>
+    <figure style="clear:both">
+      <img src="img/mark2-crew.jpg" alt="Three young scientists in lab coats beside a cardboard robot labelled Mark II">
+      <figcaption>To introduce the legend, I filmed "archive footage" at home with my crack film
+      crew — three lab-coat scientists and one very convincing cardboard Mark II.</figcaption>
+    </figure>
+  </div>
+  <div lang="es">
+    <h2>Les presento a Hopper 🦋</h2>
+    <img class="hopper-mini" src="img/hopper.jpg" alt="Hopper, nuestra mascota polilla de peluche">
+    <p>En 1947, unos ingenieros encontraron una polilla de verdad dentro de la computadora Mark II
+    de Harvard y la pegaron con cinta en su bitácora — el primer "bug" (insecto/error) literal de la
+    computación. El equipo de Grace Hopper hizo legendaria la historia. Nuestra mascota, <b>la
+    polilla Hopper</b>, la mantiene viva: los estudiantes se turnan como guardianes de Hopper y
+    firman nuestra bitácora respondiendo una pregunta: <i>¿qué depuraste (debug) hoy?</i></p>
+    <p>Un estudiante me escribió antes del primer día para decirme que nunca había estudiado
+    computación, pero que tenía muchas ganas de empezar. Perfecto. Esta clase se creó exactamente
+    para eso.</p>
+    <figure style="clear:both">
+      <img src="img/mark2-crew.jpg" alt="Tres jóvenes científicas con batas blancas junto a un robot de cartón que dice Mark II">
+      <figcaption>Para presentar la leyenda, filmé "material de archivo" en casa con mi equipo de
+      filmación: tres científicas de bata blanca y un Mark II de cartón muy convincente.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ PUZZLE ============ -->
+<div class="puzzle">
+  <div lang="en">
+    <h3>🧩 The Loop Challenge #1 — win a prize!</h3>
+    <p>Computers store letters as numbers, and numbers as <b>binary</b> — just 1s and 0s. Here's the
+    key: number the alphabet (A=1, B=2, C=3 … Z=26), then write each number with five binary digits:
+    A=00001, B=00010, C=00011… can you continue the pattern? Now decode this message:</p>
+    <div class="binary">00111 01111 &middot; 00101 00001 00111 01100 00101 10011</div>
+    <p><b>First student to bring Mr. Johnston the decoded message wins a small prize.</b> Families,
+    you're allowed to help — but your student has to deliver it! <i>(Binary is coming later this
+    year in class. Consider this a sneak peek.)</i></p>
+  </div>
+  <div lang="es">
+    <h3>🧩 Reto The Loop #1 — ¡gana un premio!</h3>
+    <p>Las computadoras guardan letras como números, y los números en <b>binario</b> — puros 1s y
+    0s. La clave: numere el alfabeto (A=1, B=2, C=3 … Z=26) y escriba cada número con cinco dígitos
+    binarios: A=00001, B=00010, C=00011… ¿puede continuar el patrón? Ahora decodifique este
+    mensaje:</p>
+    <div class="binary">00111 01111 &middot; 00101 00001 00111 01100 00101 10011</div>
+    <p><b>El primer estudiante que le traiga al Sr. Johnston el mensaje decodificado gana un pequeño
+    premio.</b> Familias: se vale ayudar — ¡pero su estudiante tiene que entregarlo! <i>(El binario
+    llega más adelante este año en clase. Consideren esto un adelanto.)</i></p>
+  </div>
+</div>
+
+<!-- ============ FUN FACT ============ -->
+<div class="dark">
+  <p lang="en" style="margin:0">⚡ <b style="color:var(--gold)">Fun CS fact:</b> a modern car can
+  carry more than <b style="color:var(--gold)">100 computers</b> — engineers call them ECUs —
+  quietly running everything from the brakes and airbags to the radio and the little light in your
+  glove box. Put together, that's far more computing power than the Apollo spacecraft that carried
+  astronauts to the Moon… which still settles nothing in our toaster-vs-smart-bulb debate, and the
+  students know it.</p>
+  <p lang="es" style="margin:0">⚡ <b style="color:var(--gold)">Dato curioso de computación:</b> un
+  auto moderno puede llevar más de <b style="color:var(--gold)">100 computadoras</b> — los
+  ingenieros las llaman ECUs — controlando en silencio todo, desde los frenos y las bolsas de aire
+  hasta el radio y la lucecita de la guantera. Juntas suman mucho más poder de cómputo que la nave
+  Apollo que llevó astronautas a la Luna… lo cual sigue sin resolver nada en nuestro debate del
+  tostador contra el foco inteligente, y los estudiantes lo saben.</p>
+</div>
+
+<!-- ============ SELF-ASSESSMENT ============ -->
+<section class="sec">
+  <div lang="en">
+    <h2>Students driving their own learning</h2>
+    <p>Every lesson in H120 posts an essential question and student-friendly success criteria — and
+    students track <b>live</b> which criteria they've reached. (Favorite moment of the week: "Look
+    at that — you're ALL successful on the first one already.") Students set goals and self-assess
+    honestly, because the point isn't the grade — it's knowing what you know.</p>
+    <figure>
+      <img src="img/pulse-poster.jpg" alt="Anonymous learning-pulse poster covered in sticky notes near the happy face">
+      <figcaption>Our anonymous "learning pulse" poster — students place a sticky for how much they
+      learned, no names, and I don't watch who posts what. This week's verdict: a crowd around
+      "SO MUCH!"</figcaption>
+    </figure>
+  </div>
+  <div lang="es">
+    <h2>Estudiantes al volante de su aprendizaje</h2>
+    <p>Cada lección en H120 publica una pregunta esencial y criterios de éxito en lenguaje
+    estudiantil — y los estudiantes marcan <b>en vivo</b> cuáles criterios ya alcanzaron. (Mi
+    momento favorito de la semana: "Miren eso — TODOS ya lograron el primero.") Los estudiantes
+    fijan metas y se autoevalúan con honestidad, porque el punto no es la calificación — es saber
+    lo que uno sabe.</p>
+    <figure>
+      <img src="img/pulse-poster.jpg" alt="Cartel anónimo del pulso de aprendizaje cubierto de notitas">
+      <figcaption>Nuestro cartel anónimo del "pulso de aprendizaje" — cada estudiante coloca una
+      notita según cuánto aprendió, sin nombres, y yo no miro quién pone qué. El veredicto de esta
+      semana: una multitud alrededor de "¡MUCHÍSIMO!"</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ SOD STORY ============ -->
+<section class="sec">
+  <div lang="en">
+    <h2>From my backyard: the sod story</h2>
+    <p>When I installed sod at home, the instructions surprised me. At first you water it
+    <b>heavily — every day</b> — so the grass takes root in new soil. But then you deliberately
+    <b>cut back</b>. Why? If the surface stays soaked, roots stay shallow. When water gets scarcer,
+    roots grow <b>deep</b> to find it — and deep roots survive a Texas summer.</p>
+    <p>The first weeks of our class are the heavy-watering phase: lots of structure, lots of
+    support, lots of me. Soon — on purpose — I'll step back, and your student's roots will grow
+    deeper: independence, persistence, problem-solving. If it ever looks like I'm "helping less,"
+    that's not neglect. <b>That's the plan working.</b></p>
+  </div>
+  <div lang="es">
+    <h2>Desde mi jardín: la historia del pasto</h2>
+    <p>Cuando instalé pasto en casa, las instrucciones me sorprendieron. Al principio se riega
+    <b>mucho — todos los días</b> — para que el pasto eche raíz en tierra nueva. Pero después, a
+    propósito, <b>se riega menos</b>. ¿Por qué? Si la superficie siempre está empapada, las raíces
+    se quedan someras. Cuando el agua escasea, las raíces crecen <b>profundo</b> para encontrarla —
+    y las raíces profundas sobreviven el verano de Texas.</p>
+    <p>Las primeras semanas de nuestra clase son la fase de riego intenso: mucha estructura, mucho
+    apoyo, mucho de mí. Pronto — a propósito — daré un paso atrás, y las raíces de su estudiante
+    crecerán más profundo: independencia, persistencia, resolución de problemas. Si algún día parece
+    que estoy "ayudando menos", no es descuido. <b>Es el plan funcionando.</b></p>
+  </div>
+</section>
+
+<!-- ============ CONTRACTS ============ -->
+<section class="sec">
+  <div lang="en">
+    <h2>Our class contracts</h2>
+    <p>Every period wrote its own class contract — the norms <i>they</i> chose for how we work
+    together. I sign each one too, with promises about what students can expect from me.</p>
+    <figure>
+      <img src="img/contract.jpg" alt="A class contract poster, intentionally blurred">
+      <figcaption>Kept small and blurry on purpose — student privacy first.</figcaption>
+    </figure>
+  </div>
+  <div lang="es">
+    <h2>Nuestros contratos de clase</h2>
+    <p>Cada período escribió su propio contrato de clase — las normas que <i>ellos</i> eligieron
+    para trabajar juntos. Yo también firmo cada uno, con promesas sobre lo que los estudiantes
+    pueden esperar de mí.</p>
+    <figure>
+      <img src="img/contract.jpg" alt="Cartel del contrato de clase, borroso a propósito">
+      <figcaption>Pequeña y borrosa a propósito — primero la privacidad de los estudiantes.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ POINTS OF PRIDE ============ -->
+<section class="sec">
+  <div lang="en">
+    <h2>Points of Pride from H120</h2>
+    <div class="pop">
+      <h4>⭐ Setting the standard</h4>
+      <p>H120 had special visitors this week: <b>Dr. Arellano</b>, Executive Director for Elementary,
+      and <b>Mr. Omar Solis</b>, our CTE Director, chose our room for walkthrough <i>calibration</i>
+      — the process leaders use to align on what great instruction looks like. Being a calibration
+      room in week one is an honor: our classroom is helping set the bar.</p>
+    </div>
+    <figure style="margin:0 0 14px">
+      <img src="img/walkthrough-notes.jpg" alt="Sticky notes with positive feedback left on the classroom door frame">
+      <figcaption>Notes left on our door frame by walkthrough visitors.</figcaption>
+    </figure>
+    <div class="pop">
+      <h4>🤝 Welcome, Mr. Flores</h4>
+      <p><b>Mr. Brian Flores</b> is our new Assistant Principal for Science &amp; CTE — and an old
+      teammate: years ago he took the reins of a robotics program I had built and coached to the VEX
+      World Championship, and he ran with it. Now we're building the future of CS at CHS
+      together.</p>
+    </div>
+    <div class="pop">
+      <h4>🎓 The neighbor every new teacher needs</h4>
+      <p><b>Mr. Jaime Campo</b>, our Engineering teacher — his room connects to ours — has taken me
+      under his wing since day one: where everything lives on campus, who to ask for what, and even
+      the sacred art of making copies. Every new Eagle should be so lucky in their neighbor.</p>
+    </div>
+    <div class="pop">
+      <h4>🧹 The people who make H120 run</h4>
+      <p>Every morning here starts the same way: a warm good-morning with <b>Robert</b>, our
+      custodian. Our trash goes out every single day without fail — and when he noticed we could use
+      another can, he found one and thoughtfully set it right next to my desk. He tells me he went
+      by <i>Bobby</i> growing up — and knew he was in trouble the moment he heard his full name.
+      Around H120 it's always a cheerful "Good morning, <i>Robert</i>" — the grown-up version, zero
+      trouble implied.</p>
+      <p>And <b>Head Custodian Isidoro Mancinas</b> stopped by in person to plan where a brand-new
+      smart board should go — he's filing the work order himself, and offered to move or add a
+      whiteboard while he's at it. That's the above-and-beyond that makes this campus run.</p>
+    </div>
+    <div class="quote">People ask how I'm liking Canutillo. One week in: <b>really good.</b> The
+    culture here is something special — a welcoming admin team and central-office staff who go out
+    of their way to help. They appreciate people who care about doing things well. I'm proud to be
+    an Eagle.</div>
+  </div>
+  <div lang="es">
+    <h2>Puntos de orgullo del H120</h2>
+    <div class="pop">
+      <h4>⭐ Ayudando a fijar el estándar</h4>
+      <p>H120 tuvo visitas especiales esta semana: la <b>Dra. Arellano</b>, Directora Ejecutiva de
+      Primarias, y el <b>Sr. Omar Solis</b>, nuestro Director de CTE, eligieron nuestro salón para
+      la <i>calibración</i> de recorridos — el proceso que usan los líderes para ponerse de acuerdo
+      sobre cómo se ve la buena enseñanza. Ser salón de calibración en la primera semana es un
+      honor: nuestro salón está ayudando a fijar el estándar.</p>
+    </div>
+    <figure style="margin:0 0 14px">
+      <img src="img/walkthrough-notes.jpg" alt="Notas positivas dejadas en el marco de la puerta del salón">
+      <figcaption>Notas que los visitantes dejaron en el marco de nuestra puerta.</figcaption>
+    </figure>
+    <div class="pop">
+      <h4>🤝 Bienvenido, Sr. Flores</h4>
+      <p>El <b>Sr. Brian Flores</b> es nuestro nuevo Subdirector de Ciencias y CTE — y un viejo
+      compañero de equipo: hace años tomó las riendas de un programa de robótica que yo construí y
+      entrené hasta el Campeonato Mundial de VEX, y lo llevó adelante. Ahora construimos juntos el
+      futuro de la computación en CHS.</p>
+    </div>
+    <div class="pop">
+      <h4>🎓 El vecino que todo maestro nuevo necesita</h4>
+      <p>El <b>Sr. Jaime Campo</b>, nuestro maestro de Ingeniería — su salón se conecta con el
+      nuestro — me ha tomado bajo su ala desde el primer día: dónde está todo en la escuela, a quién
+      preguntarle qué, y hasta el arte sagrado de sacar copias. Ojalá todo Eagle nuevo tuviera un
+      vecino así.</p>
+    </div>
+    <div class="pop">
+      <h4>🧹 Las personas que hacen funcionar el H120</h4>
+      <p>Cada mañana aquí empieza igual: un caluroso "buenos días" con <b>Robert</b>, nuestro
+      conserje. Nuestra basura sale todos los días sin falta — y cuando notó que nos hacía falta
+      otro bote, consiguió uno y lo colocó con todo cuidado junto a mi escritorio. Me cuenta que de
+      niño le decían <i>Bobby</i> — y que sabía que estaba en problemas en cuanto escuchaba su
+      nombre completo. En H120 siempre es un alegre "Good morning, <i>Robert</i>" — la versión de
+      adulto, sin problema alguno.</p>
+      <p>Y el <b>Jefe de Conserjes Isidoro Mancinas</b> vino en persona a planear dónde irá un
+      pizarrón inteligente nuevo — él mismo está metiendo la orden de trabajo, y hasta ofreció mover
+      o agregar un pizarrón blanco de una vez. Ese esfuerzo extra es lo que hace funcionar esta
+      escuela.</p>
+    </div>
+    <div class="quote">Me preguntan cómo me va en Canutillo. A una semana: <b>muy bien.</b> La
+    cultura aquí es algo especial — un equipo administrativo que recibe con los brazos abiertos y
+    personal de oficina central que se esfuerza por ayudar. Aquí se aprecia a la gente que hace las
+    cosas bien. Orgulloso de ser un Eagle.</div>
+  </div>
+</section>
+
+<!-- ============ CALENDAR ============ -->
+<div class="dark">
+  <div lang="en">
+    <h3>📅 Mark your calendar</h3>
+    <ul>
+      <li><b>Thu, Aug 27</b> — Eagles football home opener vs. Americas (media pick us to win District 2-5A!)</li>
+      <li><b>Fri, Aug 28</b> — no school (district closed)</li>
+      <li><b>Coming soon</b> — student laptops arrive; syllabus is posted in Google Classroom (email me for a copy)</li>
+      <li><b>Mid-September</b> — first progress reports</li>
+    </ul>
+  </div>
+  <div lang="es">
+    <h3>📅 Marque su calendario</h3>
+    <ul>
+      <li><b>Jue 27 de agosto</b> — primer partido de fútbol americano en casa: Eagles vs. Americas (¡los medios nos ponen de favoritos para ganar el Distrito 2-5A!)</li>
+      <li><b>Vie 28 de agosto</b> — no hay clases (distrito cerrado)</li>
+      <li><b>Muy pronto</b> — llegan las laptops estudiantiles; el temario está en Google Classroom (escríbame si desea una copia)</li>
+      <li><b>Mediados de septiembre</b> — primeros reportes de progreso</li>
+    </ul>
+  </div>
+</div>
+
+<img class="eagle-mark" src="../../assets/img/chs-eagle-logo.svg" alt="Canutillo Eagles">
+
+<p class="disclaimer" lang="es">Traducción asistida por inteligencia artificial. ¿Algo no quedó
+claro? Escríbame y con gusto lo aclaro.</p>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span class="viva" lang="en">Our Time is Now! ¡Viva Canutillo!</span>
+    <span class="viva" lang="es">¡Nuestro momento es ahora! ¡Viva Canutillo!</span>
+    <p lang="en"><b>Mr. Johnston</b> &middot; Room H120 &middot;
+      <a href="mailto:mjohnston@canutillo-isd.org">mjohnston@canutillo-isd.org</a><br>
+      Conference: 5th period, B days (12:18–1:48) &middot; Tutoring by appointment until 4:30</p>
+    <p lang="es"><b>Sr. Johnston</b> &middot; Salón H120 &middot;
+      <a href="mailto:mjohnston@canutillo-isd.org">mjohnston@canutillo-isd.org</a><br>
+      Conferencia: 5.º período, días B (12:18–1:48) &middot; Tutoría con cita hasta las 4:30</p>
+    <p><a href="../">← All issues / Todos los boletines</a></p>
+  </div>
+</footer>
+
+<script>
+function setLang(l){
+  document.documentElement.setAttribute('data-lang', l);
+  document.documentElement.lang = l;
+  document.getElementById('btn-en').setAttribute('aria-pressed', l==='en');
+  document.getElementById('btn-es').setAttribute('aria-pressed', l==='es');
+  try { localStorage.setItem('loop-lang', l); } catch(e){}
+}
+(function(){
+  var saved = null;
+  try { saved = localStorage.getItem('loop-lang'); } catch(e){}
+  var pick = saved || ((navigator.language||'').toLowerCase().indexOf('es')===0 ? 'es' : 'en');
+  setLang(pick);
+})();
+</script>
+</body>
+</html>

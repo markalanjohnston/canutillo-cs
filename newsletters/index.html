@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Loop — all issues | Fundamentals of Computer Science, Canutillo HS</title>
+<meta name="description" content="Every issue of The Loop, the family newsletter for Mr. Johnston's Fundamentals of Computer Science class at Canutillo High School.">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="icon" href="../assets/img/chs-eagle-logo.svg">
+<script>document.documentElement.classList.remove('no-js');</script>
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap">
+    <a href="../">
+      <img src="../assets/img/CANUTILLO-ISD-LOGO.png" alt="Canutillo ISD">
+      <span class="who">Fundamentals of Computer Science
+        <span>Mr. Johnston &middot; Canutillo High School &middot; Room H120</span></span>
+    </a>
+  </div>
+</header>
+
+<div class="mast">
+  <div class="wrap">
+    <h1 class="loop">THE L<span class="oo"></span><span class="oo"></span>P</h1>
+    <p class="tag" lang="en">Every issue — Points of Pride from Room H120</p>
+    <p class="tag" lang="es">Todos los boletines — Puntos de orgullo del salón H120</p>
+  </div>
+</div>
+
+<div class="langbar">
+  <div class="wrap">
+    <button class="langbtn" id="btn-en" aria-pressed="true" onclick="setLang('en')">English</button>
+    <button class="langbtn" id="btn-es" aria-pressed="false" onclick="setLang('es')">Español</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+<!-- NEWEST FIRST. To add an issue: copy this card block, update title/date/links. -->
+<div class="card">
+  <h3>The Loop — Issue #1</h3>
+  <p class="date">August 2026</p>
+  <p lang="en" style="margin:0 0 12px">Week one in Room H120: computer science without computers,
+  meet Hopper the moth, the sod story, and a binary puzzle with a prize.</p>
+  <p lang="es" style="margin:0 0 12px">Primera semana en el salón H120: computación sin
+  computadoras, les presentamos a la polilla Hopper, la historia del pasto y un reto binario con
+  premio.</p>
+  <div class="links">
+    <a class="btn-primary" href="2026-08-issue-01/"><span lang="en">Read online</span><span lang="es">Leer en línea</span></a>
+    <a class="btn-second" href="2026-08-issue-01/the-loop-issue-01.pdf">PDF (EN + ES)</a>
+  </div>
+</div>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span class="viva" lang="en">Our Time is Now! ¡Viva Canutillo!</span>
+    <span class="viva" lang="es">¡Nuestro momento es ahora! ¡Viva Canutillo!</span>
+    <p><b>Mr. Johnston</b> &middot; Room H120 &middot;
+      <a href="mailto:mjohnston@canutillo-isd.org">mjohnston@canutillo-isd.org</a></p>
+    <p><a href="../">← <span lang="en">Class home</span><span lang="es">Inicio</span></a></p>
+  </div>
+</footer>
+
+<script>
+function setLang(l){
+  document.documentElement.setAttribute('data-lang', l);
+  document.documentElement.lang = l;
+  document.getElementById('btn-en').setAttribute('aria-pressed', l==='en');
+  document.getElementById('btn-es').setAttribute('aria-pressed', l==='es');
+  try { localStorage.setItem('loop-lang', l); } catch(e){}
+}
+(function(){
+  var saved = null;
+  try { saved = localStorage.getItem('loop-lang'); } catch(e){}
+  var pick = saved || ((navigator.language||'').toLowerCase().indexOf('es')===0 ? 'es' : 'en');
+  setLang(pick);
+})();
+</script>
+</body>
+</html>

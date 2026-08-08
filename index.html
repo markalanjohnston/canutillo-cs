@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fundamentals of Computer Science — Mr. Johnston, Canutillo High School</title>
+<meta name="description" content="Class hub for Fundamentals of Computer Science at Canutillo High School: family newsletters, what we're learning, and how to reach Mr. Johnston.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="assets/img/chs-eagle-logo.svg">
+<script>document.documentElement.classList.remove('no-js');</script>
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap">
+    <a href="./">
+      <img src="assets/img/CANUTILLO-ISD-LOGO.png" alt="Canutillo ISD">
+      <span class="who">Fundamentals of Computer Science
+        <span>Mr. Johnston &middot; Canutillo High School &middot; Room H120</span></span>
+    </a>
+  </div>
+</header>
+
+<div class="mast">
+  <div class="wrap">
+    <h1 style="margin:0;font-size:clamp(27px,7.5vw,42px);line-height:1.15">Building the CS program at Canutillo High School</h1>
+    <p class="tag" lang="en">A brand-new program — and your student is in its founding class.</p>
+    <p class="tag" lang="es">Un programa completamente nuevo — y su estudiante es parte de su generación fundadora.</p>
+  </div>
+</div>
+
+<div class="langbar">
+  <div class="wrap">
+    <button class="langbtn" id="btn-en" aria-pressed="true" onclick="setLang('en')">English</button>
+    <button class="langbtn" id="btn-es" aria-pressed="false" onclick="setLang('es')">Español</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+<section class="sec">
+  <div lang="en">
+    <h2>Welcome</h2>
+    <p>This is the public home for <b>Fundamentals of Computer Science</b> at Canutillo High School.
+    Families will find our class newsletter here — what students are learning, how to talk about it
+    at home, and what's coming up. Everything is posted in <b>English and Spanish</b>.</p>
+    <p>Day-to-day assignments live in <b>Google Classroom</b>; this site is the front porch.</p>
+  </div>
+  <div lang="es">
+    <h2>Bienvenidos</h2>
+    <p>Esta es la página pública de <b>Fundamentos de Ciencias de la Computación</b> en Canutillo
+    High School. Aquí las familias encontrarán el boletín de nuestra clase: lo que están aprendiendo
+    los estudiantes, cómo conversarlo en casa y lo que viene. Todo se publica en <b>inglés y
+    español</b>.</p>
+    <p>Las tareas del día a día están en <b>Google Classroom</b>; este sitio es la puerta de
+    entrada.</p>
+  </div>
+</section>
+
+<section class="sec">
+  <div lang="en"><h2>Latest newsletter</h2></div>
+  <div lang="es"><h2>Boletín más reciente</h2></div>
+  <div class="card" style="box-shadow:none;padding:0">
+    <h3>The Loop — Issue #1</h3>
+    <p class="date">August 2026 · <span lang="en">Week one in Room H120</span><span lang="es">Primera semana en el salón H120</span></p>
+    <div class="links">
+      <a class="btn-primary" href="newsletters/2026-08-issue-01/"><span lang="en">Read online</span><span lang="es">Leer en línea</span></a>
+      <a class="btn-second" href="newsletters/2026-08-issue-01/the-loop-issue-01.pdf">PDF</a>
+    </div>
+  </div>
+  <p style="margin:16px 0 0"><a href="newsletters/"><span lang="en">All issues →</span><span lang="es">Todos los boletines →</span></a></p>
+</section>
+
+<section class="sec">
+  <div lang="en">
+    <h2>Contact</h2>
+    <p><b>Email is the fastest way to reach me</b> and I check it daily:
+      <a href="mailto:mjohnston@canutillo-isd.org">mjohnston@canutillo-isd.org</a>.
+      My classroom phone cannot receive outside calls.</p>
+    <p>Conference period: 5th period on B days (12:18–1:48). Tutoring by appointment until 4:30.
+    Families — please come to me first with any question or concern. I'd rather solve things
+    together early.</p>
+  </div>
+  <div lang="es">
+    <h2>Contacto</h2>
+    <p><b>El correo electrónico es la manera más rápida de comunicarse conmigo</b> y lo reviso a
+      diario: <a href="mailto:mjohnston@canutillo-isd.org">mjohnston@canutillo-isd.org</a>.
+      El teléfono del salón no puede recibir llamadas de afuera.</p>
+    <p>Período de conferencia: 5.º período en días B (12:18–1:48). Tutoría con cita hasta las 4:30.
+    Familias: por favor acudan a mí primero con cualquier pregunta o preocupación. Prefiero
+    resolver las cosas juntos y a tiempo.</p>
+  </div>
+</section>
+
+<img class="eagle-mark" src="assets/img/chs-eagle-logo.svg" alt="Canutillo Eagles">
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span class="viva" lang="en">Our Time is Now! ¡Viva Canutillo!</span>
+    <span class="viva" lang="es">¡Nuestro momento es ahora! ¡Viva Canutillo!</span>
+    <p><b>Mr. Johnston</b> &middot; Room H120 &middot; Canutillo High School &middot;
+      <a href="mailto:mjohnston@canutillo-isd.org">mjohnston@canutillo-isd.org</a></p>
+  </div>
+</footer>
+
+<script>
+function setLang(l){
+  document.documentElement.setAttribute('data-lang', l);
+  document.documentElement.lang = l;
+  document.getElementById('btn-en').setAttribute('aria-pressed', l==='en');
+  document.getElementById('btn-es').setAttribute('aria-pressed', l==='es');
+  try { localStorage.setItem('loop-lang', l); } catch(e){}
+}
+(function(){
+  var saved = null;
+  try { saved = localStorage.getItem('loop-lang'); } catch(e){}
+  var pick = saved || ((navigator.language||'').toLowerCase().indexOf('es')===0 ? 'es' : 'en');
+  setLang(pick);
+})();
+</script>
+</body>
+</html>
