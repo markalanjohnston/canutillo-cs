@@ -11,7 +11,9 @@ const LS_ROSTER   = 'passprinter.roster';
 const DEFAULT_SETTINGS = {
   teacher:              'Mr. Teacher',
   schoolName:           '',
-  classes:              ['Period 1', 'Period 2', 'Period 3', 'Period 4'],
+  classes:              ['Period 1', 'Period 2', 'Period 3', 'Period 4',
+                         'Period 5', 'Period 6', 'Period 7', 'Period 8',
+                         'Advisory', 'Before School', 'After School'],
   defaultClass:         'Period 1',
   expiryLabel:          'End of Quarter',
   serial:               1,
@@ -52,6 +54,13 @@ function loadSettings() {
     const raw = localStorage.getItem(LS_SETTINGS);
     if (!raw) return { ...DEFAULT_SETTINGS };
     const parsed = JSON.parse(raw);
+    // One-time migration: browsers that saved the old 4-period default get
+    // the full list. Custom class lists are left alone.
+    const OLD_DEFAULT = ['Period 1', 'Period 2', 'Period 3', 'Period 4'];
+    if (Array.isArray(parsed.classes) &&
+        JSON.stringify(parsed.classes) === JSON.stringify(OLD_DEFAULT)) {
+      delete parsed.classes;
+    }
     return { ...DEFAULT_SETTINGS, ...parsed };
   } catch { return { ...DEFAULT_SETTINGS }; }
 }
