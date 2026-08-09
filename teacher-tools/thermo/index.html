@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Thermo — Teacher Tools | canutillocs.com</title>
+  <meta name="description" content="Thermo: thermal-printer receipts for hall passes, praise tickets, and classroom notices. All data stays in your browser.">
+  <meta name="robots" content="noindex">
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+  />
+  <link rel="stylesheet" href="../../assets/css/site.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="../../assets/img/chs-eagle-logo.svg" />
+</head>
+<body>
+
+  <header class="site-head">
+    <div class="wrap" style="max-width:1400px">
+      <a href="../../">
+        <img src="../../assets/img/CANUTILLO-ISD-LOGO.png" alt="Canutillo ISD">
+        <span class="who">Fundamentals of Computer Science
+          <span>Mr. Johnston &middot; Canutillo High School &middot; Room H120</span></span>
+      </a>
+    </div>
+  </header>
+
+  <div class="thermo-container">
+    <nav class="breadcrumb-nav" style="padding:10px 2px; font-size:14px;">
+      <a href="../../">Home</a>
+      <span class="text-muted mx-2">/</span>
+      <a href="../">Teacher Tools</a>
+      <span class="text-muted mx-2">/</span>
+      <span>Thermo</span>
+    </nav>
+
+    <div class="thermo-shell">
+      <header class="thermo-header">
+        <div class="thermo-title">
+          <h1>
+            <i class="bi bi-receipt text-primary"></i> Thermo
+            <span class="brand-sub" aria-live="polite"></span>
+          </h1>
+          <p class="lead text-muted mb-0">
+            Thermal-printer receipts for hall passes, tickets, and classroom notices.
+            Settings and rosters stay in <b>this browser only</b> — nothing is uploaded.
+          </p>
+        </div>
+        <nav class="thermo-actions">
+          <button type="button" id="btnStudents" class="btn btn-outline-secondary">
+            <i class="bi bi-people"></i> Manage students
+          </button>
+          <button type="button" id="btnSettings" class="btn btn-outline-secondary">
+            <i class="bi bi-gear"></i> Settings
+          </button>
+        </nav>
+      </header>
+
+      <main class="app-main">
+        <aside class="template-picker" id="templatePicker" aria-label="Receipt templates">
+          <!-- populated by app.js -->
+        </aside>
+
+        <section class="form-area">
+          <h2 id="formTitle">Pick a template</h2>
+          <form id="templateForm" autocomplete="off">
+            <div id="formFields"></div>
+
+            <div class="actions" id="actions">
+              <!-- Print buttons are injected here per-template by app.js -->
+              <button type="button" id="btnTestPrint">Test print (alignment)</button>
+              <button type="button" id="btnShuffle" title="Randomize any variable fields">Shuffle preview</button>
+            </div>
+
+            <p class="hint">
+              First print: in the browser dialog, pick your thermal printer, set
+              paper size to 80mm (or custom 80mm width), margins to None. Chrome
+              remembers the settings after that.
+            </p>
+          </form>
+        </section>
+
+        <section class="preview-area">
+          <h2>Live preview</h2>
+          <div class="preview-shell">
+            <div class="receipt-preview" id="receiptPreview">
+              <div class="receipt-placeholder">Select a template on the left.</div>
+            </div>
+          </div>
+          <p class="hint preview-hint">
+            Preview renders at true 80mm width. What you see is what prints.
+          </p>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- This node is the only thing visible when the browser prints. -->
+  <div class="print-area" id="printArea" aria-hidden="true"></div>
+
+  <!-- Students modal -->
+  <dialog id="studentsModal" class="thermo-modal">
+    <form method="dialog" class="thermo-modal-body">
+      <header class="tm-header">
+        <h2><i class="bi bi-people"></i> Manage Students</h2>
+        <button type="submit" class="tm-close-btn" value="close" aria-label="Close dialog">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </header>
+
+      <div class="tm-scroll">
+        <p class="form-text" style="margin:0 0 12px">
+          <i class="bi bi-shield-lock"></i> Names you add here are saved in this browser's
+          localStorage only. They never leave your computer.
+        </p>
+        <section class="tm-section">
+          <h3><i class="bi bi-person-plus"></i> Add a student</h3>
+          <div class="row g-2 align-items-end">
+            <div class="col-sm-7">
+              <label for="studentNameInput" class="form-label">Name</label>
+              <input type="text" class="form-control" id="studentNameInput" placeholder="First name or Firstname Lastname" />
+            </div>
+            <div class="col-sm-3">
+              <label for="studentClassInput" class="form-label">Class</label>
+              <select class="form-select" id="studentClassInput"></select>
+            </div>
+            <div class="col-sm-2">
+              <button type="button" id="btnAddStudent" class="btn btn-primary w-100">
+                <i class="bi bi-plus-lg"></i> Add
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="tm-section">
+          <h3><i class="bi bi-clipboard"></i> Bulk import</h3>
+          <p class="text-muted small mb-2">
+            One name per line. Optional <code>Name, Class</code> to assign a period.
+          </p>
+          <textarea class="form-control mb-2" id="studentBulkInput" rows="5"
+            placeholder="Stephano, AP CSP&#10;Jordan, Fundamentals of CS&#10;Alex"></textarea>
+          <button type="button" id="btnBulkAdd" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-clipboard-plus"></i> Import pasted list
+          </button>
+        </section>
+
+        <section class="tm-section">
+          <h3>
+            <i class="bi bi-list-ul"></i> Current roster
+            <span id="rosterCount" class="roster-count-badge">0</span>
+          </h3>
+          <ul id="rosterList" class="roster"></ul>
+        </section>
+      </div>
+
+      <footer class="tm-footer">
+        <button type="button" id="btnClearRoster" class="btn btn-outline-danger">
+          <i class="bi bi-trash"></i> Clear all
+        </button>
+        <button type="submit" value="close" class="btn btn-primary">Close</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- Settings modal -->
+  <dialog id="settingsModal" class="thermo-modal">
+    <form method="dialog" class="thermo-modal-body">
+      <header class="tm-header">
+        <h2><i class="bi bi-gear"></i> Settings</h2>
+        <button type="submit" class="tm-close-btn" value="close" aria-label="Close dialog">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </header>
+
+      <div class="tm-scroll">
+        <section class="tm-section">
+          <h3><i class="bi bi-person-badge"></i> Your info</h3>
+          <div class="mb-3">
+            <label for="settingsTeacher" class="form-label">Teacher signature</label>
+            <input type="text" class="form-control" id="settingsTeacher" placeholder="Mr. Teacher" />
+          </div>
+          <div class="mb-3">
+            <label for="settingsSchoolName" class="form-label">
+              School name <span class="text-muted fw-normal">(shown under the app title)</span>
+            </label>
+            <input type="text" class="form-control" id="settingsSchoolName" placeholder="Your High School" />
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-sm-4">
+              <label for="settingsRoom" class="form-label">Room number</label>
+              <input type="text" class="form-control" id="settingsRoom" placeholder="101" />
+            </div>
+            <div class="col-sm-8">
+              <label for="settingsEmail" class="form-label">Contact email</label>
+              <input type="text" class="form-control" id="settingsEmail" placeholder="teacher@yourschool.edu" />
+            </div>
+          </div>
+          <div class="mb-1">
+            <label for="settingsFooter" class="form-label">
+              Footer line <span class="text-muted fw-normal">(printed under the signature)</span>
+            </label>
+            <input type="text" class="form-control" id="settingsFooter" placeholder="Your School — Department" />
+          </div>
+        </section>
+
+        <section class="tm-section">
+          <h3><i class="bi bi-calendar3"></i> Classes &amp; counters</h3>
+          <div class="mb-3">
+            <label for="settingsClasses" class="form-label">
+              Classes <span class="text-muted fw-normal">(one per line)</span>
+            </label>
+            <textarea class="form-control" id="settingsClasses" rows="4"
+              placeholder="Period 1&#10;Period 2&#10;Period 3"></textarea>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-sm-6">
+              <label for="settingsDefaultClass" class="form-label">Default class period</label>
+              <select class="form-select" id="settingsDefaultClass"></select>
+            </div>
+            <div class="col-sm-6">
+              <label for="settingsExpiry" class="form-label">Quarter expiry label</label>
+              <input type="text" class="form-control" id="settingsExpiry" placeholder="End of Quarter" />
+            </div>
+          </div>
+          <div class="mb-1">
+            <label for="settingsSerial" class="form-label">
+              Serial counter <span class="text-muted fw-normal">(tickets / coupons)</span>
+            </label>
+            <div class="input-group">
+              <input type="number" class="form-control" id="settingsSerial" min="0" />
+              <button type="button" id="btnResetSerial" class="btn btn-outline-secondary">Reset to 1</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="tm-section">
+          <h3><i class="bi bi-image"></i> Logos</h3>
+          <div class="mb-3">
+            <label class="form-label">Add a logo from your computer</label>
+            <div class="row g-2 align-items-center">
+              <div class="col-sm-5">
+                <input type="text" class="form-control form-control-sm" id="newLogoLabel" placeholder="Name (e.g., School Mascot)" />
+              </div>
+              <div class="col-sm-2">
+                <input type="text" class="form-control form-control-sm" id="newLogoWidth" placeholder="28mm" value="28mm" />
+              </div>
+              <div class="col-sm-4">
+                <input type="file" class="form-control form-control-sm" id="newLogoFile"
+                  accept="image/png,image/jpeg,image/gif,image/webp" />
+              </div>
+              <div class="col-sm-1">
+                <button type="button" id="btnAddLogo" class="btn btn-sm btn-primary w-100">Add</button>
+              </div>
+            </div>
+            <p class="form-text">Uploads are auto-resized to ~800px and saved in this browser.</p>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Your logos</label>
+            <ul id="logoList" class="logo-list"></ul>
+          </div>
+          <div class="mb-1">
+            <label for="settingsLogo" class="form-label">Active header logo</label>
+            <select class="form-select" id="settingsLogo"></select>
+          </div>
+        </section>
+
+        <section class="tm-section">
+          <h3><i class="bi bi-qr-code"></i> QR codes</h3>
+          <div class="mb-3">
+            <label for="settingsQRPresets" class="form-label">
+              Saved QR codes
+              <span class="text-muted fw-normal">(one per line: <code>Label, Content</code>)</span>
+            </label>
+            <textarea class="form-control" id="settingsQRPresets" rows="4"
+              placeholder="Class website, https://yourschool.edu/class&#10;Contact me, mailto:teacher@yourschool.edu"></textarea>
+          </div>
+          <div class="mb-1">
+            <label for="settingsQRNote" class="form-label">
+              QR note <span class="text-muted fw-normal">(small italic line under every QR)</span>
+            </label>
+            <input type="text" class="form-control" id="settingsQRNote" placeholder="(use phone for this after school)" />
+          </div>
+        </section>
+
+        <section class="tm-section">
+          <h3><i class="bi bi-phone-vibrate"></i> Phone-confiscation template</h3>
+          <div class="mb-3">
+            <label for="settingsPhonePolicy" class="form-label">Policy citation body</label>
+            <textarea class="form-control" id="settingsPhonePolicy" rows="3"
+              placeholder="Per [state law/code]: personal devices prohibited during class. Full policy: yourschool.edu/policy"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="settingsPhoneEscalationLabel" class="form-label">Escalation section label</label>
+            <input type="text" class="form-control" id="settingsPhoneEscalationLabel" placeholder="DISTRICT ESCALATION" />
+          </div>
+          <div class="mb-3">
+            <label for="settingsPhoneEscalation" class="form-label">Escalation body</label>
+            <textarea class="form-control" id="settingsPhoneEscalation" rows="5"
+              placeholder="1. Warning&#10;2. Confiscated, returned EOD&#10;3. Parent pickup + conference&#10;4. Progressive discipline"></textarea>
+          </div>
+          <div class="mb-1">
+            <label for="settingsPhonePickup" class="form-label">Default pickup instructions</label>
+            <textarea class="form-control" id="settingsPhonePickup" rows="3"
+              placeholder="Pick up at the main office after final period."></textarea>
+          </div>
+        </section>
+      </div>
+
+      <footer class="tm-footer">
+        <button type="submit" value="close" class="btn btn-primary">
+          <i class="bi bi-check-lg"></i> Done
+        </button>
+      </footer>
+    </form>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="vendor/qrcode.min.js"></script>
+  <script src="templates.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
