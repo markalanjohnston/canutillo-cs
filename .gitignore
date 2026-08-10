@@ -1,0 +1,6 @@
+# Local working config — never published. CLAUDE.md and .claude/ describe the
+# public/private split (private repo, student data, SPED material) and the
+# permission rules that enforce it. Documenting those controls on a public,
+# search-indexed site advertises what's being protected. Keep them local.
+CLAUDE.md
+.claude/

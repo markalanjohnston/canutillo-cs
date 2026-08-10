@@ -24,10 +24,7 @@ const DEFAULT_SETTINGS = {
   footerText:           '',
   room:                 '',
   contactEmail:         '',
-  phonePolicyText:      '',    // Body of the POLICY section on the phone template
-  phoneEscalationLabel: 'ESCALATION',
-  phoneEscalationText:  '',    // Body of the ESCALATION section on the phone template
-  phonePickupDefault:   ''     // Default text for the "Pickup instructions" field
+  taglineText:          "...now you can bring the receipts to prove it!"
 };
 
 // Built-in "no logo" option is always available; everything else comes from settings.
@@ -410,6 +407,21 @@ function renderPreview() {
   }
   host.innerHTML = t.render(state.formData, buildCtx());
   injectQR(host);
+  injectTagline(host);
+}
+
+// The tagline prints at the bottom of every receipt (below any QR, above
+// the tear line). Editable/clearable in Settings.
+function injectTagline(host) {
+  const text = (state.settings.taglineText || '').trim();
+  if (!text) return;
+  const html = `<div class="r-tagline">${escapeHTML(text)}</div>`;
+  const feed = host.querySelector('.r-feed');
+  if (feed) feed.insertAdjacentHTML('beforebegin', html);
+  else {
+    const r = host.querySelector('.r');
+    if (r) r.insertAdjacentHTML('beforeend', html);
+  }
 }
 
 function injectQR(host) {
@@ -639,10 +651,7 @@ function openSettings() {
   document.getElementById('settingsSerial').value               = s.serial;
   document.getElementById('settingsQRPresets').value            = formatQRPresets(s.qrPresets);
   document.getElementById('settingsQRNote').value               = s.qrNote;
-  document.getElementById('settingsPhonePolicy').value          = s.phonePolicyText;
-  document.getElementById('settingsPhoneEscalationLabel').value = s.phoneEscalationLabel;
-  document.getElementById('settingsPhoneEscalation').value      = s.phoneEscalationText;
-  document.getElementById('settingsPhonePickup').value          = s.phonePickupDefault;
+  document.getElementById('settingsTagline').value              = s.taglineText;
   renderLogoList();
   populateLogoDropdown();
   refreshDefaultClassDropdown();
@@ -799,10 +808,7 @@ function commitSettingsFromInputs() {
   S.qrPresets   = parseQRPresets(document.getElementById('settingsQRPresets').value);
   S.qrNote      = document.getElementById('settingsQRNote').value;
 
-  S.phonePolicyText      = document.getElementById('settingsPhonePolicy').value;
-  S.phoneEscalationLabel = document.getElementById('settingsPhoneEscalationLabel').value.trim() || DEFAULT_SETTINGS.phoneEscalationLabel;
-  S.phoneEscalationText  = document.getElementById('settingsPhoneEscalation').value;
-  S.phonePickupDefault   = document.getElementById('settingsPhonePickup').value;
+  S.taglineText          = document.getElementById('settingsTagline').value;
 
   saveSettings();
   updateBrandSubtitle();

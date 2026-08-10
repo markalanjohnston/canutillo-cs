@@ -411,99 +411,6 @@ const TEMPLATES = {
   }
 };
 
-TEMPLATES.phone = {
-  id: 'phone',
-  label: 'Phone Taken',
-  sub: 'Cell-phone confiscation notice with policy excerpt.',
-  usesSerial: true,
-  printButtons: [
-    { label: 'Print teacher record', copyLabel: '-- TEACHER RECORD (signed) --' },
-    { label: 'Print student copy',   copyLabel: '-- STUDENT COPY --' },
-    { label: 'Print office copy',    copyLabel: '-- BUSINESS OFFICE (w/ phone) --' }
-  ],
-
-  fields: (ctx) => ([
-    { name: 'student',     label: 'Student', type: 'student-picker', required: true },
-    { name: 'classPeriod', label: 'Class',   type: 'class-select' },
-    { name: 'time',        label: 'Time (auto — edit if printing later)', type: 'text',
-      default: ctx.fmtTime(ctx.now) },
-    { name: 'device', label: 'Device', type: 'select',
-      options: [
-        { value: 'Cell phone',  label: 'Cell phone' },
-        { value: 'Smart watch', label: 'Smart watch' },
-        { value: 'AirPods',     label: 'AirPods / earbuds' },
-        { value: 'Tablet',      label: 'Tablet' },
-        { value: 'Laptop',      label: 'Personal laptop' },
-        { value: 'Other',       label: 'Other' }
-      ],
-      default: 'Cell phone' },
-    { name: 'pickup', label: 'Pickup instructions', type: 'textarea',
-      default: ctx.settings.phonePickupDefault || '' },
-    { name: 'freeNote', label: 'Note (optional)', type: 'textarea' },
-    { name: 'includePickup',     label: 'Print PICKUP section',     type: 'checkbox', default: true },
-    { name: 'includePolicy',     label: 'Print POLICY citation',    type: 'checkbox', default: true },
-    { name: 'includeEscalation', label: 'Print ESCALATION section',   type: 'checkbox', default: true }
-  ]),
-
-  render: (data, ctx) => {
-    const e = ctx.escape;
-    const name = (data.student || '').trim() || '(student)';
-    const room = ctx.settings.room || '';
-    const email = ctx.settings.contactEmail || '';
-    const sigLine = '_'.repeat(28);
-
-    const policyText      = ctx.settings.phonePolicyText || '';
-    const escalationText  = ctx.settings.phoneEscalationText || '';
-    const escalationLabel = ctx.settings.phoneEscalationLabel || 'ESCALATION';
-
-    return `
-      <div class="r">
-        ${ctx.logo}
-        <div class="r-divider">${ctx.divider('*')}</div>
-        <div class="r-title">PHONE TAKEN</div>
-        <div class="r-divider">${ctx.divider('*')}</div>
-
-        <div class="r-kv"><b>Student:</b> <span>${e(name)}</span></div>
-        ${data.classPeriod ? `<div class="r-kv"><b>Class:</b> <span>${e(data.classPeriod)}</span></div>` : ''}
-        <div class="r-kv"><b>Date:</b> <span>${e(ctx.fmtDate(ctx.now))}</span></div>
-        <div class="r-kv"><b>Time:</b> <span>${e(data.time || ctx.fmtTime(ctx.now))}</span></div>
-        <div class="r-kv"><b>Device:</b> <span>${e(data.device || 'Cell phone')}</span></div>
-        <div class="r-kv"><b>Record:</b> <span>#${ctx.pad4(ctx.settings.serial)}</span></div>
-
-        ${data.includePickup !== false ? `
-          <div class="r-divider">${ctx.divider('-')}</div>
-          <div class="r-msg">--- PICKUP ---</div>
-          <div class="r-block">${e(data.pickup || '')}</div>
-        ` : ''}
-        ${data.freeNote ? `
-          <div class="r-divider">${ctx.divider('-')}</div>
-          <div class="r-block">${e(data.freeNote)}</div>
-        ` : ''}
-        ${(data.includePolicy !== false && policyText.trim()) ? `
-          <div class="r-divider">${ctx.divider('-')}</div>
-          <div class="r-msg">--- POLICY ---</div>
-          <div class="r-block">${e(policyText)}</div>
-        ` : ''}
-        ${(data.includeEscalation !== false && escalationText.trim()) ? `
-          <div class="r-divider">${ctx.divider('-')}</div>
-          <div class="r-msg">--- ${e(escalationLabel)} ---</div>
-          <div class="r-block">${e(escalationText)}</div>
-        ` : ''}
-
-        <div class="r-divider">${ctx.divider('-')}</div>
-        <div class="r-msg">Student signature:</div>
-        <div class="r-msg">${sigLine}</div>
-        ${email ? `<div class="r-msg">Questions? ${e(email)}</div>` : ''}
-
-        <div class="r-divider">${ctx.divider('=')}</div>
-        <div class="r-sig">${e(ctx.settings.teacher)}</div>
-        ${room ? `<div class="r-msg">Room ${e(room)}</div>` : ''}
-        ${ctx.footer}
-        <div class="r-feed"></div>
-      </div>`;
-  }
-};
-
 /* -------------------- 6. Custom (kitchen sink) ---------- */
 TEMPLATES.custom = {
   id: 'custom',
@@ -566,16 +473,16 @@ TEMPLATES.custom = {
     { name: 'includePickup', label: 'Print PICKUP block', type: 'checkbox' },
     { name: 'pickupLabel',   label: 'Section label', type: 'text', default: 'PICKUP' },
     { name: 'pickupText',    label: 'Body text', type: 'textarea',
-      default: ctx.settings.phonePickupDefault || '' },
+      default: '' },
     { name: 'includePolicy', label: 'Print POLICY block', type: 'checkbox' },
     { name: 'policyLabel',   label: 'Section label', type: 'text', default: 'POLICY' },
     { name: 'policyText',    label: 'Body text', type: 'textarea',
-      default: ctx.settings.phonePolicyText || '' },
+      default: '' },
     { name: 'includeEscalation', label: 'Print ESCALATION block', type: 'checkbox' },
     { name: 'escalationLabel',   label: 'Section label', type: 'text',
-      default: ctx.settings.phoneEscalationLabel || 'ESCALATION' },
+      default: 'ESCALATION' },
     { name: 'escalationText',    label: 'Body text', type: 'textarea',
-      default: ctx.settings.phoneEscalationText || '' },
+      default: '' },
 
     { type: 'section', label: 'Closing' },
     { name: 'includeSignatureLine', label: 'Print blank signature line', type: 'checkbox' },
@@ -734,4 +641,4 @@ TEMPLATES.custom = {
   }
 };
 
-const TEMPLATE_ORDER = ['praise', 'encourage', 'pass', 'homework', 'phone', 'custom'];
+const TEMPLATE_ORDER = ['praise', 'encourage', 'pass', 'homework', 'custom'];

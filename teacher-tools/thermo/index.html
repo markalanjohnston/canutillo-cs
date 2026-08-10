@@ -47,7 +47,7 @@
             <span class="brand-sub" aria-live="polite"></span>
           </h1>
           <p class="lead text-muted mb-0">
-            Thermal-printer receipts for hall passes, tickets, and classroom notices.
+            Praise tickets, encouragement notes, and informal hall passes — printed on receipt paper.
             Settings and rosters stay in <b>this browser only</b> — nothing is uploaded.
           </p>
         </div>
@@ -200,11 +200,17 @@
               <input type="text" class="form-control" id="settingsEmail" placeholder="teacher@yourschool.edu" />
             </div>
           </div>
-          <div class="mb-1">
+          <div class="mb-3">
             <label for="settingsFooter" class="form-label">
               Footer line <span class="text-muted fw-normal">(printed under the signature)</span>
             </label>
             <input type="text" class="form-control" id="settingsFooter" placeholder="Your School — Department" />
+          </div>
+          <div class="mb-1">
+            <label for="settingsTagline" class="form-label">
+              Tagline <span class="text-muted fw-normal">(prints at the very bottom of every receipt — clear it to turn off)</span>
+            </label>
+            <input type="text" class="form-control" id="settingsTagline" placeholder="...now you can bring the receipts to prove it!" />
           </div>
         </section>
 
@@ -287,28 +293,6 @@
           </div>
         </section>
 
-        <section class="tm-section">
-          <h3><i class="bi bi-phone-vibrate"></i> Phone-confiscation template</h3>
-          <div class="mb-3">
-            <label for="settingsPhonePolicy" class="form-label">Policy citation body</label>
-            <textarea class="form-control" id="settingsPhonePolicy" rows="3"
-              placeholder="Per [state law/code]: personal devices prohibited during class. Full policy: yourschool.edu/policy"></textarea>
-          </div>
-          <div class="mb-3">
-            <label for="settingsPhoneEscalationLabel" class="form-label">Escalation section label</label>
-            <input type="text" class="form-control" id="settingsPhoneEscalationLabel" placeholder="DISTRICT ESCALATION" />
-          </div>
-          <div class="mb-3">
-            <label for="settingsPhoneEscalation" class="form-label">Escalation body</label>
-            <textarea class="form-control" id="settingsPhoneEscalation" rows="5"
-              placeholder="1. Warning&#10;2. Confiscated, returned EOD&#10;3. Parent pickup + conference&#10;4. Progressive discipline"></textarea>
-          </div>
-          <div class="mb-1">
-            <label for="settingsPhonePickup" class="form-label">Default pickup instructions</label>
-            <textarea class="form-control" id="settingsPhonePickup" rows="3"
-              placeholder="Pick up at the main office after final period."></textarea>
-          </div>
-        </section>
       </div>
 
       <footer class="tm-footer">

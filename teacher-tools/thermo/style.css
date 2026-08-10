@@ -452,6 +452,17 @@ button.danger {
   border-radius: 1mm;
 }
 
+/* Cheeky sign-off printed at the very bottom of every receipt */
+.receipt-preview .r-tagline,
+.print-area .r-tagline {
+  text-align: center;
+  font-style: italic;
+  font-size: 0.85em;
+  margin-top: 3mm;
+  padding-top: 1.5mm;
+  border-top: 1px dotted #000;
+}
+
 /* Copy label printed at the top of each copy for multi-copy templates */
 .receipt-preview .r-copy-note,
 .print-area .r-copy-note {
