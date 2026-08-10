@@ -279,7 +279,8 @@ function renderForm() {
     universalHTML +
     // shared datalist for any student-picker in the form
     `<datalist id="${dataListId}">
-       ${state.roster.map(s => `<option value="${escapeHTML(s.name)}"></option>`).join('')}
+       ${state.roster.map(s => `<option value="${escapeHTML(s.name)}"${
+           s.classPeriod ? ` label="${escapeHTML(s.classPeriod)}"` : ''}></option>`).join('')}
      </datalist>`;
 
   // Wire the universal QR input + preset dropdown + show-text checkbox.
@@ -320,14 +321,22 @@ function renderForm() {
       ? 'input' : 'change';
     input.addEventListener(evt, () => {
       state.formData[f.name] = (f.type === 'checkbox') ? input.checked : input.value;
-      // When a student name matches a known roster entry, auto-fill their class.
+      // Picking a student sets their class automatically. Choosing a NEW student
+      // clears any manual override, so the next name auto-fills too. The class
+      // dropdown stays fully editable either way.
       if (f.type === 'student-picker') {
-        const match = state.roster.find(r => r.name.toLowerCase() === input.value.trim().toLowerCase());
-        if (match && match.classPeriod) {
-          const classEl = host.querySelector(`[name="classPeriod"]`);
-          if (classEl && !classEl.dataset.userEdited) {
-            classEl.value = match.classPeriod;
-            state.formData.classPeriod = match.classPeriod;
+        const typed = input.value.trim().toLowerCase();
+        const matches = state.roster.filter(r => r.name.toLowerCase() === typed);
+        const classEl = host.querySelector(`[name="classPeriod"]`);
+        if (classEl) {
+          delete classEl.dataset.userEdited;
+          if (matches.length === 1 && matches[0].classPeriod) {
+            classEl.value = matches[0].classPeriod;
+            state.formData.classPeriod = matches[0].classPeriod;
+            flashField(classEl);
+          } else if (matches.length > 1) {
+            // Same display name in more than one class — don't guess.
+            flashField(classEl, true);
           }
         }
       }
@@ -337,6 +346,14 @@ function renderForm() {
       renderPreview();
     });
   });
+}
+
+// Brief highlight so an automatic change is visible rather than silent.
+// amber = ambiguous (duplicate name across classes), green = set from roster.
+function flashField(el, ambiguous) {
+  el.style.transition = 'background-color .15s';
+  el.style.backgroundColor = ambiguous ? '#fff3cd' : '#e6f4ea';
+  setTimeout(() => { el.style.backgroundColor = ''; }, 900);
 }
 
 function renderField(f) {
