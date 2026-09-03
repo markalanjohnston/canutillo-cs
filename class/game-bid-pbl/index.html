@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Game Bid — Fundamentals of CS</title>
+<style>
+  :root { --navy:#1b2a52; --orange:#E8781F; --ink:#111; --paper:#fff; --soft:#f4f6fa; }
+  * { box-sizing:border-box; }
+  body { font-family:Arial,Helvetica,sans-serif; color:var(--ink); background:var(--paper);
+         margin:0; line-height:1.55; font-size:17px; }
+  header { background:var(--navy); color:#fff; padding:18px 16px 14px; }
+  header .wrap, main { max-width:760px; margin:0 auto; padding:0 4px; }
+  header h1 { margin:0; font-size:1.6rem; }
+  header p { margin:4px 0 0; color:#c8d4ec; font-size:.95rem; }
+  .bar { height:6px; background:var(--orange); }
+  main { padding:14px 16px 40px; }
+  nav.pbl { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px; }
+  nav.pbl a { text-decoration:none; background:var(--soft); color:var(--navy); font-weight:bold;
+              border:2px solid var(--navy); border-radius:999px; padding:4px 14px; font-size:.9rem; }
+  nav.pbl a.here { background:var(--navy); color:#fff; }
+  .task { border:2px solid var(--navy); border-radius:12px; margin:18px 0; overflow:hidden; }
+  .task h2 { margin:0; background:var(--navy); color:#fff; font-size:1.05rem; padding:9px 14px; }
+  .task h2 .min { float:right; background:var(--orange); border-radius:999px; padding:1px 11px;
+                  font-size:.85rem; }
+  .task .body { padding:10px 14px 14px; }
+  .vocab { display:grid; grid-template-columns:1fr; gap:8px; margin-top:6px; }
+  @media (min-width:560px){ .vocab { grid-template-columns:1fr 1fr; } }
+  .v { background:var(--soft); border-left:5px solid var(--orange); border-radius:8px; padding:8px 12px; }
+  .v b { color:var(--navy); }
+  .v .es { color:#667; font-style:italic; font-size:.9rem; }
+  .note { background:var(--soft); border-radius:10px; padding:10px 14px; font-size:.95rem; margin-top:16px; }
+  .big { font-size:1.05rem; }
+  code { background:var(--soft); padding:1px 7px; border-radius:6px; font-size:.95em; }
+  .video { position:relative; padding-top:56.25%; border-radius:10px; overflow:hidden; margin-top:8px; }
+  .video iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+  table.map { border-collapse:collapse; width:100%; margin-top:6px; font-size:.95rem; }
+  .map th, .map td { border:1px solid #b9c2d8; padding:6px 9px; text-align:left; vertical-align:top; }
+  .map th { background:var(--soft); color:var(--navy); }
+  .map .now { background:#fff4e8; }
+  .fine { color:#667; font-size:.85rem; margin-top:22px; }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>The Game Bid 🎲</h1>
+  <p>Fundamentals of Computer Science · Mr. Johnston · project hub — everything lives here or in Google Classroom</p>
+</div></header>
+<div class="bar"></div>
+<main>
+
+<nav class="pbl">
+  <a class="here" href="./">Hub</a>
+  <a href="email.html">Email like a pro</a>
+  <a href="library.html">Game library</a>
+  <a href="crew.html">Crews &amp; contracts</a>
+  <a href="rfp.html">The RFP 🔒</a>
+</nav>
+
+<p class="big"><b>The deal:</b> a client &mdash; Boxtop Digital &mdash; is taking bids to relaunch
+<b>ONE classic tabletop game as a mobile app</b>. Your crew is a design firm. You studied a real
+game as field research, you&rsquo;ll get the client&rsquo;s requirements, and you&rsquo;ll design the app and
+pitch it. <b>Bid Day: Sept 22&ndash;23.</b> Late bids are not heard.
+<span style="color:#667;font-style:italic">El cliente acepta propuestas para convertir UN juego
+de mesa cl&aacute;sico en una app. Tu equipo compite. D&iacute;a de propuestas: 22&ndash;23 de septiembre.</span></p>
+
+<div class="task"><h2>Where this started <span class="min">3&frac12; min</span></h2><div class="body">
+  Board games have always been built with the technology of their era &mdash; hand-painted boards, then
+  cheap mass printing, then games that mirrored their moment (a moon-landing game right after Apollo).
+  <b>Cardboard was a technology. So is the phone in your pocket.</b> That jump is the whole project.
+  <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/9QBWw8qNKPo"
+    title="How board games took over America" allowfullscreen loading="lazy"></iframe></div>
+</div></div>
+
+<div class="task"><h2>The road to Bid Day</h2><div class="body">
+  <table class="map">
+    <tr><th>When</th><th>Stop</th><th>What your crew produces</th></tr>
+    <tr class="now"><td>Sept 3&ndash;4</td><td><b>Launch — Game Day</b></td><td>Play as field research · every player submits the Field Survey (in Classroom) · crew Know / Need-to-Know sheet, parked for the weekend</td></tr>
+    <tr><td>Sept 8&ndash;9</td><td>BOY testing</td><td>&mdash; (devices already proven)</td></tr>
+    <tr><td>Sept 10&ndash;11</td><td><b>The RFP opens</b> <a href="rfp.html">🔒</a></td><td>Your crew emails the client its ONE question — professional format</td></tr>
+    <tr><td>Sept 14&ndash;15</td><td>Deconstruction</td><td>Core-loop map of YOUR game: what really happens on a turn</td></tr>
+    <tr><td>Sept 16&ndash;17</td><td>Design Sprint I</td><td>Paper wireframes of the app&rsquo;s screens</td></tr>
+    <tr><td>Sept 18 &amp; 21</td><td>Design Sprint II</td><td>Clickable prototype in Google Slides</td></tr>
+    <tr><td><b>Sept 22&ndash;23</b></td><td><b>BID DAY</b></td><td>90-second pitch · the client walks your prototype · bid package submitted</td></tr>
+  </table>
+</div></div>
+
+<div class="task"><h2>Right now</h2><div class="body">
+  <ol>
+    <li><b>Field Survey</b> — every player submits their OWN, in Google Classroom. It&rsquo;s your
+        research timesheet: what a turn looks like, how you win, luck vs. choices, and the client
+        question &mdash; one thing a phone makes BETTER, one thing that gets LOST.</li>
+    <li><b>Know / Need-to-Know sheet</b> — parked in your crew folder. Over the weekend, think like
+        a bidder. Don&rsquo;t solve it; sharpen it.</li>
+    <li><b>Your one question</b> — when the RFP opens Sept 10, the client answers exactly ONE emailed
+        question per crew. Format matters: see <a href="email.html">Email like a pro</a>.</li>
+  </ol>
+</div></div>
+
+<div class="vocab">
+  <div class="v"><b>Client</b> <span class="es">· cliente</span><br>The one paying for the work — and the one you have to understand.</div>
+  <div class="v"><b>Bid / proposal</b> <span class="es">· propuesta</span><br>Your crew&rsquo;s answer to the client: here&rsquo;s what we&rsquo;d build, and why it wins.</div>
+  <div class="v"><b>Playtest / field research</b> <span class="es">· prueba de juego</span><br>Playing on purpose: noticing what makes the game work while you play it.</div>
+  <div class="v"><b>Need-to-know</b> <span class="es">· lo que necesitamos saber</span><br>A question the CLIENT must answer before you can design — not something you could look up.</div>
+</div>
+
+<div class="note"><b>Absent, or working solo?</b> Watch the video above, read this hub, then do the
+Field Survey in Classroom about a game you know well from memory. The crew steps have solo versions
+&mdash; check your Classroom comments. <span style="font-style:italic;color:#667">Todo tiene versi&oacute;n
+individual — revisa Classroom.</span></div>
+
+<p class="fine">Boxtop Digital is our classroom&rsquo;s client for this project. The design work, the
+deadlines, the email — and the bid — are real.</p>
+
+</main>
+</body>
+</html>

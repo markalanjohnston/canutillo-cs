@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Email Like a Professional — Fundamentals of CS</title>
+<style>
+  :root { --navy:#1b2a52; --orange:#E8781F; --ink:#111; --paper:#fff; --soft:#f4f6fa; }
+  * { box-sizing:border-box; }
+  body { font-family:Arial,Helvetica,sans-serif; color:var(--ink); background:var(--paper);
+         margin:0; line-height:1.55; font-size:17px; }
+  header { background:var(--navy); color:#fff; padding:18px 16px 14px; }
+  header .wrap, main { max-width:760px; margin:0 auto; padding:0 4px; }
+  header h1 { margin:0; font-size:1.6rem; }
+  header p { margin:4px 0 0; color:#c8d4ec; font-size:.95rem; }
+  .bar { height:6px; background:var(--orange); }
+  main { padding:14px 16px 40px; }
+  nav.pbl { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px; }
+  nav.pbl a { text-decoration:none; background:var(--soft); color:var(--navy); font-weight:bold;
+              border:2px solid var(--navy); border-radius:999px; padding:4px 14px; font-size:.9rem; }
+  nav.pbl a.here { background:var(--navy); color:#fff; }
+  .task { border:2px solid var(--navy); border-radius:12px; margin:18px 0; overflow:hidden; }
+  .task h2 { margin:0; background:var(--navy); color:#fff; font-size:1.05rem; padding:9px 14px; }
+  .task .body { padding:10px 14px 14px; }
+  .vocab { display:grid; grid-template-columns:1fr; gap:8px; margin-top:6px; }
+  @media (min-width:560px){ .vocab { grid-template-columns:1fr 1fr; } }
+  .v { background:var(--soft); border-left:5px solid var(--orange); border-radius:8px; padding:8px 12px; }
+  .v b { color:var(--navy); }
+  .v .es { color:#667; font-style:italic; font-size:.9rem; }
+  .write { background:#fffaf0; border:2px dashed var(--orange); border-radius:10px; padding:10px 14px; margin-top:10px; }
+  .write b { color:var(--navy); }
+  .note { background:var(--soft); border-radius:10px; padding:10px 14px; font-size:.95rem; margin-top:16px; }
+  .big { font-size:1.05rem; }
+  code { background:var(--soft); padding:1px 7px; border-radius:6px; font-size:.95em; }
+  .mail { border:2px solid #b9c2d8; border-radius:10px; padding:10px 14px; margin-top:8px;
+          font-family:Georgia,serif; background:#fbfcff; }
+  .mail.bad { border-color:#d88; background:#fff7f7; }
+  .mail .hdr { color:#667; font-size:.9rem; border-bottom:1px solid #d5dbea; padding-bottom:4px; margin-bottom:6px; }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Email Like a Professional ✉️</h1>
+  <p>Fundamentals of Computer Science · Mr. Johnston · the standing format for every email in this class</p>
+</div></header>
+<div class="bar"></div>
+<main>
+
+<nav class="pbl">
+  <a href="./">Hub</a>
+  <a class="here" href="email.html">Email like a pro</a>
+  <a href="library.html">Game library</a>
+  <a href="crew.html">Crews &amp; contracts</a>
+  <a href="rfp.html">The RFP 🔒</a>
+</nav>
+
+<p class="big"><b>Register is real.</b> The same ask, two ways: <i>&ldquo;yo can u fix my grade&rdquo;</i>
+gets deleted; <i>&ldquo;Could you tell me what I missed on Tuesday?&rdquo;</i> gets answered within the
+hour. Bosses, coaches, colleges, clients &mdash; email is the front door, and the reader decides in
+five seconds. <span style="color:#667;font-style:italic">El registro importa: el mismo mensaje,
+escrito profesionalmente, S&Iacute; recibe respuesta.</span></p>
+
+<div class="task"><h2>The five marks — scored 0&ndash;5, one point each</h2><div class="body">
+  Every real email you send Mr. Johnston gets a reply with a single number. Count your own marks
+  before you hit send.
+  <div class="vocab">
+    <div class="v"><b>1 · Subject</b> <span class="es">· asunto</span><br>Starts <code>FoCS P#</code> (your period), then YOUR words saying what it&rsquo;s about. The subject is how busy people sort — blank or vague means unread.</div>
+    <div class="v"><b>2 · Body</b> <span class="es">· cuerpo</span><br>Greeting + who you are + ONE clear ask. One email, one question.</div>
+    <div class="v"><b>3 · Signature</b> <span class="es">· firma</span><br>A closing (&ldquo;Thank you,&rdquo;) and your full name. Every time.</div>
+    <div class="v"><b>4 · Grammar</b> <span class="es">· gramática</span><br>Capitals, punctuation, complete sentences. Not texting.</div>
+    <div class="v"><b>5 · Formatting</b> <span class="es">· formato</span><br>Line breaks between greeting, body, and signature. No wall of text.</div>
+  </div>
+</div></div>
+
+<div class="task"><h2>Before and after</h2><div class="body">
+  <div class="mail bad"><div class="hdr"><b>Subject:</b> (none)</div>
+  hey its me from ur class i need my grade fixed cuz i did turn it in and the computer messed it up so yeah</div>
+  <div class="mail"><div class="hdr"><b>Subject:</b> FoCS P4 &mdash; grade question about Tuesday&rsquo;s survey</div>
+  Good morning Mr. Johnston,<br><br>
+  My name is Alan T. and I&rsquo;m in your Period 4 class. My Field Survey shows as missing, but I
+  submitted it Tuesday before the bell. Could you check whether it came through?<br><br>
+  Thank you,<br>Alan T.</div>
+  Same student. Same problem. Only one of these gets an answer &mdash; count the five marks in each.
+</div></div>
+
+<div class="task"><h2>To · CC · BCC · Reply All</h2><div class="body">
+  <div class="vocab">
+    <div class="v"><b>To</b> <span class="es">· para</span><br>The person you expect ACTION from.</div>
+    <div class="v"><b>CC</b> <span class="es">· con copia</span><br>Kept in the loop — reads it, does nothing.</div>
+    <div class="v"><b>BCC</b> <span class="es">· copia oculta</span><br>A privacy tool: hides a big list of addresses from each other. Not sneaky — considerate.</div>
+    <div class="v"><b>Reply vs. Reply All</b> <span class="es">· responder a todos</span><br>Answer the SENDER unless every single recipient truly needs your answer. Reply-All storms are how adults lose an afternoon.</div>
+  </div>
+</div></div>
+
+<div class="write"><b>Stuck? Start from the frame:</b><br>
+<i>Good morning Mr. Johnston,</i><br>
+<i>My name is ______ and I am in your Period ___ class. ______ (one clear ask — could you tell us&hellip; / could you check&hellip;)</i><br>
+<i>Thank you,</i><br><i>______</i></div>
+
+<div class="note"><b>For the project:</b> the client answers questions <b>by email only</b>, one per
+crew, in exactly this format &mdash; a malformed email gets one reply: <i>&ldquo;Resend professionally
+and I&rsquo;ll answer.&rdquo;</i> The five marks aren&rsquo;t a school thing. They&rsquo;re the job.</div>
+
+</main>
+</body>
+</html>
