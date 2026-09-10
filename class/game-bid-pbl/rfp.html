@@ -28,17 +28,18 @@
   .v .es { color:#667; font-style:italic; font-size:.9rem; }
   .note { background:var(--soft); border-radius:10px; padding:10px 14px; font-size:.95rem; margin-top:16px; }
   .big { font-size:1.05rem; }
-  .locked { border:3px solid var(--orange); border-radius:14px; background:#fffaf0;
-            text-align:center; padding:34px 18px; margin:24px 0; }
-  .locked .lock { font-size:3rem; }
-  .locked h2 { color:var(--navy); margin:8px 0 4px; }
-  .locked p { margin:6px 0; }
+  ol.reqs { padding-left:22px; }
+  ol.reqs li { margin:7px 0; }
+  .memo { border:2px solid var(--navy); border-radius:12px; background:#fbfcff; padding:12px 16px; margin:18px 0; }
+  .memo .from { color:#667; font-size:.9rem; border-bottom:1px solid #d5dbea; padding-bottom:6px; margin-bottom:8px; }
+  .stamp { display:inline-block; border:2px solid var(--orange); color:var(--orange); font-weight:bold;
+           border-radius:6px; padding:1px 10px; font-size:.85rem; transform:rotate(-2deg); }
 </style>
 </head>
 <body>
 <header><div class="wrap">
-  <h1>The RFP 🔒</h1>
-  <p>Fundamentals of Computer Science · Mr. Johnston · the client&rsquo;s requirements — when the client is ready</p>
+  <h1>The RFP 📜</h1>
+  <p>Fundamentals of Computer Science · Mr. Johnston · Request for Proposals — now OPEN</p>
 </div></header>
 <div class="bar"></div>
 <main>
@@ -48,34 +49,84 @@
   <a href="email.html">Email like a pro</a>
   <a href="library.html">Game library</a>
   <a href="crew.html">Crews &amp; contracts</a>
-  <a class="here" href="rfp.html">The RFP 🔒</a>
+  <a class="here" href="rfp.html">The RFP 📜</a>
 </nav>
 
-<div class="locked">
-  <div class="lock">🔒</div>
-  <h2>The RFP opens Thursday, September 10</h2>
-  <p>Criteria. Constraints. Deliverables. The fence your bid lives inside.</p>
-  <p><b>Until then, the client is not answering questions</b> — and when the window opens, each crew
-  gets exactly <b>ONE</b> emailed question, in <a href="email.html">professional format</a>.</p>
-  <p style="color:#667;font-style:italic">El RFP se abre el jueves 10 de septiembre. Una sola
-  pregunta por equipo — por correo profesional.</p>
+<div class="memo">
+  <div class="from"><b>FROM:</b> VP of Revivals, Boxtop Digital &nbsp;·&nbsp; <b>TO:</b> all bidding crews
+  &nbsp;·&nbsp; <span class="stamp">RFP OPEN</span></div>
+  <p class="big"><b>Boxtop Digital is accepting bids to relaunch ONE classic tabletop game as a
+  mobile app.</b> Each crew bids on the game it studied. Two crews may bid the same game — bids
+  compete on design work, not on who claimed it first. <b>Bid Day: September 22–23. Late bids are
+  not heard.</b></p>
+  <p style="color:#667;font-style:italic">Boxtop Digital acepta propuestas para relanzar UN juego
+  de mesa clásico como app móvil. Día de propuestas: 22–23 de septiembre. Las propuestas
+  tardías no se aceptan.</p>
 </div>
 
-<div class="task"><h2>What an RFP is</h2><div class="body">
-  A <b>Request for Proposals</b> is how real clients hire: a document that says what they want,
-  what&rsquo;s required, and how bids will be judged. Companies win or lose millions on how carefully
-  they read one. Yours will draw the fence: what MUST be true of your app, and what a winning bid
-  does best.
+<div class="task"><h2>Read this box first: criteria vs. constraints</h2><div class="body">
+  <div class="vocab">
+    <div class="v"><b>CRITERIA</b> <span class="es">· criterios</span><br>Judged — degrees of good.
+    The scale we score your bid on. You can do well or poorly on a criterion.</div>
+    <div class="v"><b>CONSTRAINTS</b> <span class="es">· restricciones</span><br>Hard fences — in or
+    out. A bid that breaks a constraint isn&rsquo;t a lower score. It&rsquo;s OUT.</div>
+  </div>
+  <p style="margin-top:8px">The fence is not your enemy. A project with no rules produces mush;
+  <b>the fence is what makes your bid creative.</b></p>
 </div></div>
 
-<div class="vocab">
-  <div class="v"><b>RFP</b> <span class="es">· solicitud de propuestas</span><br>The client&rsquo;s written requirements — the starting gun for real design work.</div>
-  <div class="v"><b>Criteria vs. constraints</b> <span class="es">· criterios y restricciones</span><br>Coming Sept 10: what wins (degrees of good) vs. what&rsquo;s in-or-out (hard fences). Knowing which is which is half the job.</div>
-</div>
+<div class="task"><h2>CRITERIA — what a winning bid maximizes (this becomes the bid rubric)</h2><div class="body">
+  <ol class="reqs">
+    <li><b>The core loop survives.</b> <span style="color:#667;font-style:italic">(core loop ·
+    ciclo central — the small set of actions a player repeats every turn; the part that IS the
+    game)</span> Someone who loves the original recognizes it within ten seconds.</li>
+    <li><b>The screens work.</b> Start &rarr; Play &rarr; Win/End, walkable in the prototype without your crew explaining it.</li>
+    <li><b>It looks deliberate.</b> Readable text, consistent colors and fonts, buttons that look tappable.</li>
+    <li><b>The pitch names the trade.</b> The ONE thing the phone made better, and the ONE thing you protected from being lost.</li>
+    <li><b>Professional correspondence throughout.</b> Every email in the standing five-marks format. The client notices.</li>
+  </ol>
+</div></div>
 
-<div class="note"><b>Best use of the weekend:</b> look at your crew&rsquo;s Need-to-Know column and
-sharpen ONE question until it can&rsquo;t be answered with yes or no. The crews that ask the best
-questions design with the fewest surprises.</div>
+<div class="task"><h2>CONSTRAINTS — the fence (in or out, no negotiation)</h2><div class="body">
+  <ol class="reqs">
+    <li>One game from the class library (a card game your crew actually played counts).</li>
+    <li>Prototype in <b>Google Slides only</b> — linked and clickable. No code, no app builders. (Code comes after the contract is awarded.)</li>
+    <li>At least <b>3</b> screens, at most <b>5</b>.</li>
+    <li>Phone-shaped: <b>portrait</b>, playable with one hand.</li>
+    <li>The classic stays recognizable: speed it up, streamline it — never turn it into a different game.</li>
+    <li>Everything original: no copied art, logos, or screenshots. Draw your own.</li>
+    <li>Audience is <b>FAMILIES</b>: a 9-year-old can play it, a grandparent can read it.</li>
+    <li>Money is out of scope: the app is assumed free to download — no ads or prices in the bid.</li>
+  </ol>
+</div></div>
+
+<div class="task"><h2>DELIVERABLES — what your crew turns in on Bid Day</h2><div class="body">
+  <ol class="reqs">
+    <li><b>Wireframes</b> — your paper screen sketches (built next week).</li>
+    <li><b>A clickable prototype</b> in Google Slides — every screen reachable by tapping.</li>
+    <li><b>A 90-second pitch</b>, delivered live while the client walks your prototype.</li>
+  </ol>
+  <p><span class="es">Entregables: bocetos en papel, prototipo navegable en Slides, y una
+  presentación de 90 segundos.</span></p>
+</div></div>
+
+<div class="task"><h2>Questions — the rules</h2><div class="body">
+  <p><b>One question per crew</b>, by professional email only (<a href="email.html">the five
+  marks</a>): To the client, <b>CC your whole crew</b>, subject starting <b>FoCS P#</b>, every
+  member&rsquo;s name in the body. The client reads email at the address pinned in Google
+  Classroom (it is also on the board).</p>
+  <p>A question the RFP already answers is a wasted question — test yours against this page first.
+  A malformed email gets one reply: <i>&ldquo;Resend professionally and I&rsquo;ll answer.&rdquo;</i></p>
+  <p><span class="es">Una pregunta por equipo, por correo profesional — y que no esté ya
+  contestada en esta página.</span></p>
+</div></div>
+
+<div class="note"><b>Where your HTML page fits:</b> the About-My-Game page you built is NOT the
+prototype (see constraint 2) — it&rsquo;s your training and your raw material. The words, rules, and
+turn-steps on it become the content of your app screens. Finish it to all seven requirements
+(the checklist is step 7 on <a href="../try-html/">the editor page</a>).
+<span style="font-style:italic;color:#667">Tu página HTML es tu material — el prototipo se
+construye en Slides.</span></div>
 
 </main>
 </body>
