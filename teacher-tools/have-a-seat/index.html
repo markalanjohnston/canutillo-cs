@@ -36,10 +36,9 @@
         <p class="lead">Set up the room, paste a class list, drag students into seats, print.
         Everything stays in <b>this browser only</b> — nothing is uploaded.</p>
       </div>
-      <label class="title-field">Chart title
-        <input type="text" id="chartTitle" placeholder="e.g. Period 3 — Fundamentals of CS" maxlength="80">
-      </label>
     </header>
+
+    <nav class="tabs" id="tabs" aria-label="Class periods"></nav>
 
     <main class="has-main">
 
@@ -75,9 +74,15 @@
             <label>Columns <input type="number" id="inCols" min="1" max="15"></label>
             <button type="button" id="btnResetRoom" class="btn btn-quiet">Reset room</button>
           </div>
-          <p class="hint">While this panel is open: <b>click a seat</b> to cycle
-            standard → special → not available. <b>Click the space between seats</b> to add or remove an
-            aisle.</p>
+          <p class="hint">While this panel is open, <b>click a seat</b> to cycle
+            standard → special → not available. The room (seats, aisles, notes) is shared by every period tab.</p>
+          <div class="rp-row aisles">
+            <span class="rp-label">Aisle between columns</span><div id="aisleCols" class="chips"></div>
+          </div>
+          <div class="rp-row aisles">
+            <span class="rp-label">Aisle between rows</span><div id="aisleRows" class="chips"></div>
+          </div>
+          <p class="hint">Or click the striped gap between two seats to toggle an aisle there.</p>
           <div class="rp-row">
             <label class="grow">Room note <input type="text" id="inNote" placeholder="e.g. Screen, Door, Windows" maxlength="40"></label>
             <label>Side

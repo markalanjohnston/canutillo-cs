@@ -3,36 +3,47 @@
    column 1 = leftmost from a student's seat facing the front. */
 'use strict';
 
-const LS_KEY = 'haveaseat.v1';
+const LS_KEY = 'haveaseat.v1';   // key kept for continuity; the payload is v2 (period tabs)
 const SEAT_CYCLE = ['standard', 'special', 'na'];
 
 // ---------- state ----------
+const uid = () => Math.random().toString(36).slice(2, 9);
 function defaultState() {
+  const p = newPeriod('Period 1');
   return {
-    v: 1,
-    title: '',
+    v: 2,
     view: 'front',          // 'front' = teacher standing at the front looking at the class
     edit: false,
-    room: { rows: 4, cols: 6, seats: {}, aisleCols: [], aisleRows: [], notes: [] },
-    students: []            // { id, name, cond: 'none'|'talker'|'accommodation'|'label', label, seat: 'r-c'|null }
+    room: { rows: 4, cols: 6, seats: {}, aisleCols: [], aisleRows: [], notes: [] },   // shared by every period
+    periods: [p],           // { id, name, students: [{ id, name, cond, label, seat }] }
+    active: p.id
   };
 }
+function newPeriod(name) { return { id: uid(), name, students: [] }; }
 let state = load();
 
 function load() {
   try {
     const raw = localStorage.getItem(LS_KEY);
-    if (raw) { const s = JSON.parse(raw); if (s && s.room && s.students) return Object.assign(defaultState(), s); }
+    if (raw) {
+      const s = JSON.parse(raw);
+      if (s && s.room && Array.isArray(s.periods) && s.periods.length) return Object.assign(defaultState(), s);
+      if (s && s.room && Array.isArray(s.students)) {          // v1: one chart → first tab
+        const p = { id: uid(), name: s.title || 'Period 1', students: s.students };
+        return Object.assign(defaultState(), { view: s.view, edit: s.edit, room: s.room, periods: [p], active: p.id });
+      }
+    }
   } catch (e) { console.warn('Could not read saved chart', e); }
   return defaultState();
 }
+const cur = () => state.periods.find(p => p.id === state.active) || state.periods[0];
+const students = () => cur().students;
 function save() {
   try { localStorage.setItem(LS_KEY, JSON.stringify(state)); }
   catch (e) { alert('Could not save — browser storage may be full or blocked.\n\n' + e.message); }
 }
-const uid = () => Math.random().toString(36).slice(2, 9);
-const byId = id => state.students.find(s => s.id === id);
-const seatOf = key => state.students.find(s => s.seat === key);
+const byId = id => students().find(s => s.id === id);
+const seatOf = key => students().find(s => s.seat === key);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 // ---------- chart CSS (shared with the print page) ----------
@@ -52,6 +63,7 @@ const CHART_CSS = `
 .grid { grid-column:2; grid-row:2; display:grid; align-items:stretch; }
 .gut { min-width:0; min-height:0; }
 .gut.aisle-mark { position:relative; }
+.chart.editing { --gutter:18px; }
 .chart.editing .gut { cursor:pointer; border-radius:4px; background:repeating-linear-gradient(90deg,transparent 0 3px,#e4e7ee 3px 6px); }
 .chart.editing .gut-row { background:repeating-linear-gradient(0deg,transparent 0 3px,#e4e7ee 3px 6px); }
 .chart.editing .gut:hover { background:#c9d2e8; }
@@ -153,7 +165,7 @@ const $ = id => document.getElementById(id);
 document.head.insertAdjacentHTML('beforeend', `<style>${CHART_CSS}</style>`);
 
 function render() {
-  $('chartTitle').value = state.title;
+  renderTabs();
   $('btnView').textContent = state.view === 'front' ? '👁 Viewing from the front' : '👁 Viewing from the back';
   $('btnRoomGear').setAttribute('aria-pressed', String(state.edit));
   $('roomPanel').hidden = !state.edit;
@@ -161,14 +173,31 @@ function render() {
   $('inCols').value = state.room.cols;
   $('noteList').innerHTML = state.room.notes.map(n =>
     `<li>${esc(n.text)} <small>${n.side}</small><button type="button" data-del-note="${n.id}" title="Remove note">✕</button></li>`).join('');
+  const chips = (n, list, attr) => {
+    if (n < 2) return '<span class="none">needs at least two</span>';
+    let h = ''; for (let i = 1; i < n; i++) h += `<button type="button" ${attr}="${i}" aria-pressed="${list.includes(i)}" title="Toggle aisle">${i} | ${i + 1}</button>`;
+    return h;
+  };
+  $('aisleCols').innerHTML = chips(state.room.cols, state.room.aisleCols, 'data-aisle-col');
+  $('aisleRows').innerHTML = chips(state.room.rows, state.room.aisleRows, 'data-aisle-row');
 
-  const pool = state.students.filter(s => !s.seat);
-  $('poolCount').textContent = `· ${pool.length} unseated / ${state.students.length} total`;
+  const all = students(), pool = all.filter(s => !s.seat);
+  $('poolCount').textContent = `· ${pool.length} unseated / ${all.length} total`;
   $('pool').innerHTML = pool.length ? pool.map(cardHTML).join('')
-    : `<div class="empty">${state.students.length ? 'Everyone has a seat.' : 'No students yet — click Import.'}</div>`;
+    : `<div class="empty">${all.length ? 'Everyone has a seat.' : 'No students yet — click Import.'}</div>`;
 
-  $('chart').innerHTML = chartHTML(state, 'app', state.view);
+  $('chart').innerHTML = chartHTML(chartState(), 'app', state.view);
   save();
+}
+// What the renderer sees: the shared room plus the active period's roster.
+function chartState() { return { room: state.room, students: students(), edit: state.edit, title: cur().name }; }
+
+function renderTabs() {
+  $('tabs').innerHTML = state.periods.map(p => {
+    const on = p.id === state.active;
+    return `<button type="button" class="tab" role="tab" aria-selected="${on}" data-tab="${p.id}">${esc(p.name)}
+      ${on ? `<span class="mini" data-rename="${p.id}" title="Rename">✎</span><span class="mini" data-close="${p.id}" title="Delete this period">✕</span>` : ''}</button>`;
+  }).join('') + `<button type="button" class="tab add" id="btnAddPeriod" title="Add a period">＋ Add period</button>`;
 }
 
 function cardHTML(s) {
@@ -186,32 +215,52 @@ function cycleCond(s) {
 
 // ---------- clicks ----------
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-gear], [data-del-note], .card, .seat, .gut');
+  const tab = e.target.closest('[data-rename], [data-close], [data-tab], #btnAddPeriod');
+  if (tab) {
+    if (tab.id === 'btnAddPeriod') { const p = newPeriod(`Period ${state.periods.length + 1}`); state.periods.push(p); state.active = p.id; render(); renamePeriod(p.id); return; }
+    if (tab.dataset.rename) { renamePeriod(tab.dataset.rename); return; }
+    if (tab.dataset.close) { deletePeriod(tab.dataset.close); return; }
+    state.active = tab.dataset.tab; render(); return;
+  }
+  const t = e.target.closest('[data-gear], [data-del-note], .card, .seat, .gut, .chips button');
   if (!t) return;
   if (t.dataset.gear) { openStudent(t.dataset.gear); return; }
   if (t.dataset.delNote) { state.room.notes = state.room.notes.filter(n => n.id !== t.dataset.delNote); render(); return; }
   if (t.classList.contains('card')) { const s = byId(t.dataset.id); if (s) { cycleCond(s); render(); } return; }
   if (!state.edit) return;
+  if (t.dataset.aisleCol) { toggle(state.room.aisleCols, +t.dataset.aisleCol); render(); return; }
+  if (t.dataset.aisleRow) { toggle(state.room.aisleRows, +t.dataset.aisleRow); render(); return; }
   if (t.classList.contains('seat')) {
     const key = t.dataset.seat, next = SEAT_CYCLE[(SEAT_CYCLE.indexOf(t.dataset.type) + 1) % SEAT_CYCLE.length];
     if (next === 'standard') delete state.room.seats[key]; else state.room.seats[key] = next;
-    if (next === 'na') { const s = seatOf(key); if (s) s.seat = null; }
-    render(); return;
+    if (next === 'na') state.periods.forEach(p => p.students.forEach(s => { if (s.seat === key) s.seat = null; }));
+    render();
   }
-  if (t.dataset.aisleCol) { toggle(state.room.aisleCols, +t.dataset.aisleCol); render(); return; }
-  if (t.dataset.aisleRow) { toggle(state.room.aisleRows, +t.dataset.aisleRow); render(); }
 });
 function toggle(arr, v) { const i = arr.indexOf(v); i >= 0 ? arr.splice(i, 1) : arr.push(v); }
 
+function renamePeriod(id) {
+  const p = state.periods.find(x => x.id === id); if (!p) return;
+  const name = prompt('Name this period (it is also the printed chart title):', p.name);
+  if (name === null) return;
+  if (name.trim()) { p.name = name.trim(); render(); }
+}
+function deletePeriod(id) {
+  const p = state.periods.find(x => x.id === id); if (!p) return;
+  if (state.periods.length === 1) { alert('This is the only period. Add another before deleting this one, or use Clear to empty its roster.'); return; }
+  if (!confirm(`Delete "${p.name}" and its ${p.students.length} students? The room layout is kept.`)) return;
+  state.periods = state.periods.filter(x => x.id !== id);
+  state.active = state.periods[0].id; render();
+}
+
 $('btnRoomGear').onclick = () => { state.edit = !state.edit; render(); };
 $('btnView').onclick = () => { state.view = state.view === 'front' ? 'back' : 'front'; render(); };
-$('chartTitle').oninput = e => { state.title = e.target.value; save(); };
 
 function resize() {
   const rows = Math.max(1, Math.min(15, +$('inRows').value || 1));
   const cols = Math.max(1, Math.min(15, +$('inCols').value || 1));
   state.room.rows = rows; state.room.cols = cols;
-  state.students.forEach(s => { if (s.seat) { const [r, c] = s.seat.split('-').map(Number); if (r > rows || c > cols) s.seat = null; } });
+  state.periods.forEach(p => p.students.forEach(s => { if (s.seat) { const [r, c] = s.seat.split('-').map(Number); if (r > rows || c > cols) s.seat = null; } }));
   Object.keys(state.room.seats).forEach(k => { const [r, c] = k.split('-').map(Number); if (r > rows || c > cols) delete state.room.seats[k]; });
   state.room.aisleCols = state.room.aisleCols.filter(c => c < cols);
   state.room.aisleRows = state.room.aisleRows.filter(r => r < rows);
@@ -220,8 +269,8 @@ function resize() {
 $('inRows').onchange = resize; $('inCols').onchange = resize;
 
 $('btnResetRoom').onclick = () => {
-  if (!confirm('Reset the room to a blank 4 × 6 grid? Seat types, aisles and notes are cleared, and every student is unseated. Students are kept.')) return;
-  state.room = defaultState().room; state.students.forEach(s => s.seat = null); render();
+  if (!confirm('Reset the room to a blank 4 × 6 grid? Seat types, aisles and notes are cleared, and every student in every period is unseated. Rosters are kept.')) return;
+  state.room = defaultState().room; state.periods.forEach(p => p.students.forEach(s => s.seat = null)); render();
 };
 $('btnAddNote').onclick = () => {
   const text = $('inNote').value.trim(); if (!text) return;
@@ -231,9 +280,9 @@ $('btnAddNote').onclick = () => {
 $('inNote').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('btnAddNote').click(); } };
 
 $('btnClearStudents').onclick = () => {
-  if (!state.students.length) return;
-  if (!confirm(`Remove all ${state.students.length} students from this chart?`)) return;
-  state.students = []; render();
+  if (!students().length) return;
+  if (!confirm(`Remove all ${students().length} students from "${cur().name}"?`)) return;
+  cur().students = []; render();
 };
 
 // ---------- drag & drop ----------
@@ -281,7 +330,7 @@ $('stUnseat').onclick = () => { const s = byId(editingId); if (s) s.seat = null;
 $('stRemove').onclick = () => {
   const s = byId(editingId); if (!s) return;
   if (!confirm(`Remove ${s.name}?`)) return;
-  state.students = state.students.filter(x => x.id !== s.id); $('studentDialog').close(); render();
+  cur().students = students().filter(x => x.id !== s.id); $('studentDialog').close(); render();
 };
 $('stCancel').onclick = () => $('studentDialog').close();
 $('studentDialog').querySelector('form').onsubmit = e => { e.preventDefault(); $('stSave').click(); };
@@ -303,7 +352,7 @@ function parseNames(text) {
 }
 function previewImport() {
   const names = parseNames($('importText').value);
-  const have = new Set(state.students.map(s => s.name.toLowerCase()));
+  const have = new Set(students().map(s => s.name.toLowerCase()));
   const fresh = names.filter(n => !have.has(n.toLowerCase()));
   const dupes = names.length - fresh.length;
   $('importPreview').innerHTML = names.length
@@ -317,7 +366,7 @@ $('btnImportCancel').onclick = () => $('importDialog').close();
 $('btnImportAdd').onclick = () => {
   const seen = new Set();
   previewImport().forEach(n => { const k = n.toLowerCase(); if (seen.has(k)) return; seen.add(k);
-    state.students.push({ id: uid(), name: n, cond: 'none', label: '', seat: null }); });
+    students().push({ id: uid(), name: n, cond: 'none', label: '', seat: null }); });
   $('importDialog').close(); render();
 };
 $('importDialog').querySelector('form').onsubmit = e => e.preventDefault();
@@ -326,10 +375,10 @@ $('importDialog').querySelector('form').onsubmit = e => e.preventDefault();
 function openPrint(mode) {
   const w = window.open('', '_blank');
   if (!w) { alert('The browser blocked the print window. Allow pop-ups for this site and try again.'); return; }
-  const json = JSON.stringify(state).replace(/<\//g, '<\\/');
+  const json = JSON.stringify(Object.assign(chartState(), { edit: false })).replace(/<\//g, '<\\/');
   const label = mode === 'teacher' ? 'Teacher copy' : 'Student copy';
   w.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
-<title>${esc(state.title || 'Seating chart')} — ${label}</title>
+<title>${esc(cur().name || 'Seating chart')} — ${label}</title>
 <style>
 body { margin:0; padding:16px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; color:#1d2330; background:#fff; }
 .toolbar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px; padding:10px 12px; background:#f4f6fa; border-radius:10px; font-size:14px; color:#5a6270; }
@@ -345,7 +394,7 @@ ${CHART_CSS}
 <h1><span id="title"></span><small id="viewTag"></small></h1>
 <div id="chart"></div>
 <script>
-const STATE=${json}; const MODE=${JSON.stringify(mode)}; let view=STATE.view; STATE.edit=false;
+const STATE=${json}; const MODE=${JSON.stringify(mode)}; let view=${JSON.stringify(state.view)};
 ${chartHTML.toString()}
 function draw(){
   document.getElementById('title').textContent = STATE.title || 'Seating chart';

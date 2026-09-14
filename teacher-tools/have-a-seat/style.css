@@ -19,9 +19,15 @@ body { font-size:16px; }
               padding-bottom:14px; border-bottom:1px solid #e9ecef; margin-bottom:14px; }
 .has-header h1 { margin:0 0 4px; font-size:28px; color:#2c3e50; }
 .has-header .lead { margin:0; color:var(--soft); font-size:15px; max-width:640px; }
-.title-field { display:flex; flex-direction:column; gap:4px; font-size:13px; font-weight:600; color:var(--soft); }
-.title-field input { font:inherit; font-size:15px; font-weight:400; color:var(--ink); padding:7px 10px;
-                     border:1px solid var(--line); border-radius:8px; min-width:280px; }
+
+/* ---- period tabs ---- */
+.tabs { display:flex; gap:6px; flex-wrap:wrap; align-items:flex-end; margin:0 0 -1px; padding:0 4px; }
+.tab { display:flex; align-items:center; gap:6px; font:inherit; font-size:14px; font-weight:600; color:var(--navy);
+       background:#eef1f8; border:1px solid var(--line); border-bottom:0; border-radius:10px 10px 0 0; padding:7px 12px; cursor:pointer; }
+.tab[aria-selected="true"] { background:var(--gold); border-color:#d8b64a; color:#3a2c00; }
+.tab .mini { border:0; background:transparent; cursor:pointer; font-size:13px; padding:0 2px; color:inherit; opacity:.7; line-height:1; }
+.tab .mini:hover { opacity:1; }
+.tab.add { background:#fff; font-weight:600; }
 
 .has-main { display:grid; grid-template-columns:290px minmax(0,1fr); gap:16px; align-items:start; }
 @media (max-width:900px) { .has-main { grid-template-columns:1fr; } .has-shell { padding:12px; } }
@@ -54,6 +60,13 @@ body { font-size:16px; }
 .rp-row label.grow { flex:1 1 180px; }
 .rp-row input, .rp-row select { font:inherit; font-size:15px; color:var(--ink); padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:#fff; }
 .rp-row input[type=number] { width:80px; }
+.rp-row.aisles { align-items:center; }
+.rp-label { font-size:13px; font-weight:600; color:var(--soft); min-width:170px; }
+.chips { display:flex; flex-wrap:wrap; gap:4px; }
+.chips button { font:inherit; font-size:12px; font-weight:600; border:1px solid var(--line); background:#fff; color:var(--navy);
+                border-radius:6px; padding:3px 8px; cursor:pointer; }
+.chips button[aria-pressed="true"] { background:var(--navy); border-color:var(--navy); color:#fff; }
+.chips .none { font-size:12px; color:var(--soft); }
 .note-list { list-style:none; padding:0; margin:0 0 4px; display:flex; flex-wrap:wrap; gap:6px; }
 .note-list li { background:#fff; border:1px solid var(--line); border-radius:999px; padding:3px 6px 3px 10px; font-size:13px; display:flex; gap:6px; align-items:center; }
 .note-list li small { color:var(--soft); }
