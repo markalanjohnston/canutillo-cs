@@ -14,12 +14,13 @@ function defaultState() {
     v: 2,
     view: 'front',          // 'front' = teacher standing at the front looking at the class
     edit: false,
+    att: false,             // taking attendance: clicks cycle status instead of tags
     room: { rows: 4, cols: 6, seats: {}, aisleCols: [], aisleRows: [], notes: [] },   // shared by every period
     periods: [p],           // { id, name, students: [{ id, name, cond, label, seat }] }
     active: p.id
   };
 }
-function newPeriod(name) { return { id: uid(), name, students: [] }; }
+function newPeriod(name) { return { id: uid(), name, students: [], attDate: '' }; }
 let state = load();
 
 function load() {
@@ -80,19 +81,23 @@ const CHART_CSS = `
 .chart.editing .seat:hover { box-shadow:0 0 0 3px #c9d2e8; }
 .seat.over { box-shadow:0 0 0 3px #1B2A52; }
 .seat .who { font-weight:600; word-break:break-word; }
-.card { border:1.5px solid #6b7280; border-radius:8px; background:#fff; padding:6px 8px; display:flex; align-items:center; gap:6px; cursor:grab; user-select:none; font-size:14px; }
+.card { border:1.5px solid #6b7280; border-radius:8px; background:#fff; padding:6px 8px; margin:0; box-shadow:none; display:flex; align-items:center; gap:6px; cursor:grab; user-select:none; font-size:14px; }
 .card:active { cursor:grabbing; }
 .card.dragging, .seat .card.dragging { opacity:.4; }
-.seat .card { border:0; padding:0; background:transparent; flex-direction:column; gap:3px; width:100%; }
+.seat .card { border:0; padding:0; margin:0; background:transparent; box-shadow:none; flex-direction:column; gap:3px; width:100%; }
 .card .who { font-weight:600; flex:1; word-break:break-word; }
 .pill { display:inline-block; font-size:10px; font-weight:700; letter-spacing:.3px; text-transform:uppercase; border-radius:999px; padding:1px 7px; line-height:1.5; white-space:nowrap; max-width:100%; overflow:hidden; text-overflow:ellipsis; }
 .pill-none { display:none; }
 .pill-talker { background:#fde3cf; color:#8a3b00; border:1px solid #f0b184; }
 .pill-accommodation { background:#dbe7ff; color:#1b3f8f; border:1px solid #9db6ee; }
 .pill-label { background:#ead9fb; color:#4b1f7a; border:1px solid #c6a3ec; text-transform:none; }
-.card .gear { border:0; background:transparent; cursor:pointer; font-size:14px; padding:0 2px; color:#5a6270; line-height:1; }
-.seat .card .gear { position:absolute; top:2px; left:4px; }
-.card .gear:hover { color:#1B2A52; }
+.card .gear { border:0; background:transparent; cursor:pointer; font-size:19px; width:30px; height:30px; border-radius:50%;
+              display:flex; align-items:center; justify-content:center; color:#5a6270; line-height:1; padding:0; flex:0 0 auto; }
+.seat .card .gear { position:absolute; top:2px; left:2px; }
+.card .gear:hover { color:#1B2A52; background:#e4e7ee; }
+.seat.att-present, .card.att-present { background:#d4f2dd; border-color:#3aa35b; }
+.seat.att-absent, .card.att-absent { background:#fbd9d7; border-color:#d9463c; }
+.seat.att-tardy, .card.att-tardy { background:#fff0b3; border-color:#e0b000; }
 .view-tag { font-size:12px; color:#5a6270; }
 `;
 
@@ -131,7 +136,7 @@ function chartHTML(state, mode, view) {
       } else if (mode === 'teacher' && st) {
         inner = `<span class="who">${esc(st.name)}</span>${pillOf(st)}`;
       }
-      const cls = ['seat', type, mode === 'student' ? 'student-mode' : ''].join(' ');
+      const cls = ['seat', type, mode === 'student' ? 'student-mode' : '', mode === 'app' && st && st.att ? 'att-' + st.att : ''].join(' ');
       cells += `<div class="${cls}" data-seat="${key}" data-type="${type}">${inner}</div>`;
       if (ci < cols.length - 1) {
         const a = aisleBetween(R.aisleCols, ci, cols);
@@ -166,6 +171,14 @@ document.head.insertAdjacentHTML('beforeend', `<style>${CHART_CSS}</style>`);
 
 function render() {
   renderTabs();
+  document.body.classList.toggle('taking-att', state.att);
+  $('btnAtt').setAttribute('aria-pressed', String(state.att));
+  $('btnAtt').textContent = state.att ? '✔ Taking attendance — click students' : 'Take attendance';
+  const all0 = students(), n = k => all0.filter(s => s.att === k).length;
+  const marked = n('present') + n('absent') + n('tardy');
+  $('attSummary').innerHTML = marked
+    ? `${esc(fmtDate(cur().attDate))} · <b class="n-present">${n('present')} present</b> · <b class="n-absent">${n('absent')} absent</b> · <b class="n-tardy">${n('tardy')} tardy</b>${all0.length - marked ? ` · ${all0.length - marked} unmarked` : ''}`
+    : 'No one marked yet.';
   $('btnView').textContent = state.view === 'front' ? '👁 Viewing from the front' : '👁 Viewing from the back';
   $('btnRoomGear').setAttribute('aria-pressed', String(state.edit));
   $('roomPanel').hidden = !state.edit;
@@ -187,6 +200,7 @@ function render() {
     : `<div class="empty">${all.length ? 'Everyone has a seat.' : 'No students yet — click Import.'}</div>`;
 
   $('chart').innerHTML = chartHTML(chartState(), 'app', state.view);
+  fitChart();
   save();
 }
 // What the renderer sees: the shared room plus the active period's roster.
@@ -197,16 +211,25 @@ function renderTabs() {
     const on = p.id === state.active;
     return `<button type="button" class="tab" role="tab" aria-selected="${on}" data-tab="${p.id}">${esc(p.name)}
       ${on ? `<span class="mini" data-rename="${p.id}" title="Rename">✎</span><span class="mini" data-close="${p.id}" title="Delete this period">✕</span>` : ''}</button>`;
-  }).join('') + `<button type="button" class="tab add" id="btnAddPeriod" title="Add a period">＋ Add period</button>`;
+  }).join('') + `<button type="button" class="tab add" id="btnAddPeriod" title="Add a period">＋ Add period</button>
+    <button type="button" class="tab exit" id="btnExitDisplay" title="Back to the full editor">✕ Exit display</button>`;
 }
 
 function cardHTML(s) {
+  const att = s.att ? ' att-' + s.att : '';
   const pill = s.cond === 'none' || (s.cond === 'label' && !s.label) ? '' :
     `<span class="pill pill-${s.cond}">${esc(s.cond === 'talker' ? 'Talker' : s.cond === 'accommodation' ? 'Accommodation' : s.label)}</span>`;
-  return `<div class="card" draggable="true" data-id="${s.id}"><span class="who">${esc(s.name)}</span>${pill}
+  return `<div class="card${att}" draggable="true" data-id="${s.id}"><span class="who">${esc(s.name)}</span>${pill}
     <button type="button" class="gear" data-gear="${s.id}" title="Edit student">⚙</button></div>`;
 }
 
+function cycleAtt(s) {
+  const order = ['present', 'absent', 'tardy'];
+  s.att = order[(order.indexOf(s.att) + 1) % order.length];
+  if (!cur().attDate) cur().attDate = todayISO();
+}
+const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+const fmtDate = iso => iso ? new Date(iso + 'T12:00:00').toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) : '';
 function cycleCond(s) {
   const order = ['none', 'talker', 'accommodation'];
   if (s.label) order.push('label');
@@ -215,8 +238,9 @@ function cycleCond(s) {
 
 // ---------- clicks ----------
 document.addEventListener('click', e => {
-  const tab = e.target.closest('[data-rename], [data-close], [data-tab], #btnAddPeriod');
+  const tab = e.target.closest('[data-rename], [data-close], [data-tab], #btnAddPeriod, #btnExitDisplay');
   if (tab) {
+    if (tab.id === 'btnExitDisplay') { history.replaceState(null, '', location.pathname); applyDisplay(); return; }
     if (tab.id === 'btnAddPeriod') { const p = newPeriod(`Period ${state.periods.length + 1}`); state.periods.push(p); state.active = p.id; render(); renamePeriod(p.id); return; }
     if (tab.dataset.rename) { renamePeriod(tab.dataset.rename); return; }
     if (tab.dataset.close) { deletePeriod(tab.dataset.close); return; }
@@ -226,7 +250,7 @@ document.addEventListener('click', e => {
   if (!t) return;
   if (t.dataset.gear) { openStudent(t.dataset.gear); return; }
   if (t.dataset.delNote) { state.room.notes = state.room.notes.filter(n => n.id !== t.dataset.delNote); render(); return; }
-  if (t.classList.contains('card')) { const s = byId(t.dataset.id); if (s) { cycleCond(s); render(); } return; }
+  if (t.classList.contains('card')) { const s = byId(t.dataset.id); if (s) { state.att ? cycleAtt(s) : cycleCond(s); render(); } return; }
   if (!state.edit) return;
   if (t.dataset.aisleCol) { toggle(state.room.aisleCols, +t.dataset.aisleCol); render(); return; }
   if (t.dataset.aisleRow) { toggle(state.room.aisleRows, +t.dataset.aisleRow); render(); return; }
@@ -254,6 +278,26 @@ function deletePeriod(id) {
 }
 
 $('btnRoomGear').onclick = () => { state.edit = !state.edit; render(); };
+$('btnAtt').onclick = () => { state.att = !state.att; if (state.att) state.edit = false; render(); };
+$('btnAttReset').onclick = () => {
+  const p = cur(); if (!p.students.some(s => s.att)) return;
+  if (!confirm(`Clear today's attendance marks for "${p.name}"?`)) return;
+  p.students.forEach(s => delete s.att); p.attDate = ''; render();
+};
+$('btnAttReport').onclick = () => openAttReport();
+
+// Display mode lives in the URL hash so a refreshed tab stays in it and other tabs are unaffected.
+const applyDisplay = () => { document.body.classList.toggle('display', location.hash === '#display'); fitChart(); };
+$('btnDisplay').onclick = () => { location.hash = '#display'; };
+window.addEventListener('hashchange', applyDisplay);
+// In display mode the chart is capped so the whole room fits the viewport height.
+function fitChart() {
+  const wrap = $('chart');
+  if (location.hash !== '#display') { wrap.style.maxWidth = ''; return; }
+  const R = state.room, ratio = (R.cols * 1.35 + (R.cols - 1) * 0.1) / (R.rows + (R.rows - 1) * 0.1);
+  wrap.style.maxWidth = `calc((100vh - 250px) * ${ratio.toFixed(3)})`;
+}
+window.addEventListener('resize', fitChart);
 $('btnView').onclick = () => { state.view = state.view === 'front' ? 'back' : 'front'; render(); };
 
 function resize() {
@@ -407,7 +451,37 @@ draw();
 <\/script></body></html>`);
   w.document.close();
 }
+function openAttReport() {
+  const p = cur(), date = fmtDate(p.attDate || todayISO());
+  const list = k => p.students.filter(s => s.att === k).map(s => s.name).sort((a, b) => a.localeCompare(b));
+  const absent = list('absent'), tardy = list('tardy'), present = list('present');
+  const unmarked = p.students.filter(s => !s.att).map(s => s.name).sort((a, b) => a.localeCompare(b));
+  const ul = arr => arr.length ? `<ul>${arr.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : '<p class="none">none</p>';
+  const w = window.open('', '_blank');
+  if (!w) { alert('The browser blocked the report window. Allow pop-ups for this site and try again.'); return; }
+  w.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Attendance — ${esc(p.name)} — ${esc(date)}</title>
+<style>
+body { margin:0; padding:24px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; color:#1d2330; max-width:700px; }
+.toolbar { margin-bottom:16px; } .toolbar button { font:inherit; font-weight:600; border:2px solid #1B2A52; background:#1B2A52; color:#fff; border-radius:999px; padding:5px 14px; cursor:pointer; }
+h1 { font-size:22px; margin:0 0 2px; } .sub { color:#5a6270; margin:0 0 18px; }
+h2 { font-size:15px; text-transform:uppercase; letter-spacing:.5px; margin:18px 0 6px; padding-bottom:4px; border-bottom:2px solid #dde1ea; }
+h2.absent { color:#a11a1a; } h2.tardy { color:#8a6d00; }
+ul { margin:0; padding-left:22px; columns:2; } li { margin:2px 0; break-inside:avoid; } .none { color:#5a6270; font-style:italic; margin:0; }
+.foot { margin-top:26px; font-size:12px; color:#5a6270; }
+@media print { .toolbar { display:none; } body { padding:0; } }
+</style></head><body>
+<div class="toolbar"><button type="button" onclick="print()">Print…</button></div>
+<h1>Attendance — ${esc(p.name)}</h1>
+<p class="sub">${esc(date)} · ${present.length} present · ${absent.length} absent · ${tardy.length} tardy${unmarked.length ? ` · ${unmarked.length} unmarked` : ''} · ${p.students.length} on roster</p>
+<h2 class="absent">Absent (${absent.length})</h2>${ul(absent)}
+<h2 class="tardy">Tardy (${tardy.length})</h2>${ul(tardy)}
+${unmarked.length ? `<h2>Not marked (${unmarked.length})</h2>${ul(unmarked)}` : ''}
+<p class="foot">Informal classroom record from Have a Seat — not the official attendance system.</p>
+</body></html>`);
+  w.document.close();
+}
 $('btnPrintTeacher').onclick = () => openPrint('teacher');
 $('btnPrintStudent').onclick = () => openPrint('student');
 
 render();
+applyDisplay();

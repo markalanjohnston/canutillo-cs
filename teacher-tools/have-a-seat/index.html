@@ -51,8 +51,8 @@
             <button type="button" id="btnClearStudents" class="btn btn-quiet" title="Remove every student">Clear</button>
           </div>
         </div>
-        <p class="hint">Click a card to cycle its tag. Drag it onto a seat. Drag a seated student
-          back here to unseat them. ⚙ edits name and custom label.</p>
+        <p class="hint">Click a card to cycle its tag (or, while taking attendance, its status). Drag it
+          onto a seat. Drag a seated student back here to unseat them. ⚙ edits name and custom label.</p>
         <div class="pool" id="pool"></div>
       </section>
 
@@ -64,8 +64,17 @@
             <button type="button" id="btnView" class="btn btn-quiet" title="Flip the perspective"></button>
             <button type="button" id="btnPrintTeacher" class="btn">Print · teacher</button>
             <button type="button" id="btnPrintStudent" class="btn">Print · student</button>
+            <button type="button" id="btnDisplay" class="btn btn-quiet" title="Fill the browser tab with the chart">🖥 Display</button>
             <button type="button" id="btnRoomGear" class="btn gear" aria-pressed="false" title="Edit the room layout">⚙ Room</button>
           </div>
+        </div>
+
+        <div class="att-bar" id="attBar">
+          <button type="button" id="btnAtt" class="btn att-toggle" aria-pressed="false">Take attendance</button>
+          <span class="att-summary" id="attSummary"></span>
+          <span class="grow"></span>
+          <button type="button" id="btnAttReport" class="btn btn-quiet">Print absent report</button>
+          <button type="button" id="btnAttReset" class="btn btn-quiet">Reset</button>
         </div>
 
         <div class="room-panel" id="roomPanel" hidden>
@@ -108,6 +117,9 @@
           <span class="pill pill-talker">Talker</span>
           <span class="pill pill-accommodation">Accommodation</span>
           <span class="pill pill-label">custom label</span>
+          <span class="att-key"><i class="sw sw-present"></i> present</span>
+          <span class="att-key"><i class="sw sw-absent"></i> absent</span>
+          <span class="att-key"><i class="sw sw-tardy"></i> tardy</span>
         </div>
       </section>
     </main>

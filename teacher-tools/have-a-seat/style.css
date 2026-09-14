@@ -28,6 +28,9 @@ body { font-size:16px; }
 .tab .mini { border:0; background:transparent; cursor:pointer; font-size:13px; padding:0 2px; color:inherit; opacity:.7; line-height:1; }
 .tab .mini:hover { opacity:1; }
 .tab.add { background:#fff; font-weight:600; }
+.tab.exit { display:none; margin-left:auto; background:#fff; }
+body.display .tab.exit { display:flex; }
+body.display .att-bar { font-size:15px; }
 
 .has-main { display:grid; grid-template-columns:290px minmax(0,1fr); gap:16px; align-items:start; }
 @media (max-width:900px) { .has-main { grid-template-columns:1fr; } .has-shell { padding:12px; } }
@@ -94,3 +97,29 @@ body { font-size:16px; }
 .import-preview ol { margin:4px 0 0; padding-left:22px; column-width:150px; }
 .dlg-btns { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:4px; }
 .dlg-btns .grow { flex:1; }
+
+/* ---- attendance bar ---- */
+.att-bar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; background:#eef1f8; border-radius:8px; padding:6px 10px; margin-bottom:10px; font-size:13px; color:var(--soft); }
+.att-bar .grow { flex:1; }
+.att-toggle[aria-pressed="true"] { background:#1a7a3a; border-color:#1a7a3a; }
+.att-summary b { color:var(--ink); }
+.att-summary .n-absent { color:#a11a1a; } .att-summary .n-tardy { color:#8a6d00; } .att-summary .n-present { color:#1a7a3a; }
+.legend .sw-present { background:#d4f2dd; border-color:#3aa35b; }
+.legend .sw-absent { background:#fbd9d7; border-color:#d9463c; }
+.legend .sw-tardy { background:#fff0b3; border-color:#e0b000; }
+body.taking-att .pool .card, body.taking-att .seat .card { cursor:pointer; }
+
+/* ---- display mode: the chart fills the browser tab ---- */
+body.display { background:#fff; }
+body.display .site-head, body.display .site-foot, body.display .crumbs, body.display .has-header,
+body.display .pool-pane, body.display .room-panel, body.display .legend, body.display #btnPrintTeacher,
+body.display #btnPrintStudent, body.display #btnRoomGear, body.display #btnDisplay,
+body.display .room-pane .pane-head h2 { display:none !important; }
+body.display .has-container { max-width:none; padding:8px 12px; }
+body.display .has-shell { box-shadow:none; padding:0; border-radius:0; }
+body.display .has-main { grid-template-columns:1fr; }
+body.display .room-pane { border:0; background:#fff; padding:8px 0 0; }
+body.display .chart-wrap { margin:0 auto; }
+body.display .seat { font-size:17px; min-height:80px; }
+body.display .pill { font-size:12px; }
+body.display .tab { font-size:16px; padding:9px 16px; }
