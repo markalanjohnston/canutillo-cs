@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deconstruction &amp; Wireframes — Fundamentals of CS</title>
+<style>
+  :root { --navy:#1b2a52; --orange:#E8781F; --ink:#111; --paper:#fff; --soft:#f4f6fa; }
+  * { box-sizing:border-box; }
+  body { font-family:Arial,Helvetica,sans-serif; color:var(--ink); background:var(--paper);
+         margin:0; line-height:1.55; font-size:17px; }
+  header { background:var(--navy); color:#fff; padding:18px 16px 14px; }
+  header .wrap, main { max-width:760px; margin:0 auto; padding:0 4px; }
+  header h1 { margin:0; font-size:1.6rem; }
+  header p { margin:4px 0 0; color:#c8d4ec; font-size:.95rem; }
+  .bar { height:6px; background:var(--orange); }
+  main { padding:14px 16px 40px; }
+  nav.pbl { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px; }
+  nav.pbl a { text-decoration:none; background:var(--soft); color:var(--navy); font-weight:bold;
+              border:2px solid var(--navy); border-radius:999px; padding:4px 14px; font-size:.9rem; }
+  nav.pbl a.here { background:var(--navy); color:#fff; }
+  .task { border:2px solid var(--navy); border-radius:12px; margin:18px 0; overflow:hidden; }
+  .task h2 { margin:0; background:var(--navy); color:#fff; font-size:1.05rem; padding:9px 14px; }
+  .task .body { padding:10px 14px 14px; }
+  .vocab { display:grid; grid-template-columns:1fr; gap:8px; margin-top:6px; }
+  @media (min-width:560px){ .vocab { grid-template-columns:1fr 1fr; } }
+  .v { background:var(--soft); border-left:5px solid var(--orange); border-radius:8px; padding:8px 12px; }
+  .v b { color:var(--navy); }
+  .v .es { color:#667; font-style:italic; font-size:.9rem; }
+  .note { background:var(--soft); border-radius:10px; padding:10px 14px; font-size:.95rem; margin-top:16px; }
+  .big { font-size:1.05rem; }
+  ol li { margin:6px 0; }
+  table.map { border-collapse:collapse; width:100%; margin-top:6px; font-size:.95rem; }
+  .map th, .map td { border:1px solid #b9c2d8; padding:6px 9px; text-align:left; vertical-align:top; }
+  .map th { background:var(--soft); color:var(--navy); }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Deconstruction &amp; Wireframes ✏️</h1>
+  <p>Fundamentals of Computer Science · Mr. Johnston · take the game apart, then start rebuilding it as screens</p>
+</div></header>
+<div class="bar"></div>
+<main>
+
+<nav class="pbl">
+  <a href="./">Hub</a>
+  <a href="email.html">Email like a pro</a>
+  <a href="library.html">Game library</a>
+  <a href="crew.html">Crews &amp; contracts</a>
+  <a href="rfp.html">The RFP 📜</a>
+  <a class="here" href="design.html">Design ✏️</a>
+</nav>
+
+<p class="big"><b>The cardboard is a costume.</b> Games have jumped technologies since the 1840s —
+hand-painted boards, printing presses, plastic, and now your pocket. What jumps isn&rsquo;t the board;
+it&rsquo;s the <b>core loop</b>: what players do, choose, and win. This week you find your game&rsquo;s
+body, then dress it for the phone. <span style="color:#667;font-style:italic">Lo que salta de
+tecnología no es el tablero — es el ciclo central: hacer, decidir, ganar.</span></p>
+
+<div class="task"><h2>Step 1 — Map the core loop (with your crew)</h2><div class="body">
+  <p>Five boxes, agreed as a crew, on the template in Google Classroom. Your own Field Survey
+  answers are the source — you already wrote what a player does on a turn.</p>
+  <table class="map">
+    <tr><th style="width:32%">Box</th><th>What goes in it</th></tr>
+    <tr><td><b>1 · Setup</b> <span style="color:#667;font-style:italic">· preparación</span></td><td>What&rsquo;s ready when a round begins.</td></tr>
+    <tr><td><b>2 · The turn</b> <span style="color:#667;font-style:italic">· el turno</span></td><td>What a player DOES — <b>verbs, not pieces</b>: roll, choose, move.</td></tr>
+    <tr><td><b>3 · The choice</b> <span style="color:#667;font-style:italic">· la decisión</span></td><td>The decision a player controls — where skill lives.</td></tr>
+    <tr><td><b>4 · Resolution</b> <span style="color:#667;font-style:italic">· resolución</span></td><td>What changed after the turn.</td></tr>
+    <tr><td><b>5 · Win</b> <span style="color:#667;font-style:italic">· victoria</span></td><td>The condition — and how the game announces it.</td></tr>
+  </table>
+</div></div>
+
+<div class="task"><h2>Step 2 — The jump: survives, changes form, or dies</h2><div class="body">
+  <p>Rule on each element of YOUR game:</p>
+  <ol>
+    <li><b>SURVIVES</b> — works the same on a phone. <i>(Yahtzee&rsquo;s five dice — the client kept them.)</i></li>
+    <li><b>CHANGES FORM</b> — same job, new shape. <i>(Trouble&rsquo;s popper &rarr; a tap with a spin animation.)</i></li>
+    <li><b>DIES</b> — the phone doesn&rsquo;t need it. <i>(The rulebook. The lost piece under the couch.)</i></li>
+  </ol>
+  <p>Then finish, in your own words: <b>&ldquo;The choice in our game lives in ___ because ___.&rdquo;</b>
+  That line becomes your Play screen&rsquo;s job. <span style="color:#667;font-style:italic">La decisión
+  de tu juego será el trabajo de tu pantalla de juego.</span></p>
+</div></div>
+
+<div class="task"><h2>Step 3 — Wireframe Screen 1 (on paper, on purpose)</h2><div class="body">
+  <p>A <b>wireframe</b> is a screen&rsquo;s skeleton: boxes and labels, drawn fast, judged on clarity.
+  The rules:</p>
+  <ol>
+    <li><b>Boxes and labels ONLY.</b> No art — ugly on purpose. Pretty comes later, in Slides.</li>
+    <li><b>Mark every tappable thing</b>, with its label. If it can be touched, it says so.</li>
+    <li><b>One screen, one job</b> — written under the frame.</li>
+    <li><b>The map feeds the screens:</b> your TURN box is your Play screen; your WIN box is your end screen.</li>
+  </ol>
+  <p><span style="color:#667;font-style:italic">Cajas y etiquetas solamente; marca todo lo que se
+  toca; una pantalla, un trabajo.</span></p>
+</div></div>
+
+<div class="task"><h2>Step 4 — The cold-read (how you know it works)</h2><div class="body">
+  <p>Trade frames with a partner. <b>The reader says what they think each element does. The designer
+  stays SILENT.</b> If the reader gets it, they initial the corner. If they need you to explain,
+  the screen failed — fix the labels, not the partner. This is criterion 2 (&ldquo;walkable without
+  your crew explaining it&rdquo;) rehearsed on paper.</p>
+  <p>Then <b>photograph your frame and attach it in Google Classroom</b> (check it isn&rsquo;t blurry
+  before you submit).</p>
+</div></div>
+
+<div class="vocab">
+  <div class="v"><b>Core loop</b> <span class="es">· ciclo central</span><br>The small set of actions a player repeats every turn — the part that IS the game.</div>
+  <div class="v"><b>Wireframe</b> <span class="es">· esquema de pantalla</span><br>A screen&rsquo;s skeleton: boxes and labels, judged on clarity, not beauty.</div>
+  <div class="v"><b>Win condition</b> <span class="es">· condición de victoria</span><br>What ends the game — and how the screen announces it.</div>
+  <div class="v"><b>Cold-read</b> <span class="es">· lectura fría</span><br>A stranger reads your screen without help. Survive it and you&rsquo;re ready for the client&rsquo;s walk.</div>
+</div>
+
+<div class="note"><b>Absent, or working solo?</b> Map YOUR game from your survey (template in
+Classroom), then wireframe Screen 1 on any paper — draw a phone-shaped rectangle and work inside
+it. Photo, submit, caught up. <span style="font-style:italic;color:#667">¿Ausente? Mapa desde tu
+encuesta, esquema en papel, foto, entregado.</span></div>
+
+</main>
+</body>
+</html>
