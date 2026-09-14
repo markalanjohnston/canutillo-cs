@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Have a Seat — Teacher Tools | canutillocs.com</title>
+<meta name="description" content="Have a Seat: a drag-and-drop seating chart builder. Rooms, rosters, and placements stay in your browser — nothing is uploaded.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="../../assets/img/chs-eagle-logo.svg">
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap" style="max-width:1400px">
+    <a href="../../">
+      <img src="../../assets/img/CANUTILLO-ISD-LOGO.png" alt="Canutillo ISD">
+      <span class="who">Fundamentals of Computer Science
+        <span>Mr. Johnston &middot; Canutillo High School &middot; Room H120</span></span>
+    </a>
+  </div>
+</header>
+
+<div class="has-container">
+  <nav class="crumbs">
+    <a href="../../">Home</a> <span>/</span>
+    <a href="../">Teacher Tools</a> <span>/</span>
+    <span>Have a Seat</span>
+  </nav>
+
+  <div class="has-shell">
+    <header class="has-header">
+      <div>
+        <h1>🪑 Have a Seat</h1>
+        <p class="lead">Set up the room, paste a class list, drag students into seats, print.
+        Everything stays in <b>this browser only</b> — nothing is uploaded.</p>
+      </div>
+      <label class="title-field">Chart title
+        <input type="text" id="chartTitle" placeholder="e.g. Period 3 — Fundamentals of CS" maxlength="80">
+      </label>
+    </header>
+
+    <main class="has-main">
+
+      <!-- LEFT: students -->
+      <section class="pool-pane" id="poolPane" aria-label="Students">
+        <div class="pane-head">
+          <h2>Students <span id="poolCount" class="count"></span></h2>
+          <div class="pane-btns">
+            <button type="button" id="btnImport" class="btn">Import</button>
+            <button type="button" id="btnClearStudents" class="btn btn-quiet" title="Remove every student">Clear</button>
+          </div>
+        </div>
+        <p class="hint">Click a card to cycle its tag. Drag it onto a seat. Drag a seated student
+          back here to unseat them. ⚙ edits name and custom label.</p>
+        <div class="pool" id="pool"></div>
+      </section>
+
+      <!-- RIGHT: room -->
+      <section class="room-pane" aria-label="Room">
+        <div class="pane-head">
+          <h2>Room</h2>
+          <div class="pane-btns">
+            <button type="button" id="btnView" class="btn btn-quiet" title="Flip the perspective"></button>
+            <button type="button" id="btnPrintTeacher" class="btn">Print · teacher</button>
+            <button type="button" id="btnPrintStudent" class="btn">Print · student</button>
+            <button type="button" id="btnRoomGear" class="btn gear" aria-pressed="false" title="Edit the room layout">⚙ Room</button>
+          </div>
+        </div>
+
+        <div class="room-panel" id="roomPanel" hidden>
+          <div class="rp-row">
+            <label>Rows <input type="number" id="inRows" min="1" max="15"></label>
+            <label>Columns <input type="number" id="inCols" min="1" max="15"></label>
+            <button type="button" id="btnResetRoom" class="btn btn-quiet">Reset room</button>
+          </div>
+          <p class="hint">While this panel is open: <b>click a seat</b> to cycle
+            standard → special → not available. <b>Click the space between seats</b> to add or remove an
+            aisle.</p>
+          <div class="rp-row">
+            <label class="grow">Room note <input type="text" id="inNote" placeholder="e.g. Screen, Door, Windows" maxlength="40"></label>
+            <label>Side
+              <select id="inNoteSide">
+                <option value="front">Front</option>
+                <option value="back">Back</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+              </select>
+            </label>
+            <button type="button" id="btnAddNote" class="btn">Add note</button>
+          </div>
+          <ul class="note-list" id="noteList"></ul>
+          <p class="hint">"Left" and "Right" are from a student's seat, facing the front.</p>
+        </div>
+
+        <div class="chart-wrap" id="chart"></div>
+
+        <div class="legend">
+          <span><i class="sw sw-std"></i> standard</span>
+          <span><i class="sw sw-special"></i> special</span>
+          <span><i class="sw sw-na"></i> not available</span>
+          <span class="pill pill-talker">Talker</span>
+          <span class="pill pill-accommodation">Accommodation</span>
+          <span class="pill pill-label">custom label</span>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- Import dialog -->
+<dialog id="importDialog" class="has-dialog">
+  <form method="dialog">
+    <h2>Import students</h2>
+    <p class="hint">Paste one name per line, or paste CSV / spreadsheet cells. With a header row
+      the <b>Name</b> column (or <b>First</b> + <b>Last</b>) is used; without one, the first column
+      is used, and two-column lines are read as <i>Last, First</i>. There is no file upload — paste only.</p>
+    <textarea id="importText" rows="10" placeholder="Ada Lovelace&#10;Grace Hopper&#10;Lovelace, Ada"></textarea>
+    <div class="import-preview" id="importPreview"></div>
+    <div class="dlg-btns">
+      <button type="button" class="btn btn-quiet" value="cancel" id="btnImportCancel">Cancel</button>
+      <button type="button" class="btn" id="btnImportAdd">Add students</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Student dialog -->
+<dialog id="studentDialog" class="has-dialog">
+  <form method="dialog">
+    <h2>Edit student</h2>
+    <label>Name <input type="text" id="stName" maxlength="60"></label>
+    <label>Custom label <input type="text" id="stLabel" maxlength="24" placeholder="e.g. Front row, Glasses, ELL"></label>
+    <p class="hint">Clicking the card cycles: none → Talker → Accommodation → your label → none.</p>
+    <div class="dlg-btns">
+      <button type="button" class="btn btn-quiet btn-danger" id="stRemove">Remove student</button>
+      <button type="button" class="btn btn-quiet" id="stUnseat">Unseat</button>
+      <span class="grow"></span>
+      <button type="button" class="btn btn-quiet" id="stCancel">Cancel</button>
+      <button type="button" class="btn" id="stSave">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span class="viva">Our Time is Now! ¡Viva Canutillo!</span>
+    <p><b>Mr. Johnston</b> &middot; Room H120 &middot;
+      <a href="mailto:mjohnston@canutillo-isd.org">mjohnston@canutillo-isd.org</a></p>
+    <p><a href="../">← Teacher tools</a></p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

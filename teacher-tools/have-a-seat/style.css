@@ -1,0 +1,83 @@
+/* Have a Seat — app chrome. The chart itself is styled by CHART_CSS in app.js
+   so the generated print page can reuse the exact same rules. */
+
+:root {
+  --panel:#fff; --ink:#1d2330; --soft:#5a6270; --line:#d7d2c7; --bg2:#fcfbf7;
+  --navy:#1B2A52; --gold:#F2C230; --danger:#b3261e;
+}
+* { box-sizing:border-box; }
+body { font-size:16px; }
+
+.has-container { max-width:1400px; margin:0 auto; padding:10px 15px 30px; }
+.crumbs { padding:8px 2px; font-size:14px; }
+.crumbs span { color:var(--soft); margin:0 6px; }
+.crumbs a { text-decoration:none; }
+
+.has-shell { background:var(--panel); border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,.18); padding:22px; }
+
+.has-header { display:flex; justify-content:space-between; align-items:flex-end; gap:20px; flex-wrap:wrap;
+              padding-bottom:14px; border-bottom:1px solid #e9ecef; margin-bottom:14px; }
+.has-header h1 { margin:0 0 4px; font-size:28px; color:#2c3e50; }
+.has-header .lead { margin:0; color:var(--soft); font-size:15px; max-width:640px; }
+.title-field { display:flex; flex-direction:column; gap:4px; font-size:13px; font-weight:600; color:var(--soft); }
+.title-field input { font:inherit; font-size:15px; font-weight:400; color:var(--ink); padding:7px 10px;
+                     border:1px solid var(--line); border-radius:8px; min-width:280px; }
+
+.has-main { display:grid; grid-template-columns:290px minmax(0,1fr); gap:16px; align-items:start; }
+@media (max-width:900px) { .has-main { grid-template-columns:1fr; } .has-shell { padding:12px; } }
+
+.pool-pane, .room-pane { background:var(--bg2); border:1px solid var(--line); border-radius:8px; padding:12px; min-width:0; }
+.pane-head { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px; }
+.pane-head h2 { margin:0; font-size:13px; letter-spacing:.5px; text-transform:uppercase; color:var(--soft); }
+.count { font-weight:400; text-transform:none; letter-spacing:0; }
+.pane-btns { display:flex; gap:6px; flex-wrap:wrap; }
+.hint { font-size:13px; color:var(--soft); margin:4px 0 8px; line-height:1.4; }
+
+.btn { font:inherit; font-size:14px; font-weight:600; border:2px solid var(--navy); background:var(--navy); color:#fff;
+       border-radius:999px; padding:5px 13px; cursor:pointer; line-height:1.3; }
+.btn:hover { background:#24365f; }
+.btn-quiet { background:#fff; color:var(--navy); }
+.btn-quiet:hover { background:#eef1f8; }
+.btn-danger { border-color:var(--danger); color:var(--danger); }
+.btn-danger:hover { background:#fbecea; }
+.btn.gear[aria-pressed="true"] { background:var(--gold); border-color:var(--gold); color:#3a2c00; }
+
+/* ---- student pool ---- */
+.pool { display:flex; flex-direction:column; gap:6px; min-height:120px; padding:6px; border:2px dashed transparent; border-radius:8px; }
+.pool.over { border-color:var(--navy); background:#eef1f8; }
+.pool .empty { font-size:13px; color:var(--soft); text-align:center; padding:20px 6px; }
+
+/* ---- room panel (gear) ---- */
+.room-panel { background:#fdf3d7; border:1px solid #e9d28a; border-radius:8px; padding:10px 12px; margin-bottom:10px; }
+.rp-row { display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; margin-bottom:6px; }
+.rp-row label { display:flex; flex-direction:column; gap:3px; font-size:13px; font-weight:600; color:var(--soft); }
+.rp-row label.grow { flex:1 1 180px; }
+.rp-row input, .rp-row select { font:inherit; font-size:15px; color:var(--ink); padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:#fff; }
+.rp-row input[type=number] { width:80px; }
+.note-list { list-style:none; padding:0; margin:0 0 4px; display:flex; flex-wrap:wrap; gap:6px; }
+.note-list li { background:#fff; border:1px solid var(--line); border-radius:999px; padding:3px 6px 3px 10px; font-size:13px; display:flex; gap:6px; align-items:center; }
+.note-list li small { color:var(--soft); }
+.note-list button { border:0; background:transparent; cursor:pointer; color:var(--danger); font-size:14px; padding:0 4px; }
+
+/* ---- chart on screen ---- */
+.chart-wrap { overflow-x:auto; padding:4px 0; }
+
+.legend { display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:13px; color:var(--soft); margin-top:10px; }
+.legend .sw { display:inline-block; width:16px; height:12px; border-radius:3px; border:1px solid #999; vertical-align:-1px; margin-right:4px; }
+.legend .sw-std { background:#fff; }
+.legend .sw-special { background:#fff3c4; border-color:#d8b64a; }
+.legend .sw-na { background:repeating-linear-gradient(45deg,#e6e6e6 0 4px,#f7f7f7 4px 8px); border-style:dashed; }
+
+/* ---- dialogs ---- */
+.has-dialog { border:0; border-radius:12px; padding:0; width:min(560px, 94vw); box-shadow:0 20px 50px rgba(0,0,0,.3); }
+.has-dialog::backdrop { background:rgba(20,30,60,.45); }
+.has-dialog form { padding:18px 20px; display:flex; flex-direction:column; gap:10px; }
+.has-dialog h2 { margin:0; font-size:20px; color:var(--navy); }
+.has-dialog label { display:flex; flex-direction:column; gap:4px; font-size:13px; font-weight:600; color:var(--soft); }
+.has-dialog input, .has-dialog textarea { font:inherit; font-size:15px; color:var(--ink); padding:7px 10px; border:1px solid var(--line); border-radius:8px; }
+.has-dialog textarea { font-family:Consolas,Menlo,monospace; font-size:14px; resize:vertical; }
+.import-preview { font-size:13px; color:var(--soft); max-height:140px; overflow:auto; background:#f4f6fa; border-radius:8px; padding:8px 10px; }
+.import-preview:empty { display:none; }
+.import-preview ol { margin:4px 0 0; padding-left:22px; column-width:150px; }
+.dlg-btns { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:4px; }
+.dlg-btns .grow { flex:1; }
