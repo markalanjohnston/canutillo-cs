@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rock Paper Scissors — a real app, with all of its code</title>
+
+<!-- ===== the GAME's styles. This block is shown in the code box below. ===== -->
+<style id="game-css">
+#game { border: 3px solid #1b2a52; border-radius: 14px; padding: 18px; text-align: center; }
+#count { font-size: 2.6rem; font-weight: bold; color: #B35A10; min-height: 3.2rem; }
+#players { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+.player { flex: 1 1 200px; background: #f4f6fa; border-radius: 10px; padding: 12px; }
+.player h3 { margin: 0 0 4px; color: #1b2a52; }
+.keys { margin: 0; font-size: .85rem; color: #555; }
+.throw { font-size: 1.6rem; font-weight: bold; margin: 8px 0 0; color: #1b2a52; }
+#result { font-size: 1.4rem; font-weight: bold; color: #1b2a52; min-height: 1.8rem; }
+#start { font-size: 1.2rem; font-weight: bold; padding: 10px 34px; border-radius: 999px;
+         border: 3px solid #B35A10; background: #fff; color: #B35A10; cursor: pointer; }
+#start:disabled { opacity: .45; cursor: default; }
+</style>
+
+<!-- ===== page styles (explainer + code box). NOT shown in the code box. ===== -->
+<style>
+  :root { --navy:#1b2a52; --orange:#E8781F; --ink:#111; --paper:#fff; --soft:#f4f6fa; }
+  * { box-sizing:border-box; }
+  body { font-family:Arial,Helvetica,sans-serif; color:var(--ink); background:var(--paper);
+         margin:0; line-height:1.55; font-size:17px; }
+  header { background:var(--navy); color:#fff; padding:18px 16px 14px; }
+  header .wrap, main { max-width:760px; margin:0 auto; padding:0 4px; }
+  header h1 { margin:0; font-size:1.6rem; }
+  header p { margin:4px 0 0; color:#c8d4ec; font-size:.95rem; }
+  .bar { height:6px; background:var(--orange); }
+  main { padding:14px 16px 40px; }
+  nav.pbl { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px; }
+  nav.pbl a { text-decoration:none; background:var(--soft); color:var(--navy); font-weight:bold;
+              border:2px solid var(--navy); border-radius:999px; padding:4px 14px; font-size:.9rem; }
+  nav.pbl a.here { background:var(--navy); color:#fff; }
+  .task { border:2px solid var(--navy); border-radius:12px; margin:18px 0; overflow:hidden; }
+  .task h2 { margin:0; background:var(--navy); color:#fff; font-size:1.05rem; padding:9px 14px; }
+  .task .body { padding:10px 14px 14px; }
+  .note { background:var(--soft); border-radius:10px; padding:10px 14px; font-size:.95rem; margin-top:16px; }
+  .warn { background:#fff6ec; border:2px solid #B35A10; border-radius:10px; padding:10px 14px; margin:14px 0; }
+  .big { font-size:1.05rem; }
+  .es { color:#555; font-style:italic; }
+  .scroll { overflow-x:auto; }
+  table.parts { border-collapse:collapse; width:100%; margin-top:6px; font-size:.95rem; min-width:420px; }
+  .parts th, .parts td { border:1px solid #b9c2d8; padding:6px 9px; text-align:left; vertical-align:top; }
+  .parts th { background:var(--soft); color:var(--navy); }
+  ol li, ul li { margin:5px 0; }
+  .codewrap { margin:18px 0; }
+  .codewrap h3 { margin:14px 0 4px; color:var(--navy); font-size:1rem; }
+  .codewrap h3 span { color:#555; font-weight:normal; font-size:.85rem; }
+  pre.code { background:#12203f; color:#e8ecf6; border-radius:10px; padding:12px 14px; margin:0;
+             overflow-x:auto; font-family:Consolas,Menlo,monospace; font-size:.82rem; line-height:1.45;
+             white-space:pre; }
+  pre.code:focus { outline:3px solid var(--orange); outline-offset:2px; }
+  .kbd { display:inline-block; border:2px solid var(--navy); border-radius:6px; padding:0 7px;
+         font-weight:bold; font-family:Consolas,Menlo,monospace; background:var(--soft); }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Rock Paper Scissors 🪨📄✂️</h1>
+  <p>Fundamentals of Computer Science · Mr. Johnston · what a wireframe looks like once somebody builds it</p>
+</div></header>
+<div class="bar"></div>
+<main>
+
+<nav class="pbl">
+  <a href="./">Hub</a>
+  <a href="email.html">Email like a pro</a>
+  <a href="library.html">Game library</a>
+  <a href="crew.html">Crews &amp; contracts</a>
+  <a href="rfp.html">The RFP 📜</a>
+  <a href="design.html">Design ✏️</a>
+  <a href="sprint.html">Sprint 📐</a>
+</nav>
+
+<p class="big"><b>You have been drawing boxes and labels on paper.</b> Every app on your phone
+started exactly there. Below is a working Rock&nbsp;Paper&nbsp;Scissors built from that kind of
+sketch — and under it, every line of code that makes it run. It is shorter than you think.
+<span class="es" lang="es">Todo lo que tienes en papel puede terminar así: funcionando, con el
+código completo debajo.</span></p>
+
+<div class="warn"><b>This is not your bid.</b> Your bid is still three to five screens in Google
+Slides, with no code in it — that is the client's fence and it has not moved. Code is what happens
+<i>after</i> a contract is awarded. This page is a look down the road, not a change of assignment.
+<span class="es" lang="es">Esto no es tu propuesta: tu propuesta sigue siendo Slides, sin código.
+El código viene después del contrato.</span></div>
+
+<div class="task"><h2>Play it — two players, one keyboard</h2><div class="body">
+  <p><b>You need a real keyboard.</b> This game cannot be played on a phone or a tablet, so open it
+  on a laptop. If you cannot use a keyboard, a partner can press for you — tell Mr. Johnston and you
+  will get a turn. <span class="es" lang="es">Necesitas un teclado de verdad: ábrelo en una
+  computadora. Si no puedes usar el teclado, un compañero puede presionar por ti.</span></p>
+
+  <p><b>Player 1</b> rests three fingers on <span class="kbd">Q</span> <span class="kbd">W</span>
+  <span class="kbd">E</span>. <b>Player 2</b> uses <span class="kbd">I</span> <span class="kbd">O</span>
+  <span class="kbd">P</span>. Press Start, watch the count, and throw the moment you see
+  <b>THROW!</b> — the window is open for one second. Nobody sees anything until you have both thrown.</p>
+
+  <div id="game">
+    <div id="count" aria-live="assertive" aria-atomic="true">Press Start</div>
+    <div id="players">
+      <div class="player">
+        <h3>Player 1</h3>
+        <p class="keys">Q = rock &nbsp; W = paper &nbsp; E = scissors</p>
+        <p id="p1" class="throw" aria-live="polite">?</p>
+      </div>
+      <div class="player">
+        <h3>Player 2</h3>
+        <p class="keys">I = rock &nbsp; O = paper &nbsp; P = scissors</p>
+        <p id="p2" class="throw" aria-live="polite">?</p>
+      </div>
+    </div>
+    <p id="result" aria-live="polite"></p>
+    <button id="start">Start</button>
+  </div>
+</div></div>
+
+<script>
+  // Snapshot the game's markup BEFORE any script touches it, so the code box
+  // below shows the page's real source and not the played-in state.
+  window.__gameHTML = document.getElementById("game").outerHTML;
+</script>
+
+<!-- ===== the GAME's code. This block is shown in the code box below. ===== -->
+<script id="game-js">
+// The entire rulebook of Rock Paper Scissors, in one line:
+const BEATS = { rock: "scissors", paper: "rock", scissors: "paper" };
+
+// Which key belongs to which player, and what it throws.
+const KEYS = {
+  q: ["p1", "rock"], w: ["p1", "paper"], e: ["p1", "scissors"],
+  i: ["p2", "rock"], o: ["p2", "paper"], p: ["p2", "scissors"]
+};
+
+let p1Throw = null;      // what player 1 threw this round
+let p2Throw = null;      // what player 2 threw this round
+let accepting = false;   // is the throw window open right now?
+let timers = [];         // the countdown timers, so we can cancel them
+
+const count = document.getElementById("count");
+const result = document.getElementById("result");
+const start = document.getElementById("start");
+
+start.addEventListener("click", startRound);
+
+// No keyboard on this device? Then say so instead of pretending.
+if (window.matchMedia("(pointer: coarse)").matches) {
+  start.disabled = true;
+  count.textContent = "Open this on a laptop";
+}
+
+function startRound() {
+  stopTimers();            // last round's timers must not fire into this one
+  p1Throw = null;
+  p2Throw = null;
+  accepting = false;       // the window opens on THROW!, not before
+  result.textContent = "";
+  start.disabled = true;
+  document.getElementById("p1").textContent = "?";
+  document.getElementById("p2").textContent = "?";
+
+  count.textContent = "3";
+  timers.push(setTimeout(function () { count.textContent = "2"; }, 700));
+  timers.push(setTimeout(function () { count.textContent = "1"; }, 1400));
+  timers.push(setTimeout(openWindow, 2100));
+  timers.push(setTimeout(closeWindow, 3100));   // one second after THROW!
+}
+
+function openWindow() {
+  count.textContent = "THROW!";
+  accepting = true;
+}
+
+document.addEventListener("keydown", function (event) {
+  if (!accepting) return;         // window shut? ignore the key
+  if (event.repeat) return;       // a held-down key is not a new throw
+  const key = KEYS[event.key.toLowerCase()];
+  if (!key) return;               // some other key? ignore it
+
+  // First press wins — you cannot change your mind.
+  if (key[0] === "p1" && p1Throw === null) {
+    p1Throw = key[1];
+    document.getElementById("p1").textContent = "READY";
+  }
+  if (key[0] === "p2" && p2Throw === null) {
+    p2Throw = key[1];
+    document.getElementById("p2").textContent = "READY";
+  }
+  if (p1Throw && p2Throw) reveal();    // both in? show it now
+});
+
+function closeWindow() {
+  if (!accepting) return;              // already revealed — nothing to do
+  endRound("BAD THROW — somebody was late. Go again.", "Try again");
+}
+
+function reveal() {
+  document.getElementById("p1").textContent = p1Throw.toUpperCase();
+  document.getElementById("p2").textContent = p2Throw.toUpperCase();
+
+  if (p1Throw === p2Throw) {
+    endRound("TIE", "Play again");
+  } else if (BEATS[p1Throw] === p2Throw) {
+    endRound("PLAYER 1 WINS", "Play again");
+  } else {
+    endRound("PLAYER 2 WINS", "Play again");
+  }
+}
+
+function endRound(message, buttonText) {
+  stopTimers();
+  accepting = false;
+  count.textContent = "";
+  result.textContent = message;
+  start.disabled = false;
+  start.textContent = buttonText;
+}
+
+function stopTimers() {
+  timers.forEach(clearTimeout);        // cancel anything still waiting
+  timers = [];
+}
+</script>
+
+<div class="task"><h2>Three languages, three jobs</h2><div class="body">
+  <p>Every page you have ever opened is these three, working together. You have already met the
+  first one in <a href="../try-html/">the editor</a>.</p>
+  <div class="scroll">
+  <table class="parts">
+    <tr><th style="width:22%">Language</th><th>Its one job</th><th>In this game</th></tr>
+    <tr><td><b>HTML</b> <span class="es" lang="es">· estructura</span></td><td>The structure — what things ARE.</td>
+        <td>A count, two player boxes, a result line, a button. <b>Boxes and labels, typed out.</b></td></tr>
+    <tr><td><b>CSS</b> <span class="es" lang="es">· estilo</span></td><td>The look — colors, spacing, shape.</td>
+        <td>Navy and orange, rounded corners, the two boxes side by side.</td></tr>
+    <tr><td><b>JavaScript</b> <span class="es" lang="es">· comportamiento</span></td><td>The behavior — what HAPPENS.</td>
+        <td>Counting down, listening for keys, deciding who won.</td></tr>
+  </table>
+  </div>
+  <p style="margin-top:8px">Notice the order that mirrors your own project: <b>structure first, looks
+  second, behavior last.</b> That is why the client made you draw boxes and labels before anything
+  got pretty — and why nobody writes code before the wireframe is right.</p>
+</div></div>
+
+<div class="task"><h2>How one round actually works</h2><div class="body">
+  <ol>
+    <li><b>Start is clicked.</b> Both throws are erased, the old timers are cancelled, and the
+        count begins.</li>
+    <li><b>The count runs</b> — the 3 appears instantly, then three timers fire the rest, 0.7
+        seconds apart.</li>
+    <li><b>THROW! opens the window.</b> Only now does the game start listening. Press early and
+        nothing happens — same as throwing before "shoot" in real life.</li>
+    <li><b>A key is pressed.</b> The game checks: is it one of the six keys? Whose is it? Has that
+        player already thrown? Your <i>first</i> press locks in — no changing your mind.</li>
+    <li><b>The screen says READY, not what you threw.</b> That is the whole trick: your opponent
+        learns that you went, never what you picked.</li>
+    <li><b>Both in → reveal.</b> Compare the two throws, name the winner.</li>
+    <li><b>One second after THROW!</b> the window shuts. A missing throw is a <b>BAD THROW</b> and
+        the round is replayed — nobody wins on a technicality.</li>
+  </ol>
+  <p>Remember ruling that the rulebook <b>DIES</b> on the jump to a phone? It did not disappear —
+  it moved into the code, and it fits on one line: <code>{ rock: "scissors", paper: "rock",
+  scissors: "paper" }</code>, each throw paired with the throw it beats. If Player 1 threw rock and
+  that line says rock beats scissors, Player 1 wins when Player 2 threw scissors. Three rules, one
+  line, no tangle of if-statements. <span class="es" lang="es">El reglamento no desapareció: se mudó
+  al código, y cabe en una línea.</span></p>
+</div></div>
+
+<div class="task"><h2>Three screens on paper — one screen here. Why?</h2><div class="body">
+  <p>The wireframes for this game were three screens: <b>Start</b>, <b>Play</b>, <b>Result</b>. The
+  thing you just played is <b>one</b> screen that changes what it shows. So was the paper wrong?</p>
+  <p>No — the paper did its job. Drawing three screens forced the question "what is each one FOR?",
+  and the answers survived: get two players in, take the throw, name the winner. When it came time to
+  build, those three jobs fit on one screen with a count box and a result line, so keeping them
+  apart would have meant three page-loads for a five-second game. <b>That decision is design work,
+  and you only get to make it because the paper made the jobs clear first.</b></p>
+  <p>Your bid is different on purpose: the client asked for three to five screens in Slides, and
+  the fence is the fence. Build what the client asked for — then be ready to say what you would
+  change if you were building it for real. <span class="es" lang="es">El papel no se equivocó: hizo
+  visible el trabajo de cada pantalla.</span></p>
+</div></div>
+
+<div class="task"><h2>What is deliberately missing — and why that is the point</h2><div class="body">
+  <p>No name entry. No best-of-three. No score history. No sound. No animations. Those all sound
+  good, and every one of them was <b>cut on purpose</b>.</p>
+  <p>This is an <b>MVP</b> — a <i>minimum viable product</i>: the smallest version that genuinely
+  works. It does one thing, completely. You build that first, you find out whether the idea is any
+  good, and <i>then</i> you add. A version with a title screen, a scoreboard, and no working
+  round is worth nothing.</p>
+  <p><b>It is not even cheat-proof:</b> nothing stops Player 1 from reaching over and pressing
+  Player 2's keys. An MVP trusts its two players. <i>How would you fix that?</i> Answer honestly and
+  you have just written your first feature request — which is exactly what a client does to you.
+  <span class="es" lang="es">Un MVP hace UNA cosa, completa. Lo demás se corta a propósito.</span></p>
+</div></div>
+
+<div class="task"><h2>Every line that makes it run</h2><div class="body">
+  <p>No hidden files, no libraries, nothing downloaded. Everything below is running on this page
+  right now — read it top to bottom and you have read the whole game.</p>
+
+  <div class="codewrap">
+    <h3>HTML <span>— the structure. Compare it to a wireframe: every box is here.</span></h3>
+    <pre class="code" id="code-html" tabindex="0" role="region" aria-label="HTML source code">(enable JavaScript to see the code)</pre>
+
+    <h3>CSS <span>— the look. Nothing here changes what the game DOES.</span></h3>
+    <pre class="code" id="code-css" tabindex="0" role="region" aria-label="CSS source code">(enable JavaScript to see the code)</pre>
+
+    <h3>JavaScript <span>— the behavior. This is the part that plays the game.</span></h3>
+    <pre class="code" id="code-js" tabindex="0" role="region" aria-label="JavaScript source code">(enable JavaScript to see the code)</pre>
+  </div>
+
+  <p style="font-size:.9rem;color:#555">These three boxes are not a copy of the code — the page
+  reads its <i>own</i> source and prints it, so what you see is exactly what is running. (The few
+  lines that do that printing are left out, or we would be here all day.)</p>
+</div></div>
+
+<div class="note"><b>Want to build one?</b> You already can. Open
+<a href="../try-html/">the editor</a>, copy the HTML above into it, and change the words. Then try
+the CSS — change <code>#B35A10</code> to any color you like. That is how everyone starts: take
+something that works, break it on purpose, and fix it.
+<span class="es" lang="es">Copia el HTML en el editor, cambia los colores, rómpelo a propósito y
+arréglalo. Así empieza todo el mundo.</span></div>
+
+<!-- ===== prints the code above. Deliberately not shown in its own box. ===== -->
+<script>
+(function () {
+  function dedent(text) {
+    const lines = text.replace(/^\n+/, "").replace(/\s+$/, "").split("\n");
+    // outerHTML strips the first line's indent, so measure from line 2 on.
+    const rest = lines.slice(1);
+    const widths = rest.filter(function (l) { return l.trim(); })
+                       .map(function (l) { return l.match(/^ */)[0].length; });
+    const cut = widths.length ? Math.min.apply(null, widths) : 0;
+    return [lines[0]].concat(rest.map(function (l) { return l.slice(cut); })).join("\n");
+  }
+  const show = {
+    "code-html": window.__gameHTML,
+    "code-css": document.getElementById("game-css").textContent,
+    "code-js": document.getElementById("game-js").textContent
+  };
+  for (const id in show) {
+    document.getElementById(id).textContent = dedent(show[id]);
+  }
+})();
+</script>
+
+</main>
+</body>
+</html>
