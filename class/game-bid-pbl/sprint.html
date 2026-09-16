@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design Sprint &amp; the Fence Audit — Fundamentals of CS</title>
+<style>
+  :root { --navy:#1b2a52; --orange:#E8781F; --ink:#111; --paper:#fff; --soft:#f4f6fa; }
+  * { box-sizing:border-box; }
+  body { font-family:Arial,Helvetica,sans-serif; color:var(--ink); background:var(--paper);
+         margin:0; line-height:1.55; font-size:17px; }
+  header { background:var(--navy); color:#fff; padding:18px 16px 14px; }
+  header .wrap, main { max-width:760px; margin:0 auto; padding:0 4px; }
+  header h1 { margin:0; font-size:1.6rem; }
+  header p { margin:4px 0 0; color:#c8d4ec; font-size:.95rem; }
+  .bar { height:6px; background:var(--orange); }
+  main { padding:14px 16px 40px; }
+  nav.pbl { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px; }
+  nav.pbl a { text-decoration:none; background:var(--soft); color:var(--navy); font-weight:bold;
+              border:2px solid var(--navy); border-radius:999px; padding:4px 14px; font-size:.9rem; }
+  nav.pbl a.here { background:var(--navy); color:#fff; }
+  .task { border:2px solid var(--navy); border-radius:12px; margin:18px 0; overflow:hidden; }
+  .task h2 { margin:0; background:var(--navy); color:#fff; font-size:1.05rem; padding:9px 14px; }
+  .task .body { padding:10px 14px 14px; }
+  .vocab { display:grid; grid-template-columns:1fr; gap:8px; margin-top:6px; }
+  @media (min-width:560px){ .vocab { grid-template-columns:1fr 1fr; } }
+  .v { background:var(--soft); border-left:5px solid var(--orange); border-radius:8px; padding:8px 12px; }
+  .v b { color:var(--navy); }
+  .v .es { color:#667; font-style:italic; font-size:.9rem; }
+  .note { background:var(--soft); border-radius:10px; padding:10px 14px; font-size:.95rem; margin-top:16px; }
+  .big { font-size:1.05rem; }
+  ol li { margin:6px 0; }
+  table.map { border-collapse:collapse; width:100%; margin-top:6px; font-size:.95rem; }
+  .map th, .map td { border:1px solid #b9c2d8; padding:6px 9px; text-align:left; vertical-align:top; }
+  .map th { background:var(--soft); color:var(--navy); }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Design Sprint &amp; the Fence Audit 📐</h1>
+  <p>Fundamentals of Computer Science · Mr. Johnston · finish every screen — then try to break your own app before the client can</p>
+</div></header>
+<div class="bar"></div>
+<main>
+
+<nav class="pbl">
+  <a href="./">Hub</a>
+  <a href="email.html">Email like a pro</a>
+  <a href="library.html">Game library</a>
+  <a href="crew.html">Crews &amp; contracts</a>
+  <a href="rfp.html">The RFP 📜</a>
+  <a href="design.html">Design ✏️</a>
+  <a class="here" href="sprint.html">Sprint 📐</a>
+</nav>
+
+<p class="big"><b>Paper is cheap. That&rsquo;s the whole strategy.</b> Every problem your crew finds
+today costs a pencil. The same problem on Bid Day costs the contract. So this week you finish every
+screen, then run a professional&rsquo;s move on your own work: the audit.
+<span style="color:#667;font-style:italic">Un error hoy cuesta un l&aacute;piz; el d&iacute;a de la
+propuesta, el contrato.</span></p>
+
+<div class="task"><h2>Step 1 — The screen list (with your crew)</h2><div class="body">
+  <p>Agree it out loud before anyone draws: <b>3 to 5 screens, one job each, every member owns at
+  least one.</b> Then each of you types the list in Classroom, with a star on YOUR screen.</p>
+  <ol>
+    <li><b>Start</b> and <b>Play</b> and <b>Win/End</b> are the spine — the client must walk that path.</li>
+    <li><b>Setup earns a screen only if the PLAYER acts</b> — place your ships, pick your character.
+        Automatic setup (shuffling, dealing) dies into a tap.</li>
+    <li>A screen with no job is decoration. &ldquo;Settings&rdquo; with nothing to set, a Rules screen
+        (the rulebook died — teach it inside Play), a splash page that repeats Start: cut them.</li>
+  </ol>
+  <p><span style="color:#667;font-style:italic">De 3 a 5 pantallas, un trabajo cada una, cada
+  miembro dibuja al menos una.</span></p>
+</div></div>
+
+<div class="task"><h2>Step 2 — Wireframe every screen</h2><div class="body">
+  <p>Same rules as before, no exceptions: <b>boxes and labels ONLY</b> (ugly on purpose) ·
+  <b>every tappable thing marked</b> with its label · <b>one screen, one job</b>, written under the
+  frame · your map feeds the screens. <span style="color:#667;font-style:italic">Cajas y
+  etiquetas; cada tap marcado; un trabajo por pantalla.</span></p>
+</div></div>
+
+<div class="task"><h2>Step 3 — The Fence Audit (the professional&rsquo;s move)</h2><div class="body">
+  <p>Lay the screens in walk order. <b>A different crew member reads each row aloud. Point at the
+  evidence on your frames BEFORE you mark PASS or FIX.</b> A FIX is a WIN — you caught it while it
+  was cheap. Fix it on paper now, initial the row.</p>
+  <table class="map">
+    <tr><th style="width:1.4rem">#</th><th>The ten rows</th></tr>
+    <tr><td>1</td><td><b>Count:</b> at least 3 screens, at most 5.</td></tr>
+    <tr><td>2</td><td><b>Portrait:</b> phone-shaped, tall, one-thumb playable.</td></tr>
+    <tr><td>3</td><td><b>Recognizable:</b> a fan names your game from the Play screen alone, in ten seconds.</td></tr>
+    <tr><td>4</td><td><b>Original:</b> nothing traced or copied — icons drawn your way.</td></tr>
+    <tr><td>5</td><td><b>Families:</b> a 9-year-old could read every label.</td></tr>
+    <tr><td>6</td><td><b>No money:</b> no ads, prices, or coin shops.</td></tr>
+    <tr><td>7</td><td><b>Slides can fake it:</b> nothing Slides can&rsquo;t fake with a click — no dice physics, typing, or video.</td></tr>
+    <tr><td>8</td><td><b>Every tappable thing labeled</b>, on every screen.</td></tr>
+    <tr><td>9</td><td><b>One screen, one job</b>, written under each frame.</td></tr>
+    <tr><td>10</td><td><b>The path:</b> Start &rarr; Play &rarr; Win, reachable by taps alone.</td></tr>
+  </table>
+  <p style="margin-top:8px"><b>An audit that finds nothing found nothing.</b>
+  <span style="color:#667;font-style:italic">Una auditor&iacute;a que no encuentra nada, no
+  encontr&oacute; nada.</span></p>
+</div></div>
+
+<div class="task"><h2>Step 4 — The full walk, then submit</h2><div class="body">
+  <p>Trade complete sets with another crew. <b>The reader walks Start &rarr; Play &rarr; Win with a
+  finger, narrating what each tap does. The designers stay SILENT.</b> Initials on every screen that
+  survives; a failed screen gets its labels fixed — not its designer defended — and is re-read.</p>
+  <p>Then <b>photograph every screen AND the audit sheet</b> and attach them in Classroom.
+  <b>Keep the paper frames</b> — next lesson they become your Slides: every box a slide, every tap
+  a link. <span style="color:#667;font-style:italic">Fotos de todo; guarda los papeles — la
+  pr&oacute;xima lecci&oacute;n se convierten en tus Slides.</span></p>
+</div></div>
+
+<div class="vocab">
+  <div class="v"><b>Audit</b> <span class="es">· auditoría</span><br>Checking the work against the requirements BEFORE the client does. Professionals audit their own work first.</div>
+  <div class="v"><b>Screen list</b> <span class="es">· lista de pantallas</span><br>Every screen, its one job, and who owns it.</div>
+  <div class="v"><b>Walkable</b> <span class="es">· recorrible</span><br>A stranger reaches Start → Play → Win with no help. Criterion 2, on paper.</div>
+  <div class="v"><b>Cold-read</b> <span class="es">· lectura fría</span><br>The reader talks, the designer stays silent. Survive it and you&rsquo;re ready for the client&rsquo;s walk.</div>
+</div>
+
+<div class="note"><b>Absent, or working solo?</b> Missed the map? Quick version: five boxes from your
+survey (setup · turn · choice · resolution · win), then draw your game&rsquo;s three core screens —
+Start, Play, Win. Self-audit with the ten rows above, reading each aloud to yourself. Photo, submit,
+caught up. <span style="font-style:italic;color:#667">¿Solo? Mapa r&aacute;pido, tres pantallas,
+auto-auditor&iacute;a con las diez filas, fotos.</span></div>
+
+</main>
+</body>
+</html>
