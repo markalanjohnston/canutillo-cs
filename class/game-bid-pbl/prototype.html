@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build the Prototype — Fundamentals of CS</title>
+<style>
+  :root { --navy:#1b2a52; --orange:#E8781F; --ink:#111; --paper:#fff; --soft:#f4f6fa; --warn:#B35A10; }
+  * { box-sizing:border-box; }
+  body { font-family:Arial,Helvetica,sans-serif; color:var(--ink); background:var(--paper);
+         margin:0; line-height:1.55; font-size:17px; }
+  header { background:var(--navy); color:#fff; padding:18px 16px 14px; }
+  header .wrap, main { max-width:760px; margin:0 auto; padding:0 4px; }
+  header h1 { margin:0; font-size:1.6rem; }
+  header p { margin:4px 0 0; color:#c8d4ec; font-size:.95rem; }
+  .bar { height:6px; background:var(--orange); }
+  main { padding:14px 16px 40px; }
+  nav.pbl { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px; }
+  nav.pbl a { text-decoration:none; background:var(--soft); color:var(--navy); font-weight:bold;
+              border:2px solid var(--navy); border-radius:999px; padding:4px 14px; font-size:.9rem; }
+  nav.pbl a.here { background:var(--navy); color:#fff; }
+  .task { border:2px solid var(--navy); border-radius:12px; margin:18px 0; overflow:hidden; }
+  .task h2 { margin:0; background:var(--navy); color:#fff; font-size:1.05rem; padding:9px 14px; }
+  .task .body { padding:10px 14px 14px; }
+  .vocab { display:grid; grid-template-columns:1fr; gap:8px; margin-top:6px; }
+  @media (min-width:560px){ .vocab { grid-template-columns:1fr 1fr; } }
+  .v { background:var(--soft); border-left:5px solid var(--orange); border-radius:8px; padding:8px 12px; }
+  .v b { color:var(--navy); }
+  .v .es { color:#555; font-style:italic; font-size:.9rem; }
+  .note { background:var(--soft); border-radius:10px; padding:10px 14px; font-size:.95rem; margin-top:16px; }
+  .warn { background:#fff6ec; border:2px solid var(--warn); border-radius:10px; padding:10px 14px; margin:14px 0; }
+  .warn b { color:var(--warn); }
+  .big { font-size:1.05rem; }
+  .es { color:#555; font-style:italic; }
+  ol.steps { padding-left:22px; margin:6px 0; }
+  ol.steps li { margin:9px 0; }
+  .kbd { display:inline-block; border:2px solid var(--navy); border-radius:6px; padding:0 7px;
+         font-weight:bold; font-family:Consolas,Menlo,monospace; background:var(--soft); font-size:.95rem; }
+  table.fix { border-collapse:collapse; width:100%; margin-top:6px; font-size:.95rem; }
+  .fix th, .fix td { border:1px solid #b9c2d8; padding:6px 9px; text-align:left; vertical-align:top; }
+  .fix th { background:var(--soft); color:var(--navy); }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Build the Prototype 📱</h1>
+  <p>Fundamentals of Computer Science · Mr. Johnston · your paper screens become something the client can actually walk</p>
+</div></header>
+<div class="bar"></div>
+<main>
+
+<nav class="pbl">
+  <a href="./">Hub</a>
+  <a href="email.html">Email like a pro</a>
+  <a href="library.html">Game library</a>
+  <a href="crew.html">Crews &amp; contracts</a>
+  <a href="rfp.html">The RFP 📜</a>
+  <a href="design.html">Design ✏️</a>
+  <a href="sprint.html">Sprint 📐</a>
+  <a class="here" href="prototype.html">Prototype 📱</a>
+</nav>
+
+<p class="big"><b>Your wireframes already passed the audit.</b> That means the hard thinking is done and the
+paper is now your instructions. Today you type it up, make it clickable, and hand it to another crew to
+break. <span class="es" lang="es">Tus esquemas ya pasaron la auditoría: el papel es ahora tu instructivo.</span></p>
+
+<div class="task"><h2>Step 1 — One slide per screen</h2><div class="body">
+  <p>Open your crew&rsquo;s copy of the starter file (in Google Classroom). The slides are <b>tall because a
+  phone is tall</b> — that is your portrait constraint, already handled.</p>
+  <ol class="steps">
+    <li><b>Put each screen on its own slide</b> — the same boxes, the same labels, the same one job
+        written on the slide.</li>
+    <li><b>Transcribe. Do not redesign.</b> Reopening the design now costs you the build, and the
+        version you are about to throw away is the one that passed the fence audit.</li>
+    <li><b>Three to five screens</b> — the fence has not moved. Delete the starter slides you do not need.</li>
+    <li><b>Put them in walk order:</b> Start, Play, Win. This matters more than you think — see the
+        warning below.</li>
+  </ol>
+  <p><span class="es" lang="es">Una diapositiva por pantalla; copia tu esquema tal cual; de 3 a 5
+  pantallas, en orden de recorrido.</span></p>
+</div></div>
+
+<div class="task"><h2>Step 2 — Make it look deliberate</h2><div class="body">
+  <p>This is criterion 3, and it is the easiest one to lose. <b>Deliberate does not mean plain</b> — it
+  means every choice on the screen is one you could defend out loud.</p>
+  <ol class="steps">
+    <li><b>ONE small palette.</b> The same few colors on every screen. Nine colors reads as nine
+        accidents.</li>
+    <li><b>One or two fonts.</b> Not five.</li>
+    <li><b>Buttons that look like buttons</b> — and look the same on every screen, so a player learns
+        them once.</li>
+  </ol>
+  <p>The test: finish the sentence <i>&ldquo;we chose this because…&rdquo;</i> for anything on your
+  screen. If you cannot, it is decoration. <span class="es" lang="es">Pocos colores, una o dos fuentes,
+  botones que parezcan botones — y que puedas justificar cada decisión.</span></p>
+</div></div>
+
+<div class="task"><h2>Step 3 — The five clicks (this is the whole trick)</h2><div class="body">
+  <p>Every tappable box on your wireframe becomes a <b>link</b> to another slide. Do it for every tap,
+  on every screen.</p>
+  <ol class="steps">
+    <li>Click the box you want to be tappable. <span class="es" lang="es">Haz clic en la caja que se toca.</span></li>
+    <li>Press <span class="kbd">Ctrl</span> + <span class="kbd">K</span> &nbsp;(or Insert &rarr; Link).</li>
+    <li>Click <b>&ldquo;Slides in this presentation.&rdquo;</b> <span class="es" lang="es">Elige &ldquo;Diapositivas de esta presentación&rdquo;.</span></li>
+    <li>Pick the screen it should open &rarr; <b>Apply</b>.</li>
+    <li>Click <b>Present</b> and try it. <b>Links only work in Present mode.</b>
+        <span class="es" lang="es">Los enlaces solo funcionan en modo presentación.</span></li>
+  </ol>
+</div></div>
+
+<div class="warn"><b>Know this before your walk.</b> In Present mode, a click on <b>empty space</b> jumps
+to the next slide. Nothing is broken — that is just how Slides works. Two consequences, and they are the
+difference between a prototype that survives Bid Day and one that does not:
+<ol class="steps" style="margin-bottom:0">
+  <li>The client clicks <b>only your labeled buttons</b>. Anything you did not label, he will not touch.</li>
+  <li>Your slides must sit in <b>walk order</b>, so a stray click still lands somewhere sensible instead
+      of in the middle of your app.</li>
+</ol>
+<span class="es" lang="es">Un clic en un espacio vacío avanza a la siguiente diapositiva: etiqueta todo
+lo que se toca y ordena tus pantallas.</span></div>
+
+<div class="task"><h2>Step 4 — Test it, then let another crew break it</h2><div class="body">
+  <p><b>First, you.</b> Press Present and walk your own app Start &rarr; Play &rarr; Win. Every button.</p>
+  <p><b>Then, them.</b> Trade with another crew. The reading crew walks your app clicking <b>only your
+  labeled buttons</b>, and <b>your crew stays completely silent</b> — no hints, no &ldquo;you have to
+  click the…&rdquo;. They write down every dead end and every wrong landing.</p>
+  <p>If they need you to talk, the prototype failed, not the reader. On Bid Day the client drives and
+  your crew is silent — this is that, with a friendlier judge.
+  <span class="es" lang="es">Otro equipo lo recorre en silencio; si necesitan tu ayuda, falló el
+  prototipo, no el lector.</span></p>
+</div></div>
+
+<div class="task"><h2>When it breaks — and it will</h2><div class="body">
+  <p>Finding a broken link today is a <b>good</b> day. The alternative is the client finding it on Bid Day.
+  That is what <b>debugging</b> is: you look for what is wrong on purpose, before it matters.</p>
+  <table class="fix">
+    <tr><th style="width:38%">What you see</th><th>What it usually is</th></tr>
+    <tr><td>Nothing happens when I click</td><td>You are not in Present mode — or you linked the TEXT and
+        clicked the BOX. Link the box itself.</td></tr>
+    <tr><td>It goes to the wrong screen</td><td>Click the box, click the link, <b>Remove</b>, and redo
+        steps 2&ndash;4.</td></tr>
+    <tr><td>Dead end — no way out</td><td>Every screen needs at least one link off it. There is no back
+        button on a prototype the client is holding.</td></tr>
+    <tr><td>A click jumps somewhere random</td><td>That was empty space, not a button. Label it, or
+        accept it and fix your slide order.</td></tr>
+  </table>
+</div></div>
+
+<div class="vocab">
+  <div class="v"><b>Prototype</b> <span class="es" lang="es">· prototipo</span><br>A working stand-in — enough to test the idea, not the finished app.</div>
+  <div class="v"><b>Link</b> <span class="es" lang="es">· enlace</span><br>What turns a drawn button into a button that does something.</div>
+  <div class="v"><b>Debug</b> <span class="es" lang="es">· depurar</span><br>Hunting for what is broken on purpose, before it costs you.</div>
+  <div class="v"><b>Palette</b> <span class="es" lang="es">· paleta</span><br>The small set of colors a design commits to everywhere.</div>
+</div>
+
+<div class="note"><b>Absent, or working solo?</b> Everything here works alone and from anywhere — the file
+lives in Google Drive. Make your own copy of the starter, build <b>three</b> screens (Start, Play, Win)
+from your wireframes or your core-loop map, link every button, press Present and click through it
+yourself, then turn in the share link. Three screens is a complete bid.
+<span class="es" lang="es">¿Ausente? Haz tu copia, construye tres pantallas, enlaza cada botón, pruébalo
+en modo presentación y entrega el enlace. Tres pantallas es una propuesta completa.</span></div>
+
+</main>
+</body>
+</html>

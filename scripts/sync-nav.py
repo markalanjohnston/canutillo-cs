@@ -22,6 +22,7 @@ CHIPS = [
     ("rfp.html",     "The RFP \U0001F4DC"),
     ("design.html",  "Design ✏️"),
     ("sprint.html",  "Sprint \U0001F4D0"),
+    ("prototype.html","Prototype \U0001F4F1"),
 ]
 SECTION = "class/game-bid-pbl"
 NAV_RE = re.compile(r'<nav class="pbl">.*?</nav>', re.S)
