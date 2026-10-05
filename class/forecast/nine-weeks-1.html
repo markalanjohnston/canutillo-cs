@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 1st nine weeks, looking back. Written 10/5/2026 from the class records. Unlinked like the
+     2nd-nine-weeks page: delete the robots line below when the forecast launches.
+     Each school day is one <tr>; the first day of a lesson pair describes its first half and the
+     second day its second half (block classes did both halves in one meeting). -->
+<meta name="robots" content="noindex">
+<title>Lesson Forecast — 1st Nine Weeks (looking back)</title>
+<style>
+  :root { --navy:#1b2a52; --orange:#E8781F; --ink:#111; --paper:#fff; --soft:#f4f6fa; --line:#c9d2e4; }
+  * { box-sizing:border-box; }
+  body { font-family:Arial,Helvetica,sans-serif; color:var(--ink); background:var(--paper);
+         margin:0; line-height:1.55; font-size:17px; }
+  header { background:var(--navy); color:#fff; padding:18px 16px 14px; }
+  header .wrap, main { max-width:760px; margin:0 auto; padding:0 4px; }
+  header h1 { margin:0; font-size:1.6rem; }
+  header p { margin:4px 0 0; color:#c8d4ec; font-size:.95rem; }
+  .bar { height:6px; background:var(--orange); }
+  main { padding:14px 16px 40px; }
+  nav.nw { display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 4px; }
+  nav.nw a { border:2px solid var(--navy); border-radius:999px; padding:3px 12px; font-size:.9rem;
+             text-decoration:none; color:var(--navy); }
+  nav.nw a.here { background:var(--navy); color:#fff; }
+  .es { display:block; color:#667; font-style:italic; font-size:.9rem; }
+  .note { background:var(--soft); border-radius:10px; padding:10px 14px; font-size:.95rem; margin:14px 0; }
+  .updated { font-size:.9rem; color:#556; }
+  .week { border:2px solid var(--navy); border-radius:12px; margin:18px 0; overflow:hidden; }
+  .week h2 { margin:0; background:var(--navy); color:#fff; font-size:1.05rem; padding:9px 14px; }
+  .week h2 .es { display:inline; color:#c8d4ec; font-size:.85rem; margin-left:6px; }
+  .chip { float:right; border-radius:999px; padding:1px 11px; font-size:.8rem; font-style:normal; }
+  .chip.done { background:#cfe8d4; color:var(--navy); }
+  table { width:100%; border-collapse:collapse; }
+  th, td { text-align:left; vertical-align:top; padding:8px 12px; border-top:1px solid var(--line); }
+  th { background:var(--soft); font-size:.85rem; color:#334; }
+  td.day { white-space:nowrap; width:7.5em; }
+  td.ab { width:3em; text-align:center; font-weight:bold; color:var(--navy); }
+  tr.off td { background:#fafafa; color:#556; }
+  ul.recap li { margin:4px 0; }
+  footer { max-width:760px; margin:0 auto; padding:0 20px 30px; font-size:.9rem; color:#556; }
+  a { color:var(--navy); }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Lesson Forecast 🌤️ — 1st Nine Weeks</h1>
+  <p>Looking back · Fundamentals of Computer Science · Mr. Johnston · Canutillo High School · Aug 3 – Oct 2, 2026</p>
+</div></header>
+<div class="bar"></div>
+<main>
+
+<nav class="nw">
+  <a class="here" href="nine-weeks-1.html">1st nine weeks · Aug 3 – Oct 2</a>
+  <a href="./">2nd nine weeks · Oct 5 – Dec 18</a>
+</nav>
+
+<p>What we learned, day by day, in the first nine weeks.
+<span class="es" lang="es">Lo que aprendimos, día por día, en las primeras nueve semanas.</span></p>
+
+<p class="updated">Written Monday, October 5, 2026
+<span class="es" lang="es">Escrito el lunes 5 de octubre de 2026</span></p>
+
+<div class="note">
+  <b>The nine weeks in one breath:</b>
+  <ul class="recap">
+    <li>we learned to think like programmers before we ever touched a computer;</li>
+    <li>researched computer science careers and designed app screens;</li>
+    <li>formed crews and learned to write a professional email;</li>
+    <li>took the district beginning-of-year test and built our first web page in HTML;</li>
+    <li>ran the Game-Bid project: design an app, build a clickable prototype, pitch it on Bid Day;</li>
+    <li>proved what we learned in the nine-weeks reflection, and started CodeHS.</li>
+  </ul>
+  <span class="es" lang="es"><b>Las nueve semanas en resumen:</b> aprendimos a pensar como programadores antes de tocar una
+  computadora; investigamos carreras de computación y diseñamos pantallas de apps; formamos equipos y aprendimos a escribir un
+  correo profesional; hicimos el examen de inicio de año del distrito y creamos nuestra primera página web en HTML; hicimos el
+  proyecto Game-Bid (diseñar una app, construir un prototipo y presentarlo el día de las propuestas); demostramos lo aprendido
+  en la reflexión de las nueve semanas y empezamos CodeHS.</span>
+</div>
+
+<div class="note">
+  <b>A and B days.</b> 1st and 8th period meet every day; 2nd, 4th and 6th period meet on A days, and 3rd and 7th
+  on B days. Most lessons fill an A day and the B day after it: block classes do the whole lesson in one 90-minute
+  class, and 1st and 8th period do the first half one day and the second half the next.
+  <span class="es" lang="es"><b>Días A y B.</b> 1.º y 8.º periodo se reúnen todos los días; 2.º, 4.º y 6.º periodo, los
+  días A, y 3.º y 7.º, los días B. Casi todas las lecciones ocupan un día A y el día B siguiente: las clases de bloque hacen
+  la lección completa en una clase de 90 minutos, y 1.º y 8.º periodo hacen la primera mitad un día y la segunda al día siguiente.</span>
+</div>
+
+<!-- ===================== WEEK: Aug 3 ===================== -->
+<section class="week">
+<h2>Week of Aug 3 <span class="es" lang="es">Semana del 3 de agosto</span> <span class="chip done">Done</span></h2>
+<table>
+<tr><th>Day</th><th>A/B</th><th>What we did</th></tr>
+<tr><td class="day">Mon 8/3</td><td class="ab">A</td><td><b>Welcome: Careers + Contract.</b> We met Mr. Johnston,
+  practiced the class attention signals, and used a Career Match sheet to find computer science careers that fit us.
+  <span class="es" lang="es">Conocimos al Sr. Johnston, practicamos las señales de atención de la clase y usamos una hoja de
+  Career Match para encontrar carreras de computación que van con nosotros.</span></td></tr>
+<tr><td class="day">Tue 8/4</td><td class="ab">B</td><td><b>Careers + Contract.</b> We wrote anonymous ideas about what makes
+  a class worth showing up to, turned them into our class contract, and signed it.
+  <span class="es" lang="es">Escribimos ideas anónimas sobre lo que hace que valga la pena venir a una clase, las convertimos
+  en nuestro contrato de clase y lo firmamos.</span></td></tr>
+<tr><td class="day">Wed 8/5</td><td class="ab">A</td><td><b>Computers Are Everywhere.</b> We &ldquo;taught an alien&rdquo;
+  to tie a shoe to see why computers need exact steps, learned input &rarr; process &rarr; output, and sorted everyday
+  objects into &ldquo;computer&rdquo; and &ldquo;not a computer.&rdquo;
+  <span class="es" lang="es">Le &ldquo;enseñamos a un extraterrestre&rdquo; a amarrarse un zapato para ver por qué las
+  computadoras necesitan pasos exactos, aprendimos entrada &rarr; proceso &rarr; salida y clasificamos objetos cotidianos en
+  &ldquo;computadora&rdquo; y &ldquo;no es computadora&rdquo;.</span></td></tr>
+<tr><td class="day">Thu 8/6</td><td class="ab">B</td><td><b>Computers Are Everywhere.</b> With a partner we designed a
+  &ldquo;dream app&rdquo; on paper (the problem it solves, its inputs and its outputs) and pitched it in 60 seconds.
+  <span class="es" lang="es">Con un compañero diseñamos en papel una &ldquo;app de ensueño&rdquo; (el problema que resuelve,
+  sus entradas y sus salidas) y la presentamos en 60 segundos.</span></td></tr>
+<tr><td class="day">Fri 8/7</td><td class="ab">A</td><td><b>Why Do Computers Take Everything So Literally?</b> We hunted
+  the bugs in a robot&rsquo;s toast-making instructions, heard the true story of the first computer bug (and met Hopper,
+  our class moth), and programmed a classmate as a &ldquo;human robot&rdquo; with exact instructions: the Mark II Mission.
+  <span class="es" lang="es">Buscamos los errores (bugs) en las instrucciones de un robot para hacer pan tostado, escuchamos
+  la historia real del primer &ldquo;bug&rdquo; de computadora (y conocimos a Hopper, la polilla de la clase) y programamos a
+  un compañero como &ldquo;robot humano&rdquo; con instrucciones exactas: la Misión Mark II.</span></td></tr>
+</table>
+</section>
+
+<!-- ===================== WEEK: Aug 10 ===================== -->
+<section class="week">
+<h2>Week of Aug 10 <span class="es" lang="es">Semana del 10 de agosto</span> <span class="chip done">Done</span></h2>
+<table>
+<tr><th>Day</th><th>A/B</th><th>What we did</th></tr>
+<tr><td class="day">Mon 8/10</td><td class="ab">B</td><td><b>Why So Literal?</b> We traded instruction slips across the
+  room, ran them exactly as written and fixed what broke (that is debugging), then wrote what an algorithm is and why exact
+  instructions matter.
+  <span class="es" lang="es">Intercambiamos instrucciones por escrito, las seguimos al pie de la letra y arreglamos lo que
+  fallaba (eso es depurar), y luego escribimos qué es un algoritmo y por qué importan las instrucciones exactas.</span></td></tr>
+<tr><td class="day">Tue 8/11</td><td class="ab">A</td><td><b>How the Internet Moves a Message.</b> We learned that the internet
+  chops a message into numbered &ldquo;packets&rdquo; that travel separately and are put back together at the end.
+  <span class="es" lang="es">Aprendimos que internet divide un mensaje en &ldquo;paquetes&rdquo; numerados que viajan por
+  separado y se vuelven a juntar al final.</span></td></tr>
+<tr><td class="day">Wed 8/12</td><td class="ab">B</td><td><b>How the Internet Moves a Message.</b> We acted it out: a secret
+  message cut into numbered pieces, passed hand to hand along different paths, and put back in order.
+  <span class="es" lang="es">Lo representamos: un mensaje secreto cortado en piezas numeradas, pasado de mano en mano por
+  caminos distintos y vuelto a ordenar.</span></td></tr>
+<tr><td class="day">Thu 8/13</td><td class="ab">A</td><td><b>The Design Sprint.</b> We learned a six-step design process
+  (define the problem, brainstorm, build a simple first version, get feedback, improve, present) and brainstormed app ideas
+  for an everyday problem with a partner. Our classroom jobs started this day.
+  <span class="es" lang="es">Aprendimos un proceso de diseño de seis pasos (definir el problema, generar ideas, construir una
+  primera versión sencilla, recibir comentarios, mejorar y presentar) y, con un compañero, generamos ideas de apps para un
+  problema cotidiano. Ese día empezaron los trabajos de la clase.</span></td></tr>
+<tr><td class="day">Fri 8/14</td><td class="ab">B</td><td><b>The Design Sprint.</b> We sketched an app screen with spacing,
+  font and color chosen on purpose, traded with another pair for written feedback, improved it, and pitched the idea in one
+  sentence.
+  <span class="es" lang="es">Dibujamos la pantalla de una app eligiendo a propósito el espacio, la letra y el color, la
+  intercambiamos con otra pareja para recibir comentarios por escrito, la mejoramos y presentamos la idea en una oración.</span></td></tr>
+</table>
+</section>
+
+<!-- ===================== WEEK: Aug 17 ===================== -->
+<section class="week">
+<h2>Week of Aug 17 <span class="es" lang="es">Semana del 17 de agosto</span> <span class="chip done">Done</span></h2>
+<table>
+<tr><th>Day</th><th>A/B</th><th>What we did</th></tr>
+<tr><td class="day">Mon 8/17</td><td class="ab">A</td><td><b>The Career Investigation.</b> In our first lesson on laptops,
+  we chose a computer science career, researched what the job is really like day to day, and built a one-slide Career Card in
+  Google Slides.
+  <span class="es" lang="es">En nuestra primera lección con laptops, elegimos una carrera de computación, investigamos cómo es
+  el trabajo día a día y creamos una Career Card de una diapositiva en Google Slides.</span></td></tr>
+<tr><td class="day">Tue 8/18</td><td class="ab">B</td><td><b>The Career Investigation.</b> We finished researching our career
+  and built our one-slide Career Card.
+  <span class="es" lang="es">Terminamos de investigar nuestra carrera y creamos nuestra Career Card de una diapositiva.</span></td></tr>
+<tr><td class="day">Wed 8/19</td><td class="ab">A</td><td><b>UI &amp; Design Standards.</b> We learned four design rules for
+  screens (Contrast, Alignment, Repetition, Proximity: C.A.R.P.) and used them to critique a deliberately messy
+  pizza-ordering app.
+  <span class="es" lang="es">Aprendimos cuatro reglas de diseño para pantallas (Contraste, Alineación, Repetición y
+  Proximidad: C.A.R.P.) y las usamos para criticar una app de pedir pizza desordenada a propósito.</span></td></tr>
+<tr><td class="day">Thu 8/20</td><td class="ab">B</td><td><b>UI &amp; Design Standards.</b> We redesigned the messy pizza app
+  as a labeled paper wireframe that follows the C.A.R.P. rules, and explained our choices.
+  <span class="es" lang="es">Rediseñamos la app de pizza como un boceto en papel (wireframe) con etiquetas que sigue las
+  reglas C.A.R.P., y explicamos nuestras decisiones.</span></td></tr>
+<tr><td class="day">Fri 8/21</td><td class="ab">A</td><td><b>From Paper to Pixels.</b> We watched Mr. Johnston turn a paper
+  wireframe into a digital mockup in Google Slides, then started our own using the alignment tools, two fonts at most and one
+  accent color.
+  <span class="es" lang="es">Vimos al Sr. Johnston convertir un boceto en papel en una maqueta digital en Google Slides y
+  luego empezamos la nuestra usando las herramientas de alineación, dos tipos de letra como máximo y un color de acento.</span></td></tr>
+</table>
+</section>
+
+<!-- ===================== WEEK: Aug 24 ===================== -->
+<section class="week">
+<h2>Week of Aug 24 <span class="es" lang="es">Semana del 24 de agosto</span> <span class="chip done">Done</span></h2>
+<table>
+<tr><th>Day</th><th>A/B</th><th>What we did</th></tr>
+<tr><td class="day">Mon 8/24</td><td class="ab">B</td><td><b>From Paper to Pixels.</b> We finished our digital mockups,
+  used the design tools on purpose, and explained our design choices in the speaker notes.
+  <span class="es" lang="es">Terminamos nuestras maquetas digitales, usamos las herramientas de diseño a propósito y
+  explicamos nuestras decisiones en las notas del orador.</span></td></tr>
+<tr><td class="day">Tue 8/25</td><td class="ab">A</td><td><b>Your First Portfolio.</b> We learned how computer science
+  professionals prove their skills (certifications, résumés, portfolios), then gathered our first three weeks of work into a
+  portfolio and scored each piece on the class 0&ndash;5 scale.
+  <span class="es" lang="es">Aprendimos cómo los profesionales de la computación demuestran sus habilidades (certificaciones,
+  currículums, portafolios) y luego reunimos el trabajo de nuestras primeras tres semanas en un portafolio y calificamos cada
+  pieza en la escala de 0 a 5 de la clase.</span></td></tr>
+<tr><td class="day">Wed 8/26</td><td class="ab">B</td><td><b>Your First Portfolio.</b> A partner checked our portfolio scores,
+  we defended one score in writing, and we turned in our first portfolio.
+  <span class="es" lang="es">Un compañero revisó las calificaciones de nuestro portafolio, defendimos una calificación por
+  escrito y entregamos nuestro primer portafolio.</span></td></tr>
+<tr><td class="day">Thu 8/27</td><td class="ab">A</td><td><b>Working in Crews.</b> We learned six teamwork words
+  (collaboration, division of labor, norms, consensus, accountability, conflict resolution) and wrote three crew rules
+  specific enough to enforce, using a self-paced packet and the class web page.
+  <span class="es" lang="es">Aprendimos seis palabras de trabajo en equipo (colaboración, división del trabajo, normas,
+  consenso, responsabilidad y resolución de conflictos) y escribimos tres reglas de equipo lo bastante específicas para
+  cumplirlas, con un paquete a nuestro ritmo y la página web de la clase.</span></td></tr>
+<tr class="off"><td class="day">Fri 8/28</td><td class="ab">—</td><td>Staff development day · no school
+  <span class="es" lang="es">Día de desarrollo profesional · no hubo clases</span></td></tr>
+</table>
+</section>
+
+<!-- ===================== WEEK: Aug 31 ===================== -->
+<section class="week">
+<h2>Week of Aug 31 <span class="es" lang="es">Semana del 31 de agosto</span> <span class="chip done">Done</span></h2>
+<table>
+<tr><th>Day</th><th>A/B</th><th>What we did</th></tr>
+<tr><td class="day">Mon 8/31</td><td class="ab">B</td><td><b>Working in Crews.</b> We worked out what to do when a crew hits
+  trouble and rewrote our crew rules so a teammate could hold us to them.
+  <span class="es" lang="es">Decidimos qué hacer cuando un equipo tiene problemas y reescribimos nuestras reglas para que un
+  compañero pudiera hacerlas cumplir.</span></td></tr>
+<tr><td class="day">Tue 9/1</td><td class="ab">A</td><td><b>Teams &amp; Email.</b> We were placed in crews of two or three,
+  took a short quiz on the teamwork words, and signed a crew contract.
+  <span class="es" lang="es">Nos asignaron a equipos de dos o tres, hicimos un examen corto sobre las palabras de trabajo en
+  equipo y firmamos un contrato de equipo.</span></td></tr>
+<tr><td class="day">Wed 9/2</td><td class="ab">B</td><td><b>Teams &amp; Email.</b> We learned the five marks of a professional
+  email (subject, body, signature, grammar, formatting) and when to use To, CC, BCC and Reply All, then sent Mr. Johnston a
+  real email.
+  <span class="es" lang="es">Aprendimos las cinco marcas de un correo profesional (asunto, cuerpo, firma, gramática y formato)
+  y cuándo usar Para, CC, CCO y Responder a todos, y luego le enviamos un correo real al Sr. Johnston.</span></td></tr>
+<tr><td class="day">Thu 9/3</td><td class="ab">A</td><td><b>The Client: Game Day.</b> Our project began. We met our
+  &ldquo;client,&rdquo; a fictional game studio looking for crews to turn a classic board game into a phone app, learned the
+  class game-library rules, and played a board game as research.
+  <span class="es" lang="es">Comenzó nuestro proyecto. Conocimos a nuestro &ldquo;cliente&rdquo;, un estudio de juegos
+  ficticio que busca equipos para convertir un juego de mesa clásico en una app, aprendimos las reglas de la biblioteca de
+  juegos de la clase y jugamos un juego de mesa como investigación.</span></td></tr>
+<tr><td class="day">Fri 9/4</td><td class="ab">B</td><td><b>The Client: Game Day.</b> We played our board games again,
+  finished a field survey on how the game is played and won, and started a crew list of what we know and still need to ask
+  the client.
+  <span class="es" lang="es">Volvimos a jugar nuestros juegos de mesa, terminamos una encuesta de campo sobre cómo se juega y
+  cómo se gana, y empezamos una lista de equipo con lo que sabemos y lo que aún necesitamos preguntarle al cliente.</span></td></tr>
+</table>
+</section>
+
+<!-- ===================== WEEK: Sep 7 ===================== -->
+<section class="week">
+<h2>Week of Sep 7 <span class="es" lang="es">Semana del 7 de septiembre</span> <span class="chip done">Done</span></h2>
+<table>
+<tr><th>Day</th><th>A/B</th><th>What we did</th></tr>
+<tr class="off"><td class="day">Mon 9/7</td><td class="ab">—</td><td>Labor Day · no school
+  <span class="es" lang="es">Día del Trabajo · no hubo clases</span></td></tr>
+<tr><td class="day">Tue 9/8</td><td class="ab">A</td><td><b>District beginning-of-year test.</b> We took the district&rsquo;s
+  beginning-of-year test for this course. In the 90-minute classes, students who finished started <b>Try HTML</b>, writing
+  real HTML code to build a first web page.
+  <span class="es" lang="es">Hicimos el examen de inicio de año del distrito para este curso. En las clases de 90 minutos,
+  quienes terminaron empezaron <b>Try HTML</b>, escribiendo código HTML real para crear su primera página web.</span></td></tr>
+<tr><td class="day">Wed 9/9</td><td class="ab">B</td><td><b>District beginning-of-year test.</b> 3rd and 7th period took the
+  district&rsquo;s beginning-of-year test for this course, then started <b>Try HTML</b>.
+  <span class="es" lang="es">3.º y 7.º periodo hicieron el examen de inicio de año del distrito para este curso y luego
+  empezaron <b>Try HTML</b>.</span></td></tr>
+<tr><td class="day">Thu 9/10</td><td class="ab">A</td><td><b>The Request for Bids.</b> We read our client&rsquo;s request for
+  bids on the class website, learned the difference between what the client will judge and the must-have rules that knock a
+  bid out, and each crew emailed the client its one allowed question.
+  <span class="es" lang="es">Leímos en el sitio web de la clase la solicitud de propuestas de nuestro cliente, aprendimos la
+  diferencia entre lo que el cliente va a evaluar y las reglas obligatorias que descalifican una propuesta, y cada equipo le
+  envió al cliente su única pregunta permitida.</span></td></tr>
+<tr><td class="day">Fri 9/11</td><td class="ab">B</td><td><b>The Request for Bids.</b> We finished our &ldquo;About My
+  Game&rdquo; web pages in HTML, meeting all seven requirements, and turned in our code.
+  <span class="es" lang="es">Terminamos nuestras páginas web &ldquo;About My Game&rdquo; en HTML, cumpliendo los siete
+  requisitos, y entregamos nuestro código.</span></td></tr>
+</table>
+</section>
+
+<!-- ===================== WEEK: Sep 14 ===================== -->
+<section class="week">
+<h2>Week of Sep 14 <span class="es" lang="es">Semana del 14 de septiembre</span> <span class="chip done">Done</span></h2>
+<table>
+<tr><th>Day</th><th>A/B</th><th>What we did</th></tr>
+<tr><td class="day">Mon 9/14</td><td class="ab">A</td><td><b>Deconstruction.</b> We took our crew&rsquo;s board game apart
+  into its core loop (setup, turn, choice, result, win) and decided which parts must survive the move to a phone app.
+  <span class="es" lang="es">Desarmamos el juego de mesa de nuestro equipo en su ciclo principal (preparación, turno,
+  decisión, resultado y victoria) y decidimos qué partes deben sobrevivir al pasar a una app.</span></td></tr>
+<tr><td class="day">Tue 9/15</td><td class="ab">B</td><td><b>Deconstruction.</b> We sketched our app&rsquo;s Start screen on
+  paper with every button labeled, then had a classmate read the sketch with no help from us.
+  <span class="es" lang="es">Dibujamos en papel la pantalla de inicio de nuestra app con cada botón etiquetado y luego un
+  compañero la leyó sin nuestra ayuda.</span></td></tr>
+<tr><td class="day">Wed 9/16</td><td class="ab">A</td><td><b>Design Sprint I.</b> We listed the three to five screens our app
+  needs, gave each one a single job, and drew them on paper.
+  <span class="es" lang="es">Hicimos la lista de las tres a cinco pantallas que necesita nuestra app, le dimos a cada una un
+  solo trabajo y las dibujamos en papel.</span></td></tr>
+<tr><td class="day">Thu 9/17</td><td class="ab">B</td><td><b>Design Sprint I.</b> We checked our paper screens against the
+  client&rsquo;s rules and fixed what failed, let another crew tap through them while we stayed silent, and photographed the
+  set.
+  <span class="es" lang="es">Revisamos nuestras pantallas de papel con las reglas del cliente y arreglamos lo que fallaba,
+  dejamos que otro equipo las probara mientras guardábamos silencio y fotografiamos el conjunto.</span></td></tr>
+<tr><td class="day">Fri 9/18</td><td class="ab">A</td><td><b>Design Sprint II.</b> We turned our paper screens into a
+  phone-shaped prototype in Google Slides, one slide per screen with a consistent look. (2nd period had the school pep rally
+  instead.)
+  <span class="es" lang="es">Convertimos nuestras pantallas de papel en un prototipo con forma de teléfono en Google Slides,
+  una diapositiva por pantalla con un estilo uniforme. (2.º periodo tuvo el pep rally de la escuela).</span></td></tr>
+</table>
+</section>
+
+<!-- ===================== WEEK: Sep 21 ===================== -->
+<section class="week">
+<h2>Week of Sep 21 <span class="es" lang="es">Semana del 21 de septiembre</span> <span class="chip done">Done</span></h2>
+<table>
+<tr><th>Day</th><th>A/B</th><th>What we did</th></tr>
+<tr><td class="day">Mon 9/21</td><td class="ab">B</td><td><b>Design Sprint II.</b> We linked every button in our prototype to
+  the right screen, tested it, traded with another crew to find dead ends, and fixed them.
+  <span class="es" lang="es">Enlazamos cada botón de nuestro prototipo con la pantalla correcta, lo probamos, lo
+  intercambiamos con otro equipo para encontrar callejones sin salida y los arreglamos.</span></td></tr>
+<tr><td class="day">Tue 9/22</td><td class="ab">A</td><td><b>Bid Day.</b> We prepared and rehearsed our 90-second pitches.
+  2nd, 4th and 6th period pitched to the client the same day.
+  <span class="es" lang="es">Preparamos y ensayamos nuestras presentaciones de 90 segundos. 2.º, 4.º y 6.º periodo se las
+  presentaron al cliente ese mismo día.</span></td></tr>
+<tr><td class="day">Wed 9/23</td><td class="ab">B</td><td><b>Bid Day.</b> Crews pitched their app to the client in 90 seconds,
+  then stayed silent while the client tried their clickable prototype.
+  <span class="es" lang="es">Los equipos presentaron su app al cliente en 90 segundos y luego guardaron silencio mientras el
+  cliente probaba su prototipo.</span></td></tr>
+<tr><td class="day">Thu 9/24</td><td class="ab">A</td><td><b>The Debrief.</b> We scored our own bid against the client&rsquo;s
+  five criteria, defended one score with evidence, named the one fix another week would buy, and wrote advice for a crew
+  starting the project tomorrow.
+  <span class="es" lang="es">Calificamos nuestra propia propuesta con los cinco criterios del cliente, defendimos una
+  calificación con evidencia, nombramos la mejora que haríamos con una semana más y escribimos consejos para un equipo que
+  empezara el proyecto mañana.</span></td></tr>
+<tr><td class="day">Fri 9/25</td><td class="ab">B</td><td><b>The Debrief.</b> We looked back at Bid Day: what worked, what we
+  would fix, and what we learned.
+  <span class="es" lang="es">Repasamos el día de las propuestas: qué funcionó, qué arreglaríamos y qué aprendimos.</span></td></tr>
+</table>
+</section>
+
+<!-- ===================== WEEK: Sep 28 ===================== -->
+<section class="week">
+<h2>Week of Sep 28 <span class="es" lang="es">Semana del 28 de septiembre</span> <span class="chip done">Done</span></h2>
+<table>
+<tr><th>Day</th><th>A/B</th><th>What we did</th></tr>
+<tr><td class="day">Mon 9/28</td><td class="ab">A</td><td><b>Reflection Prep + CodeHS.</b> We named an assignment we are
+  proud of, tried logging in to CodeHS for the first time, and built a table pairing three things we learned with the
+  assignment that proves each one.
+  <span class="es" lang="es">Nombramos una tarea de la que estamos orgullosos, intentamos entrar a CodeHS por primera vez y
+  armamos una tabla que une tres cosas que aprendimos con la tarea que demuestra cada una.</span></td></tr>
+<tr><td class="day">Tue 9/29</td><td class="ab">B</td><td><b>Reflection Prep + CodeHS.</b> We finished our three-row tables,
+  each thing we learned paired with the assignment that proves it.
+  <span class="es" lang="es">Terminamos nuestras tablas de tres filas, cada cosa aprendida con la tarea que la demuestra.</span></td></tr>
+<tr><td class="day">Wed 9/30</td><td class="ab">A</td><td><b>The Nine-Weeks Reflection.</b> We took the nine-weeks test: a
+  written reflection of three paragraphs, each naming something we learned and attaching the assignment that proves it.
+  <span class="es" lang="es">Hicimos el examen de las nueve semanas: una reflexión escrita de tres párrafos, cada uno con
+  algo que aprendimos y la tarea adjunta que lo demuestra.</span></td></tr>
+<tr><td class="day">Thu 10/1</td><td class="ab">B</td><td><b>The Nine-Weeks Reflection.</b> We completed the nine-weeks
+  reflection and turned it in.
+  <span class="es" lang="es">Completamos la reflexión de las nueve semanas y la entregamos.</span></td></tr>
+<tr><td class="day">Fri 10/2</td><td class="ab">A</td><td><b>CodeHS: the Pretest, then Karel.</b> We logged in to CodeHS
+  through the district&rsquo;s sign-in page and took a starting-point pretest, then met Karel the Dog, who follows four
+  commands. Last day of the nine weeks.
+  <span class="es" lang="es">Entramos a CodeHS por la página de acceso del distrito e hicimos un examen inicial; luego
+  conocimos a Karel, un perro que sigue cuatro comandos. Último día de las nueve semanas.</span></td></tr>
+</table>
+</section>
+
+<nav class="nw">
+  <a class="here" href="nine-weeks-1.html">1st nine weeks · Aug 3 – Oct 2</a>
+  <a href="./">2nd nine weeks · Oct 5 – Dec 18</a>
+</nav>
+
+</main>
+<footer>
+  Questions? Email Mr. Johnston: <a href="mailto:mjohnston@canutillo-isd.org">mjohnston@canutillo-isd.org</a>
+  <span class="es" lang="es">¿Preguntas? Escríbale al Sr. Johnston: mjohnston@canutillo-isd.org</span>
+  <br><a href="/">canutillocs.com</a>
+</footer>
+</body>
+</html>
