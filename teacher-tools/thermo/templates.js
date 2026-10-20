@@ -641,4 +641,62 @@ TEMPLATES.custom = {
   }
 };
 
-const TEMPLATE_ORDER = ['praise', 'encourage', 'pass', 'homework', 'custom'];
+/* -------------------- 7. Karel Challenge coupon --------
+   One coupon per Karel Challenges level passed. Wording matches the coupon
+   box on the Karel Challenges sheet. Leave Student blank to print a stack
+   ahead of time; the name line prints blank for handwriting. */
+const KAREL_LEVELS = [
+  { value: '',  label: '(blank: write it in)' },
+  { value: '1', label: 'Level 1: Frame' },
+  { value: '2', label: 'Level 2: Initials' },
+  { value: '3', label: 'Level 3: Checkerboard' },
+  { value: '4', label: 'Level 4: Pyramid' },
+  { value: '5', label: 'Level 5: Pixel art' },
+  { value: '6', label: 'Level 6: The big one' }
+];
+
+TEMPLATES.karel = {
+  id: 'karel',
+  label: 'Karel Challenge Coupon',
+  sub: 'One free solution to one Unit 2 Exercise, per level passed.',
+  usesSerial: true,
+
+  fields: (ctx) => ([
+    { name: 'student',     label: 'Student (blank = write in)', type: 'student-picker' },
+    { name: 'classPeriod', label: 'Class',                      type: 'class-select' },
+    { name: 'level',       label: 'Level passed',               type: 'select',
+      options: KAREL_LEVELS, default: '' },
+    { name: 'includeSpanish', label: 'Print Spanish lines', type: 'checkbox', default: true }
+  ]),
+
+  render: (data, ctx) => {
+    const e = ctx.escape;
+    const name = (data.student || '').trim().toUpperCase();
+    const lvl = KAREL_LEVELS.find(l => l.value && l.value === data.level);
+    const es = data.includeSpanish !== false;
+    return `
+      <div class="r">
+        ${ctx.logo}
+        <div class="r-title">KAREL CHALLENGE COUPON</div>
+        <div class="r-coupon">
+          <div class="r-msg"><b>GOOD FOR ONE (1)</b></div>
+          <div class="r-msg"><b>FREE SOLUTION</b></div>
+          ${name ? `<div class="r-name">${e(name)}</div>`
+                 : `<div class="r-msg">Name: ${'_'.repeat(20)}</div>`}
+          ${data.classPeriod ? `<div class="r-msg">${e(data.classPeriod)}</div>` : ''}
+          <div class="r-divider">${ctx.divider('-')}</div>
+          <div class="r-block">The solution to one CodeHS item labeled Exercise in Unit 2 (2.x). Not quizzes, not challenges, not badges, not other units.</div>
+          ${es ? `<div class="r-block">La solución de un ejercicio de CodeHS marcado Exercise en la Unidad 2. No sirve para quizzes, retos, insignias ni otras unidades.</div>` : ''}
+          <div class="r-divider">${ctx.divider('-')}</div>
+          <div class="r-kv"><b>Level:</b>  <span>${lvl ? e(lvl.label.replace(/^Level /, '')) : '_'.repeat(14)}</span></div>
+          <div class="r-kv"><b>Issued:</b> <span>${e(ctx.fmtDate(ctx.now))}</span></div>
+          <div class="r-kv"><b>Coupon:</b> <span>#${ctx.pad4(ctx.settings.serial)}</span></div>
+          <div class="r-sig">${e(ctx.settings.teacher)}</div>
+        </div>
+        ${ctx.footer}
+        <div class="r-feed"></div>
+      </div>`;
+  }
+};
+
+const TEMPLATE_ORDER = ['praise', 'encourage', 'pass', 'homework', 'karel', 'custom'];
