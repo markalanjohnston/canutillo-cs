@@ -642,29 +642,26 @@ TEMPLATES.custom = {
 };
 
 /* -------------------- 7. Karel Challenge coupon --------
-   One coupon per Karel Challenges level passed. Wording matches the coupon
-   box on the Karel Challenges sheet. Leave Student blank to print a stack
-   ahead of time; the name line prints blank for handwriting. */
+   Two coupons at most: one for passing Levels 1-3, a second for passing
+   Levels 4-6. Wording matches the coupon box on the Karel Challenges sheet.
+   Leave Student blank to print a stack ahead of time; the name line prints
+   blank for handwriting. */
 const KAREL_LEVELS = [
-  { value: '',  label: '(blank: write it in)' },
-  { value: '1', label: 'Level 1: Frame' },
-  { value: '2', label: 'Level 2: Initials' },
-  { value: '3', label: 'Level 3: Checkerboard' },
-  { value: '4', label: 'Level 4: Pyramid' },
-  { value: '5', label: 'Level 5: Pixel art' },
-  { value: '6', label: 'Level 6: The big one' }
+  { value: '',    label: '(blank: write it in)' },
+  { value: '1-3', label: 'Levels 1-3' },
+  { value: '4-6', label: 'Levels 4-6' }
 ];
 
 TEMPLATES.karel = {
   id: 'karel',
   label: 'Karel Challenge Coupon',
-  sub: 'One free solution to one Unit 2 Exercise, per level passed.',
+  sub: 'One free solution to one Unit 2 Exercise. Levels 1-3 earn one, Levels 4-6 a second.',
   usesSerial: true,
 
   fields: (ctx) => ([
     { name: 'student',     label: 'Student (blank = write in)', type: 'student-picker' },
     { name: 'classPeriod', label: 'Class',                      type: 'class-select' },
-    { name: 'level',       label: 'Level passed',               type: 'select',
+    { name: 'level',       label: 'Levels passed',              type: 'select',
       options: KAREL_LEVELS, default: '' },
     { name: 'includeSpanish', label: 'Print Spanish lines', type: 'checkbox', default: true }
   ]),
@@ -688,7 +685,7 @@ TEMPLATES.karel = {
           <div class="r-block">The solution to one CodeHS item labeled Exercise in Unit 2 (2.x). Not quizzes, not challenges, not badges, not other units.</div>
           ${es ? `<div class="r-block">La solución de un ejercicio de CodeHS marcado Exercise en la Unidad 2. No sirve para quizzes, retos, insignias ni otras unidades.</div>` : ''}
           <div class="r-divider">${ctx.divider('-')}</div>
-          <div class="r-kv"><b>Level:</b>  <span>${lvl ? e(lvl.label.replace(/^Level /, '')) : '_'.repeat(14)}</span></div>
+          <div class="r-kv"><b>Levels:</b> <span>${lvl ? e(lvl.value) : '_'.repeat(10)}</span></div>
           <div class="r-kv"><b>Issued:</b> <span>${e(ctx.fmtDate(ctx.now))}</span></div>
           <div class="r-kv"><b>Coupon:</b> <span>#${ctx.pad4(ctx.settings.serial)}</span></div>
           <div class="r-sig">${e(ctx.settings.teacher)}</div>
