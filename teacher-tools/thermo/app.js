@@ -928,6 +928,16 @@ function wire() {
     renderPreview();
   });
 
+  // Closing the tab or browser with Settings still open never fires 'close',
+  // so commit those edits when the page is hidden or unloaded too.
+  const commitOpenSettings = () => {
+    if (document.getElementById('settingsModal').open) commitSettingsFromInputs();
+  };
+  window.addEventListener('pagehide', commitOpenSettings);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') commitOpenSettings();
+  });
+
   // Ctrl/Cmd+P fires the template's first print button (not the browser page).
   window.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
