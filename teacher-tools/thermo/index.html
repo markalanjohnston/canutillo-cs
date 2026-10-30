@@ -61,6 +61,8 @@
         </nav>
       </header>
 
+      <p class="save-status" role="alert" hidden></p>
+
       <main class="app-main">
         <aside class="template-picker" id="templatePicker" aria-label="Receipt templates">
           <!-- populated by app.js -->
@@ -159,6 +161,7 @@
       </div>
 
       <footer class="tm-footer">
+        <p class="save-status" role="alert" hidden></p>
         <button type="button" id="btnClearRoster" class="btn btn-outline-danger">
           <i class="bi bi-trash"></i> Clear all
         </button>
@@ -264,6 +267,7 @@
               </div>
             </div>
             <p class="form-text">Uploads are auto-resized to ~800px and saved in this browser.</p>
+            <p id="logoStatus" role="alert" hidden></p>
           </div>
           <div class="mb-3">
             <label class="form-label">Your logos</label>
@@ -296,6 +300,7 @@
       </div>
 
       <footer class="tm-footer">
+        <p class="save-status" role="alert" hidden></p>
         <button type="submit" value="close" class="btn btn-primary">
           <i class="bi bi-check-lg"></i> Done
         </button>

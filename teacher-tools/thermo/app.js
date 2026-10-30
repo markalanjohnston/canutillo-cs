@@ -3,6 +3,14 @@
    Dependencies: templates.js (TEMPLATES, TEMPLATE_ORDER)
    ========================================================= */
 
+// http:// and https:// are separate origins with separate localStorage, so a
+// setup saved on one looks lost on the other. Move to https before anything
+// loads or saves (a local test server stays on http).
+if (location.protocol === 'http:' &&
+    !['localhost', '127.0.0.1'].includes(location.hostname)) {
+  location.replace(location.href.replace(/^http:/, 'https:'));
+}
+
 const LS_SETTINGS = 'passprinter.settings';
 const LS_ROSTER   = 'passprinter.roster';
 
@@ -62,7 +70,7 @@ function loadSettings() {
   } catch { return { ...DEFAULT_SETTINGS }; }
 }
 function saveSettings() {
-  localStorage.setItem(LS_SETTINGS, JSON.stringify(state.settings));
+  return store(LS_SETTINGS, state.settings);
 }
 
 function loadRoster() {
@@ -74,7 +82,44 @@ function loadRoster() {
   } catch { return []; }
 }
 function saveRoster() {
-  localStorage.setItem(LS_ROSTER, JSON.stringify(state.roster));
+  return store(LS_ROSTER, state.roster);
+}
+
+// Every write goes through here and returns true if it stuck. A failed write
+// (storage full, or blocked by a private window or browser setting) is never
+// silent: a short note shows on the page until that key saves again.
+const saveErrors = {};   // storage key -> error name from its last failed write
+function store(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+    delete saveErrors[key];
+  } catch (err) {
+    saveErrors[key] = (err && err.name) || 'Error';
+  }
+  showSaveStatus();
+  return !saveErrors[key];
+}
+
+function showSaveStatus() {
+  const keys = Object.keys(saveErrors);
+  let msg = '';
+  if (keys.length) {
+    const what = keys.map(k => k === LS_ROSTER ? 'student list' : 'settings').join(' and ');
+    msg = `Your ${what} couldn't be saved, so changes will be gone when the browser closes. ` +
+      (keys.some(k => saveErrors[k] === 'QuotaExceededError')
+        ? 'Storage is full: remove a logo in Settings to make room.'
+        : 'This browser is blocking storage (a private window or a site-data setting).');
+  }
+  document.querySelectorAll('.save-status').forEach(el => {
+    el.textContent = msg;
+    el.hidden = !msg;
+  });
+}
+
+function showLogoStatus(msg) {
+  const el = document.getElementById('logoStatus');
+  el.textContent = msg;
+  el.hidden = !msg;
 }
 
 // ---------- Helpers ----------
@@ -669,6 +714,7 @@ function openSettings() {
   document.getElementById('settingsQRPresets').value            = formatQRPresets(s.qrPresets);
   document.getElementById('settingsQRNote').value               = s.qrNote;
   document.getElementById('settingsTagline').value              = s.taglineText;
+  showLogoStatus('');
   renderLogoList();
   populateLogoDropdown();
   refreshDefaultClassDropdown();
@@ -736,20 +782,25 @@ async function addLogoFromInputs() {
     return;
   }
 
+  const prevLogoFile = state.settings.logoFile;
   state.settings.logoPresets = state.settings.logoPresets || [];
   state.settings.logoPresets.push({ label, file: src, width });
 
   // If this is the first logo, make it active automatically.
   if (!state.settings.logoFile) state.settings.logoFile = src;
 
-  try {
-    saveSettings();
-  } catch (err) {
-    // localStorage quota — pop the just-added logo and tell the user.
+  if (!saveSettings()) {
+    // Couldn't keep it (usually the storage quota). Take it back out
+    // completely, logoFile included, or every later save would carry the
+    // oversized image too. Then save the rest and say so on the page.
     state.settings.logoPresets.pop();
-    alert(`Couldn't save — probably localStorage is full. Try a smaller image or delete an existing logo first.\n\n(${err.message})`);
+    state.settings.logoFile = prevLogoFile;
+    if (saveSettings()) {
+      showLogoStatus('That logo is too big to keep in this browser. Try a smaller image, or remove a logo first.');
+    }
     return;
   }
+  showLogoStatus('');
 
   // Reset the upload inputs so the next add starts fresh.
   document.getElementById('newLogoLabel').value = '';

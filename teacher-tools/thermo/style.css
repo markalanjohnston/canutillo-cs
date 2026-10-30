@@ -278,6 +278,19 @@ button.danger {
 }
 .preview-hint { margin-top: 10px; }
 
+/* A save that didn't stick (showSaveStatus / showLogoStatus in app.js). */
+.save-status,
+#logoStatus {
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  background: #fbf8ef;
+  border: 1px solid #e0b6b3;
+  border-radius: 5px;
+  color: var(--danger);
+  font-size: 0.85rem;
+}
+.tm-footer .save-status { flex: 1 1 100%; margin: 0; }
+
 /* ---------- Preview ---------- */
 
 .preview-area { display: flex; flex-direction: column; }
@@ -648,6 +661,7 @@ button.danger {
 
 .tm-footer {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 10px;
   padding: 14px 22px;
