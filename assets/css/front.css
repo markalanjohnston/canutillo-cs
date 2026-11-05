@@ -227,13 +227,14 @@ html.no-js [lang="es"], html.no-js [lang="en"]{display:revert!important}
 /* 4 · why it's worth it */
 .wage { margin: 24px 0 0; padding: 16px 18px; border-radius: 16px; background: var(--mist); border: 1px solid var(--line);
         font-size: 18px; line-height: 1.45; color: var(--ink); }
+.wage p { margin: 0; }
+.wage .wage-note { margin-top: 6px; font-size: 16px; color: var(--muted); }
 .wage b { color: var(--navy); }
 .wage .src { color: var(--muted); }
 .cards { display: grid; gap: 12px; margin: 14px 0 0; }
 .card { display: grid; grid-template-columns: 44px 1fr; column-gap: 14px; align-items: center; align-content: start;
         background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 18px 18px 20px; }
 .card > [lang] { grid-column: 1 / -1; margin-top: 10px; }
-.card [lang] p + p { margin-top: 8px; }
 .card h3 { margin: 0; font: 800 20px/1.25 var(--sans); letter-spacing: -.01em; color: var(--navy); }
 .card p { margin: 0; color: var(--ink); }
 .card .ic { width: 44px; height: 44px; border-radius: 12px; background: var(--navy); color: var(--orange-lt);
