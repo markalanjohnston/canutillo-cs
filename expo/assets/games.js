@@ -302,4 +302,20 @@
 
   /* Click a button the way a finger would (the real click handlers run). */
   K.tap = (el) => { if (!el) throw new Error('nothing to tap'); el.click(); };
+
+  /* Keep the screen awake while a game shows (the iPad and the school Mac sit idle between visitors). */
+  if ('wakeLock' in navigator) {
+    let held = null;
+    const ask = () => {
+      if (held || document.visibilityState !== 'visible') return;
+      navigator.wakeLock.request('screen').then((s) => {
+        held = s;
+        s.addEventListener('release', () => { held = null; });
+      }).catch(() => {});
+    };
+    document.addEventListener('visibilitychange', ask);
+    document.addEventListener('click', ask);
+    document.addEventListener('keydown', ask);
+    ask();
+  }
 })();

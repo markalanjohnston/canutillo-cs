@@ -1351,6 +1351,22 @@ async function main() {
 }
 main().catch(report);
 })();
+/* Keep the screen awake while this page shows (a Mac on the TV, a tablet at the table). */
+(function () {
+  if (!('wakeLock' in navigator)) return;
+  var held = null;
+  function ask() {
+    if (held || document.visibilityState !== 'visible') return;
+    navigator.wakeLock.request('screen').then(function (s) {
+      held = s;
+      s.addEventListener('release', function () { held = null; });
+    }).catch(function () {});
+  }
+  document.addEventListener('visibilitychange', ask);
+  document.addEventListener('click', ask);
+  document.addEventListener('keydown', ask);
+  ask();
+})();
 </script>
 </body>
 </html>
