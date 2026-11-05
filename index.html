@@ -3,121 +3,353 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fundamentals of Computer Science — Mr. Johnston, Canutillo High School</title>
-<meta name="description" content="Class hub for Fundamentals of Computer Science at Canutillo High School: family newsletters, what we're learning, and how to reach Mr. Johnston.">
-<link rel="stylesheet" href="assets/css/site.css">
+<title>Computer Science at Canutillo High School · Mr. Johnston</title>
+<meta name="description" content="Computer Science at Canutillo High School with Mr. Johnston: what you'll do in Fundamentals of Computer Science, the planned four-year pathway, and how to ask for it at course selection. In English and Spanish.">
+<link rel="stylesheet" href="assets/css/front.css">
 <link rel="icon" href="assets/img/chs-eagle-logo.svg">
 <script>document.documentElement.classList.remove('no-js');</script>
 </head>
 <body>
 
-<header class="site-head">
-  <div class="wrap">
-    <a href="./">
-      <img src="assets/img/CANUTILLO-ISD-LOGO.png" alt="Canutillo ISD">
-      <span class="who">Fundamentals of Computer Science
-        <span>Mr. Johnston &middot; Canutillo High School &middot; Room H120</span></span>
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="./">
+      <span class="brand-chip"><img src="assets/img/chs-cs-eagle.png" alt="" width="900" height="385"></span>
+      <span class="brand-txt"><span lang="en">Computer Science at CHS</span><span lang="es">Ciencias de la Computación en CHS</span></span>
     </a>
+    <div class="top-r">
+      <a class="top-fam" href="families/"><span lang="en">Current students &amp; families →</span><span lang="es">Estudiantes de la clase y sus familias →</span></a>
+      <div class="langbar" role="group" aria-label="Language / Idioma">
+        <button class="langbtn" id="btn-en" aria-pressed="true" onclick="setLang('en')">English</button>
+        <button class="langbtn" id="btn-es" aria-pressed="false" onclick="setLang('es')">Español</button>
+      </div>
+    </div>
   </div>
 </header>
 
-<div class="mast">
-  <div class="wrap">
-    <h1 style="margin:0;font-size:clamp(27px,7.5vw,42px);line-height:1.15">Building the CS program at Canutillo High School</h1>
-    <p class="tag" lang="en">A brand-new program — and your student is in its founding class.</p>
-    <p class="tag" lang="es">Un programa completamente nuevo — y su estudiante es parte de su generación fundadora.</p>
-  </div>
-</div>
+<main>
 
-<div class="langbar">
-  <div class="wrap">
-    <button class="langbtn" id="btn-en" aria-pressed="true" onclick="setLang('en')">English</button>
-    <button class="langbtn" id="btn-es" aria-pressed="false" onclick="setLang('es')">Español</button>
-  </div>
-</div>
+<section class="hero" aria-labelledby="hook">
+  <div class="wrap hero-in">
+    <div class="hero-copy">
+      <p class="eyebrow"><span lang="en">Computer Science at CHS</span><span lang="es">Ciencias de la Computación en CHS</span></p>
+      <p class="school"><span lang="en">Canutillo High School · Mr.&nbsp;Johnston · Room H120</span><span lang="es">Canutillo High School · Sr.&nbsp;Johnston · Salón H120</span></p>
 
-<main class="wrap">
+      <div class="hook">
+        <p class="hl"><span class="ln" aria-hidden="true">1</span><span lang="en">Never coded? <em>Good.</em> <span class="nw">Start here.</span></span><span lang="es">¿Nunca has programado? <em>Perfecto.</em> <span class="nw">Empieza aquí.</span></span></p>
+        <h1 class="hl" id="hook"><span class="ln" aria-hidden="true">2</span><span lang="en">This class is hard. <em class="nl">That's the point.</em></span><span lang="es">Esta clase es difícil. <em class="nl">Esa es la idea.</em></span></h1>
+        <p class="hl"><span class="ln" aria-hidden="true">3</span><span lang="en">We hold you to a high standard because <em>we know you can reach it.</em></span><span lang="es">Te exigimos mucho porque <em>sabemos que puedes lograrlo.</em></span></p>
+      </div>
 
-<section class="sec">
-  <div lang="en">
-    <h2>Welcome</h2>
-    <p>This is the public home for <b>Fundamentals of Computer Science</b> at Canutillo High School.
-    Families will find our class newsletter here — what students are learning, how to talk about it
-    at home, and what's coming up. Everything is posted in <b>English and Spanish</b>.</p>
-    <p>Day-to-day assignments live in <b>Google Classroom</b>; this site is the front porch.</p>
-  </div>
-  <div lang="es">
-    <h2>Bienvenidos</h2>
-    <p>Esta es la página pública de <b>Fundamentos de Ciencias de la Computación</b> en Canutillo
-    High School. Aquí las familias encontrarán el boletín de nuestra clase: lo que están aprendiendo
-    los estudiantes, cómo conversarlo en casa y lo que viene. Todo se publica en <b>inglés y
-    español</b>.</p>
-    <p>Las tareas del día a día están en <b>Google Classroom</b>; este sitio es la puerta de
-    entrada.</p>
+      <a class="ask" href="#join">
+        <span class="ask-body">
+          <span class="ask-label"><span lang="en">Your next step</span><span lang="es">El siguiente paso</span></span>
+          <span class="ask-text"><span lang="en">Ask for <b>Fundamentals of Computer Science</b> at course selection.</span><span lang="es">Al elegir sus materias, pidan <b>Fundamentals of Computer Science</b>.</span></span>
+        </span>
+        <span class="ask-go" aria-hidden="true">↓</span>
+      </a>
+      <ul class="chips" role="list">
+        <li><span lang="en">No experience needed</span><span lang="es">No se necesita experiencia</span></li>
+        <li><span lang="en">No prerequisites</span><span lang="es">Sin requisitos previos</span></li>
+        <li><span lang="en">1 high school credit</span><span lang="es">1 crédito de high school</span></li>
+      </ul>
+    </div>
+
+    <a class="families" href="families/">
+      <span class="fam-main"><span lang="en">Current students &amp; families →</span><span lang="es">Estudiantes de la clase y sus familias →</span></span>
+      <span class="fam-sub"><span lang="en">Newsletters · welcome letter · contact</span><span lang="es">Boletines · carta de bienvenida · contacto</span></span>
+    </a>
+
+    <a class="hero-art peek" href="#try">
+      <span class="peek-head"><span lang="en">Where does Karel stop?</span><span lang="es">¿Dónde se detiene Karel?</span></span>
+      <span class="editor peek-ed" aria-hidden="true">
+        <span class="editor-bar"><i></i><i></i><i></i><span>karel.js</span></span>
+        <span class="peek-code"><span class="l"><span class="tk">function</span> start() {</span><span class="l">    <span class="tk">for</span> (<span class="tk">let</span> i = <span class="tn">0</span>; i &lt; <span class="tn">4</span>; i++) {</span><span class="l">        <span class="tf">move</span>();</span><span class="l">        <span class="tf">putBall</span>();</span><span class="l">    }</span><span class="l">}</span></span>
+      </span>
+      <span class="board peek-board" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b><i class="karel"><img src="assets/img/karel-dog.svg" alt="" width="100" height="100"></i></b><b></b><b></b><b></b></span>
+      <span class="peek-go"><span lang="en">Try the puzzle ↓</span><span lang="es">Prueba el reto ↓</span></span>
+    </a>
   </div>
 </section>
 
-<section class="sec">
-  <div lang="en">
-    <h2>New to the class?</h2>
-    <p>Start with the <a href="welcome/"><b>welcome letter</b></a> — who I am, why this program
-    is brand-new, and how our classroom works. It went home by email before day one, but if it
-    never reached you, it lives here now.</p>
-  </div>
-  <div lang="es">
-    <h2>¿Nuevos en la clase?</h2>
-    <p>Empiecen con la <a href="welcome/"><b>carta de bienvenida</b></a> — quién soy, por qué
-    este programa es completamente nuevo y cómo funciona nuestro salón. Se envió por correo antes
-    del primer día, pero si nunca les llegó, ahora vive aquí.</p>
+<section class="sec do" aria-labelledby="do-h">
+  <div class="wrap">
+    <p class="kicker"><span lang="en">Inside the class</span><span lang="es">Dentro de la clase</span></p>
+    <h2 id="do-h"><span lang="en">What you'll actually do</span><span lang="es">Lo que de verdad vas a hacer</span></h2>
+    <ol class="do-list" role="list">
+      <li>
+        <div lang="en"><b>Program Karel</b>, a robot dog, in <b>JavaScript</b> on CodeHS: commands, functions, loops, if/else.</div>
+        <div lang="es"><b>Programa a Karel</b>, un perro robot, en <b>JavaScript</b> en CodeHS: commands (comandos), functions (funciones), loops (ciclos) e if/else (si… si no…).</div>
+      </li>
+      <li>
+        <div lang="en"><b>Debug:</b> find out why the code did exactly what you said, which wasn't what you meant.</div>
+        <div lang="es"><b>Debug (depurar):</b> descubre por qué el código hizo exactamente lo que escribiste, que no era lo que tenías en mente.</div>
+      </li>
+      <li>
+        <div lang="en">Make <b>your first web page in HTML</b>.</div>
+        <div lang="es">Crea <b>tu primera página web en HTML</b>.</div>
+      </li>
+      <li>
+        <div lang="en"><b>Design a product</b> from scratch and <b>pitch it</b>, like a real tech company.</div>
+        <div lang="es"><b>Diseña un producto</b> desde cero y <b>presenta una propuesta</b>, como se hace en una empresa de tecnología.</div>
+      </li>
+      <li>
+        <div lang="en"><b>Bell work to start every class:</b> a short puzzle or prediction.</div>
+        <div lang="es"><b>Actividad de inicio en cada clase:</b> un acertijo corto o una predicción.</div>
+      </li>
+    </ol>
   </div>
 </section>
 
-<section class="sec">
-  <div lang="en"><h2>Latest newsletter</h2></div>
-  <div lang="es"><h2>Boletín más reciente</h2></div>
-  <div class="card" style="box-shadow:none;padding:0">
-    <h3>The Loop — Issue #1</h3>
-    <p class="date">August 2026 · <span lang="en">Week one in Room H120</span><span lang="es">Primera semana en el salón H120</span></p>
-    <div class="links">
-      <a class="btn-primary" href="newsletters/2026-08-issue-01/"><span lang="en">Read online</span><span lang="es">Leer en línea</span></a>
-      <a class="btn-second" href="newsletters/2026-08-issue-01/the-loop-issue-01.pdf">PDF</a>
+<section class="sec try" aria-labelledby="try-h">
+  <div class="wrap">
+    <p class="kicker"><span lang="en">Try it now</span><span lang="es">Pruébalo ahora</span></p>
+    <h2 id="try-h"><span lang="en">Can you think like a computer?</span><span lang="es">¿Puedes pensar como una computadora?</span></h2>
+    <p class="lede" lang="en">Computers do exactly what you say, not what you mean.</p>
+    <p class="lede" lang="es">Las computadoras hacen exactamente lo que escribes, no lo que tenías en mente.</p>
+    <p class="setup" lang="en">Karel starts in the bottom-left corner, on street 1 and avenue 1, facing East. Streets are rows; avenues are columns. This world is 4 avenues wide.</p>
+    <p class="setup" lang="es">Karel empieza en la esquina de abajo a la izquierda, en la calle 1 y la avenida 1, mirando al Este. Las calles son filas y las avenidas son columnas. Este mundo tiene 4 avenidas de ancho.</p>
+
+    <div class="try-grid">
+      <div class="editor">
+        <div class="editor-bar" aria-hidden="true"><i></i><i></i><i></i><span>karel.js</span></div>
+        <pre><code><span class="l"><span class="tk">function</span> start() {</span>
+<span class="l">    <span class="tk">for</span> (<span class="tk">let</span> i = <span class="tn">0</span>; i &lt; <span class="tn">4</span>; i++) {</span>
+<span class="l">        <span class="tf">move</span>();</span>
+<span class="l">        <span class="tf">putBall</span>();</span>
+<span class="l">    }</span>
+<span class="l">}</span></code></pre>
+      </div>
+      <figure class="world">
+        <div class="wbox" aria-hidden="true">
+          <div class="wst"><span>3</span><span>2</span><span>1</span></div>
+          <div class="board">
+            <b></b><b></b><b></b><b></b>
+            <b></b><b></b><b></b><b></b>
+            <b><i class="karel"><img src="assets/img/karel-dog.svg" alt="" width="100" height="100"></i></b><b></b><b></b><b></b>
+          </div>
+          <div class="wav"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+        </div>
+        <figcaption><span lang="en">Karel's world: 4 avenues wide, 3 streets tall. Karel is on street 1, avenue 1, facing East.</span><span lang="es">El mundo de Karel: 4 avenidas de ancho y 3 calles de alto. Karel está en la calle 1, avenida 1, mirando al Este.</span></figcaption>
+      </figure>
+    </div>
+
+    <dl class="legend">
+      <div><dt><code>move()</code></dt><dd><span lang="en">one step forward</span><span lang="es">avanzar un paso</span></dd></div>
+      <div><dt><code>putBall()</code></dt><dd><span lang="en">drop a ball</span><span lang="es">poner una pelota</span></dd></div>
+      <div><dt><code>for (let i = 0; i &lt; 4; i++)</code></dt><dd><span lang="en">repeat 4 times</span><span lang="es">repetir 4 veces</span></dd></div>
+    </dl>
+
+    <p class="question"><span lang="en">How many balls, where, and does Karel crash?</span><span lang="es">¿Cuántas pelotas quedan y dónde? ¿Karel choca?</span></p>
+
+    <details class="answer">
+      <summary><span class="sum-txt"><span lang="en">Show the answer</span><span lang="es">Ver la respuesta</span></span></summary>
+      <div class="answer-body">
+        <div lang="en">
+          <p class="verdict">3 balls, then a crash.</p>
+          <p>The loop asks for 4 moves, but from avenue 1 this world only has room for 3. Karel moves to avenue 2 and drops a ball, then avenue 3, then avenue 4. On the 4th <code>move()</code>, Karel runs into the edge of the world and crashes, so the last <code>putBall()</code> never runs. Avenue 1 stays empty, because Karel moves before it drops.</p>
+        </div>
+        <div lang="es">
+          <p class="verdict">3 pelotas, y luego choca.</p>
+          <p>El ciclo pide 4 pasos, pero desde la avenida 1 este mundo solo tiene espacio para 3. Karel avanza a la avenida 2 y pone una pelota, luego a la 3 y luego a la 4. En el cuarto <code>move()</code>, Karel choca contra el borde del mundo, así que el último <code>putBall()</code> nunca se ejecuta. La avenida 1 queda vacía, porque Karel avanza antes de poner la pelota.</p>
+        </div>
+        <figure class="world">
+          <div class="wbox" aria-hidden="true">
+            <div class="wst"><span>3</span><span>2</span><span>1</span></div>
+            <div class="board">
+              <b></b><b></b><b></b><b></b>
+              <b></b><b></b><b></b><b></b>
+              <b></b><b><i class="ball"></i></b><b><i class="ball"></i></b><b class="hit"><i class="karel"><img src="assets/img/karel-dog.svg" alt="" width="100" height="100"></i><i class="ball"></i></b>
+            </div>
+            <div class="wav"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+          </div>
+          <figcaption><span lang="en">After: one ball each on street 1 at avenues 2, 3 and 4. Karel crashed at avenue 4, facing the edge.</span><span lang="es">Al final: una pelota en cada avenida 2, 3 y 4 de la calle 1. Karel chocó en la avenida 4, frente al borde.</span></figcaption>
+        </figure>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section class="sec path on-dark" aria-labelledby="path-h">
+  <div class="wrap">
+    <p class="kicker"><span lang="en">Course pathway</span><span lang="es">Ruta de cursos</span></p>
+    <h2 id="path-h"><span lang="en">Planned pathway</span><span lang="es">Ruta planeada</span></h2>
+    <p class="lede" lang="en">Every course on this path is on the state's Programming and Software Development program of study. Fundamentals is Level 1, the first course.</p>
+    <p class="lede" lang="es">Cada curso de esta ruta es parte del programa de estudios estatal Programming and Software Development (Programación y Desarrollo de Software). Fundamentals es el Nivel 1, el primer curso.</p>
+    <ol class="years" role="list">
+      <li class="year now">
+        <p class="ytag"><span class="yr"><span lang="en">Year 1</span><span lang="es">Año 1</span></span><span class="st"><span lang="en">Start here</span><span lang="es">Empieza aquí</span></span></p>
+        <p class="course">Fundamentals of Computer Science</p>
+        <p class="where"><span lang="en">at CHS or Alderete Middle School</span><span lang="es">en CHS o en Alderete Middle School</span></p>
+        <p class="alt"><span class="or"><span lang="en">or</span><span lang="es">o</span></span> <b>Principles of Information Technology</b> <span lang="en">at Canutillo Middle School</span><span lang="es">en Canutillo Middle School</span></p>
+      </li>
+      <li class="year planned">
+        <p class="ytag"><span class="yr"><span lang="en">Year 2</span><span lang="es">Año 2</span></span><span class="st"><span lang="en">Planned</span><span lang="es">Planeado</span></span></p>
+        <p class="course">Computer Science I</p>
+        <p class="alt"><span class="or"><span lang="en">or</span><span lang="es">o</span></span> <b>AP Computer Science Principles</b></p>
+      </li>
+      <li class="year planned">
+        <p class="ytag"><span class="yr"><span lang="en">Year 3</span><span lang="es">Año 3</span></span><span class="st"><span lang="en">Planned</span><span lang="es">Planeado</span></span></p>
+        <p class="course">Game Programming and Design</p>
+      </li>
+      <li class="year planned">
+        <p class="ytag"><span class="yr"><span lang="en">Year 4</span><span lang="es">Año 4</span></span><span class="st"><span lang="en">Planned</span><span lang="es">Planeado</span></span></p>
+        <p class="course">AP Computer Science A</p>
+        <p class="alt"><span class="or"><span lang="en">or</span><span lang="es">o</span></span> <b>Computer Science II</b></p>
+      </li>
+    </ol>
+    <p class="path-note" lang="en">Already took one of those in middle school? Ask Mr.&nbsp;Johnston about your next step.</p>
+    <p class="path-note" lang="es">¿Ya cursaste alguna de estas materias? Pregúntale al Sr.&nbsp;Johnston cuál sería tu siguiente paso.</p>
+  </div>
+</section>
+
+<section class="sec why" aria-labelledby="why-h">
+  <div class="wrap">
+    <p class="kicker"><span lang="en">Careers and college</span><span lang="es">Carreras y universidad</span></p>
+    <h2 id="why-h"><span lang="en">Why it's worth it</span><span lang="es">Por qué vale la pena</span></h2>
+    <div class="wage">
+      <p lang="en"><b>Software developers in Texas:</b> median wage of $127,000 a year <span class="src">(Texas Workforce Commission, via TEA; retrieved 2024)</span>.</p>
+      <p lang="es"><b>Desarrolladores de software en Texas:</b> mediana salarial de $127,000 al año <span class="src">(Texas Workforce Commission, vía TEA; consultado en 2024)</span>.</p>
+      <p class="wage-note" lang="en">This is the median for all software developers in Texas, not a starting salary.</p>
+      <p class="wage-note" lang="es">Es la mediana de todos los desarrolladores de software en Texas, no un sueldo de entrada.</p>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <p class="ic" aria-hidden="true">AP</p>
+        <h3><span lang="en">AP courses in the plan</span><span lang="es">Cursos AP en el plan</span></h3>
+        <p lang="en">The planned pathway includes AP Computer Science Principles and AP Computer Science A. Passing an AP exam can earn college credit at many colleges.</p>
+        <p lang="es">La ruta planeada incluye AP Computer Science Principles y AP Computer Science A. Aprobar un examen AP puede valer créditos universitarios en muchas universidades.</p>
+      </div>
+      <div class="card">
+        <p class="ic" aria-hidden="true">&#10003;</p>
+        <h3><span lang="en">Endorsements</span><span lang="es">Endorsements (endosos)</span></h3>
+        <p lang="en">Completing this program of study, once all its courses are offered, can fulfill the STEM endorsement (when the math and science requirements are met) or the Business and Industry endorsement.</p>
+        <p lang="es">Completar este programa de estudios, cuando se ofrezcan todos sus cursos, puede cumplir el endoso de STEM (si también se cumplen los requisitos de matemáticas y ciencias) o el de Negocios e Industria.</p>
+      </div>
+      <div class="card">
+        <p class="ic" aria-hidden="true">&lt;/&gt;</p>
+        <h3><span lang="en">Industry certifications</span><span lang="es">Certificaciones de la industria</span></h3>
+        <p lang="en">Industry certifications aligned with this program of study include Information Technology Specialist (Python, JavaScript, Java) and Certified Entry-Level Python Programmer (PCEP).</p>
+        <p lang="es">Las certificaciones de la industria alineadas con este programa de estudios incluyen Information Technology Specialist (Python, JavaScript, Java) y Certified Entry-Level Python Programmer (PCEP).</p>
+      </div>
+      <div class="card">
+        <p class="ic" aria-hidden="true">{ }</p>
+        <h3><span lang="en">A foundation for more than CS</span><span lang="es">Una base para mucho más que computación</span></h3>
+        <p lang="en">The same thinking (breaking problems down, logic, debugging) carries into engineering, medicine and health tech, data science, cybersecurity, aerospace and business.</p>
+        <p lang="es">La misma forma de pensar (dividir un problema en partes, la lógica y la depuración de código) sirve en ingeniería, medicina y tecnología de la salud, ciencia de datos, ciberseguridad, la industria aeroespacial y los negocios.</p>
+      </div>
+    </div>
+    <a class="ask ask-sm" href="#join">
+      <span class="ask-body">
+        <span class="ask-label"><span lang="en">Your next step</span><span lang="es">El siguiente paso</span></span>
+        <span class="ask-text"><span lang="en">Ask for <b>Fundamentals of Computer Science</b> at course selection.</span><span lang="es">Al elegir sus materias, pidan <b>Fundamentals of Computer Science</b>.</span></span>
+      </span>
+      <span class="ask-go" aria-hidden="true">↓</span>
+    </a>
+  </div>
+</section>
+
+<section class="sec belong" aria-labelledby="belong-h">
+  <div class="wrap">
+    <p class="kicker"><span lang="en">Who codes?</span><span lang="es">¿Quién programa?</span></p>
+    <h2 id="belong-h"><span lang="en">You belong here</span><span lang="es">Este es tu lugar</span></h2>
+    <p class="whynot"><span lang="en">Every text. Every emoji. Every app. Someone wrote that code. <em>Why not you?</em></span><span lang="es">Cada mensaje. Cada emoji. Cada app. Alguien escribió ese código. <em>¿Por qué no tú?</em></span></p>
+    <h3 class="pio-h"><span lang="en">Pioneers</span><span lang="es">Pioneras y pioneros</span></h3>
+    <ul class="pioneers" role="list">
+      <li>
+        <span class="mono-badge" aria-hidden="true">AL</span>
+        <div lang="en"><b>Ada Lovelace</b> published the first algorithm meant for a machine, in 1843.</div>
+        <div lang="es"><b>Ada Lovelace</b> publicó el primer algoritmo pensado para una máquina, en 1843.</div>
+      </li>
+      <li>
+        <span class="mono-badge" aria-hidden="true">GH</span>
+        <div lang="en"><b>Grace Hopper</b> built one of the first compilers (A-0, 1952) and helped make code readable in English-like words.</div>
+        <div lang="es"><b>Grace Hopper</b> creó uno de los primeros compiladores (A-0, 1952) y ayudó a desarrollar lenguajes de programación con instrucciones parecidas a frases en inglés.</div>
+      </li>
+      <li>
+        <span class="mono-badge" aria-hidden="true">KJ</span>
+        <div lang="en"><b>Katherine Johnson</b>, NASA mathematician: before John Glenn's 1962 orbit, he asked her to check the computer's numbers by hand.</div>
+        <div lang="es"><b>Katherine Johnson</b>, matemática de la NASA: antes de su vuelo orbital de 1962, John Glenn le pidió que verificara a mano los cálculos de la computadora.</div>
+      </li>
+      <li>
+        <span class="mono-badge" aria-hidden="true">EO</span>
+        <div lang="en"><b>Ellen Ochoa</b>, engineer and inventor: the first Hispanic woman in space (1993), later director of NASA's Johnson Space Center.</div>
+        <div lang="es"><b>Ellen Ochoa</b>, ingeniera e inventora: la primera mujer hispana en el espacio (1993) y, más tarde, directora del Centro Espacial Johnson de la NASA.</div>
+      </li>
+      <li>
+        <span class="mono-badge" aria-hidden="true">MD</span>
+        <div lang="en"><b>Mark Dean</b>, IBM engineer: co-created the IBM PC and holds three of its nine original patents.</div>
+        <div lang="es"><b>Mark Dean</b>, ingeniero de IBM: cocreó la IBM PC y tiene tres de las nueve patentes originales de la IBM PC.</div>
+      </li>
+      <li>
+        <span class="mono-badge" aria-hidden="true">LvA</span>
+        <div lang="en"><b>Luis von Ahn</b>, born in Guatemala: co-invented CAPTCHA and reCAPTCHA and co-founded Duolingo.</div>
+        <div lang="es"><b>Luis von Ahn</b>, nacido en Guatemala: coinventó CAPTCHA y reCAPTCHA y cofundó Duolingo.</div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="sec meet" aria-labelledby="meet-h">
+  <div class="wrap">
+    <div class="meet-head">
+      <img class="headshot" src="assets/img/johnston.png" alt="Mr. Johnston" width="306" height="306">
+      <div>
+        <p class="kicker"><span lang="en">Your teacher</span><span lang="es">Tu maestro</span></p>
+        <h2 id="meet-h"><span lang="en">Meet Mr.&nbsp;Johnston</span><span lang="es">Conoce al Sr.&nbsp;Johnston</span></h2>
+      </div>
+    </div>
+    <div class="meet-body">
+      <ul class="creds" role="list">
+        <li><span lang="en">U.S. Air Force veteran</span><span lang="es">Veterano de la Fuerza Aérea de EE.&nbsp;UU.</span></li>
+        <li><span lang="en">MBA</span><span lang="es">MBA (maestría en administración de empresas)</span></li>
+        <li><span lang="en">Coached VEX Robotics teams to the World Championship</span><span lang="es">Como entrenador, llevó equipos de VEX Robotics al Campeonato Mundial</span></li>
+        <li><span lang="en">Former district Director of Robotics</span><span lang="es">Fue director de robótica de un distrito escolar</span></li>
+        <li><span lang="en">Founder of West Robotics, a <span class="nw">501(c)(3)</span> nonprofit</span><span lang="es">Fundador de West Robotics, una organización sin fines de lucro <span class="nw">501(c)(3)</span></span></li>
+      </ul>
+      <div class="builds">
+        <p lang="en">He designs, codes and runs his own web software for schools: the same skills this pathway starts teaching.</p>
+        <p lang="es">Diseña, programa y administra su propio software web para escuelas: las mismas habilidades que este programa empieza a enseñar.</p>
+      </div>
     </div>
   </div>
-  <p style="margin:16px 0 0"><a href="newsletters/"><span lang="en">All issues →</span><span lang="es">Todos los boletines →</span></a></p>
 </section>
 
-<section class="sec">
-  <div lang="en">
-    <h2>Contact</h2>
-    <p><b>Email is the fastest way to reach me</b> and I check it daily:
-      <a href="mailto:mjohnston@canutillo-isd.org">mjohnston@canutillo-isd.org</a>.
-      My classroom phone cannot receive outside calls.</p>
-    <p>Conference period: 5th period on B days (12:18–1:48). Tutoring by appointment until 4:30.
-    Families — please come to me first with any question or concern. I'd rather solve things
-    together early.</p>
-  </div>
-  <div lang="es">
-    <h2>Contacto</h2>
-    <p><b>El correo electrónico es la manera más rápida de comunicarse conmigo</b> y lo reviso a
-      diario: <a href="mailto:mjohnston@canutillo-isd.org">mjohnston@canutillo-isd.org</a>.
-      El teléfono del salón no puede recibir llamadas de afuera.</p>
-    <p>Período de conferencia: 5.º período en días B (12:18–1:48). Tutoría con cita hasta las 4:30.
-    Familias: por favor acudan a mí primero con cualquier pregunta o preocupación. Prefiero
-    resolver las cosas juntos y a tiempo.</p>
+<section class="sec join on-dark" id="join" aria-labelledby="join-h">
+  <div class="wrap join-in">
+    <div>
+      <p class="kicker"><span lang="en">Ready?</span><span lang="es">¿Te animas?</span></p>
+      <h2 id="join-h"><span lang="en">How to join</span><span lang="es">Cómo unirte</span></h2>
+      <p class="big-ask"><span lang="en">Ask for <b>Fundamentals of Computer Science</b> at course selection.</span><span lang="es">Al elegir sus materias, pidan <b>Fundamentals of Computer Science</b>.</span></p>
+      <p class="grit" lang="en">No experience needed. Grit required.</p>
+      <p class="grit" lang="es">No se necesita experiencia. Hay que echarle ganas.</p>
+      <ul class="facts" role="list">
+        <li><span lang="en">Texas CTE course</span><span lang="es">Curso CTE de Texas</span></li>
+        <li><span lang="en">1 high school credit</span><span lang="es">1 crédito de high school</span></li>
+        <li><span lang="en">No prerequisites</span><span lang="es">Sin requisitos previos</span></li>
+        <li><span lang="en">At CHS and Alderete Middle School</span><span lang="es">En CHS y en Alderete Middle School</span></li>
+      </ul>
+      <p class="clubs-line" lang="en"><b>Clubs in the works:</b> Girls Who Code · TSA programming challenges</p>
+      <p class="clubs-line" lang="es"><b>Clubes en proceso:</b> Girls Who Code · retos de programación de TSA</p>
+    </div>
+    <div>
+      <div class="contact">
+        <p><span lang="en">Questions? Email Mr.&nbsp;Johnston</span><span lang="es">¿Preguntas? Escríbanle al Sr.&nbsp;Johnston</span></p>
+        <a class="mail" href="mailto:mjohnston@canutillo-isd.org"><span class="nw">mjohnston@</span><wbr><span class="nw">canutillo-isd.org</span></a>
+      </div>
+    </div>
   </div>
 </section>
-
-<img class="eagle-mark" src="assets/img/chs-eagle-logo.svg" alt="Canutillo Eagles">
 
 </main>
 
-<footer class="site-foot">
+<footer class="foot">
   <div class="wrap">
-    <span class="viva" lang="en">Our Time is Now! ¡Viva Canutillo!</span>
-    <span class="viva" lang="es">¡Nuestro momento es ahora! ¡Viva Canutillo!</span>
-    <p><b>Mr. Johnston</b> &middot; Room H120 &middot; Canutillo High School &middot;
-      <a href="mailto:mjohnston@canutillo-isd.org">mjohnston@canutillo-isd.org</a></p>
-    <p style="font-size:13px"><a href="teacher-tools/">Teacher tools</a></p>
+    <p class="foot-chip"><img src="assets/img/chs-cs-eagle.png" alt="Canutillo Eagles" width="900" height="385"></p>
+    <p><b>Mr.&nbsp;Johnston</b> &middot; Room H120 &middot; <span class="nw">Canutillo High School</span> &middot;
+      <a class="nw" href="mailto:mjohnston@canutillo-isd.org">mjohnston@canutillo-isd.org</a></p>
+    <p><a class="fam-link" href="families/"><span lang="en">Current students &amp; families →</span><span lang="es">Estudiantes de la clase y sus familias →</span></a></p>
+    <p class="tools"><a href="teacher-tools/">Teacher tools</a></p>
   </div>
 </footer>
 
