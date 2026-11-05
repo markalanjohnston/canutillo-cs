@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#000636">
+<title>CTE Night · CS at CHS</title>
+<link rel="stylesheet" href="assets/games.css">
+<style>
+html, body { min-height: 100%; }
+body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.menu { max-width: 1240px; margin: 0 auto; padding: 12px 20px 16px; display: flex; flex-direction: column; gap: 12px; min-height: 100vh; min-height: 100dvh; justify-content: center; }
+a { color: inherit; text-decoration: none; }
+a, button { touch-action: manipulation; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+
+/* header */
+.mhead { display: flex; align-items: center; gap: 16px; }
+.mhead .logo-chip { width: 124px; height: 56px; border-radius: 15px; }
+.mhead .t .en { display: block; font-size: 31px; font-weight: 900; line-height: 1.05; }
+.mhead .t .es { display: block; font-size: 20px; font-weight: 700; color: var(--es); }
+.mhead .room { margin-left: auto; text-align: right; font-size: 16px; font-weight: 700; color: var(--muted); line-height: 1.25; }
+.mhead .room b { color: #fff; }
+
+/* the three lines always appear together, at equal size, in this order */
+.trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.trio .line { padding: 10px 14px; border-radius: 16px; background: rgba(255, 255, 255, .07); box-shadow: inset 0 0 0 2px var(--line); }
+.trio .line .en { display: block; font-size: 18px; font-weight: 850; line-height: 1.2; }
+.trio .line .es { display: block; font-size: 15px; font-weight: 650; line-height: 1.2; color: var(--es); margin-top: 3px; }
+.trio .line .n { display: inline-block; width: 24px; height: 24px; margin-right: 6px; border-radius: 50%; background: var(--orange); color: var(--navy); text-align: center; font: 900 15px/24px var(--font); vertical-align: 1px; }
+
+/* the three challenges */
+.sect { font-size: 14px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; color: var(--muted); margin: 2px 2px -4px; }
+.sect .es { text-transform: none; letter-spacing: 0; font-weight: 650; margin-left: 8px; }
+.games { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 12px; }
+.tile { position: relative; display: flex; gap: 14px; align-items: center; padding: 14px 16px; min-height: 128px; border-radius: 22px;
+  background: linear-gradient(160deg, rgba(20, 44, 200, .55), rgba(0, 16, 128, .55)); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .18), 0 14px 30px rgba(0, 0, 0, .35);
+  transition: transform .08s, box-shadow .15s; }
+.tile:active { transform: scale(.98); box-shadow: inset 0 0 0 3px var(--orange), 0 8px 20px rgba(0, 0, 0, .35); }
+.tile.main { background: linear-gradient(160deg, rgba(240, 128, 0, .32), rgba(0, 16, 128, .6)); box-shadow: inset 0 0 0 3px var(--orange), 0 14px 30px rgba(0, 0, 0, .35); }
+.tile .art { flex: none; width: 84px; height: 84px; border-radius: 16px; background: rgba(255, 255, 255, .92); display: flex; align-items: center; justify-content: center; }
+.tile .art svg { display: block; width: 72px; height: 72px; }
+.tile .txt { min-width: 0; padding: 0 30px 6px 0; }
+.tile .name .en { display: block; font-size: 23px; font-weight: 900; line-height: 1.08; }
+.tile .name .es { display: block; font-size: 17px; font-weight: 700; color: var(--es); }
+.tile .what { display: block; margin-top: 6px; font-size: 15px; font-weight: 650; line-height: 1.22; color: #e2e7ff; }
+.tile .what .es { display: block; color: var(--es); font-size: 13.5px; }
+.tile .go { position: absolute; right: 12px; bottom: 10px; width: 34px; height: 34px; border-radius: 50%; background: var(--orange); color: var(--navy); display: flex; align-items: center; justify-content: center; }
+.tile .go svg { width: 18px; height: 18px; }
+
+/* sign-up and the slideshows */
+.lower { display: grid; grid-template-columns: 1.35fr 2fr; gap: 12px; align-items: center; }
+.signup { display: flex; gap: 16px; align-items: center; padding: 12px 16px; border-radius: 22px; background: #fff; color: var(--navy); cursor: pointer; text-align: left; font: inherit; border: 0; box-shadow: 0 0 0 4px var(--orange), 0 14px 30px rgba(0, 0, 0, .35); }
+.signup img { flex: none; width: 128px; height: 128px; display: block; }
+.signup .s1 .en { display: block; font-size: 20px; font-weight: 900; line-height: 1.12; }
+.signup .s1 .es { display: block; font-size: 16.5px; font-weight: 750; color: var(--orange-dark); line-height: 1.15; margin-top: 2px; }
+.signup .s2 { display: block; margin-top: 8px; font-size: 14px; font-weight: 650; line-height: 1.25; color: #23306e; }
+.signup .s2 .es { display: block; color: #6a3a00; }
+.signup .s2 b { color: var(--navy); }
+.signup .tapbig { display: block; margin-top: 6px; font-size: 12.5px; font-weight: 700; color: #5a6aa8; }
+.loopbox { display: flex; flex-direction: column; gap: 8px; }
+.loops { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.loop { display: flex; align-items: center; gap: 10px; padding: 12px 14px; min-height: 92px; border-radius: 18px; background: rgba(255, 255, 255, .07); box-shadow: inset 0 0 0 2px var(--line); }
+.loop:active { box-shadow: inset 0 0 0 3px var(--orange); }
+.loop b { width: 40px; height: 40px; flex: none; border-radius: 12px; background: var(--orange); color: var(--navy); font: 900 22px/40px var(--font); text-align: center; }
+.loop .bi .en { font-size: 18px; font-weight: 850; }
+.loop .bi .es { font-size: 14.5px; }
+
+/* the big QR, for scanning across the table */
+.qrbig { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; background: rgba(0, 3, 28, .88); padding: 16px; }
+.qrbig.show { display: flex; }
+.qrbig .card { background: #fff; color: var(--navy); border-radius: 28px; padding: 20px 28px; text-align: center; max-width: 94vw; box-shadow: 0 0 0 5px var(--orange); }
+.qrbig img { width: min(52vh, 74vw); height: min(52vh, 74vw); display: block; margin: 0 auto 10px; }
+.qrbig .q1 .en { display: block; font-size: 27px; font-weight: 900; }
+.qrbig .q1 .es { display: block; font-size: 21px; font-weight: 750; color: var(--orange-dark); }
+.qrbig .q2 { display: block; margin-top: 8px; font-size: 17px; font-weight: 650; line-height: 1.25; color: #23306e; }
+.qrbig .q2 .es { display: block; color: #6a3a00; }
+.qrbig .close { margin-top: 12px; }
+
+@media (orientation: portrait), (max-width: 980px) {
+  .trio { grid-template-columns: 1fr; gap: 8px; }
+  .trio .line .en { font-size: 19px; }
+  .trio .line .es { font-size: 15.5px; }
+  .games { grid-template-columns: 1fr 1fr; }
+  .games .main { grid-column: 1 / -1; }
+  .lower { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .games { grid-template-columns: 1fr; }
+  .loops { grid-template-columns: 1fr; }
+  .mhead .room { display: none; }
+  .mhead .t .en { font-size: 24px; }
+  .signup { flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body>
+<main class="menu">
+  <header class="mhead">
+    <span class="logo-chip"><img src="assets/img/chs-cs-eagle.png" alt="Canutillo High School Computer Science eagle" draggable="false"></span>
+    <div class="t"><span class="en">Computer Science at CHS</span><span class="es" lang="es">Ciencias de la Computación en CHS</span></div>
+    <div class="room"><b>Mr. Johnston</b> · Room H120<br><span class="es" lang="es">Sr. Johnston · Salón H120</span></div>
+  </header>
+
+  <section class="trio" aria-label="Computer Science at CHS">
+    <div class="line"><span class="en"><span class="n">1</span>Never coded? Good. Start here.</span><span class="es" lang="es">¿Nunca has programado? Perfecto. Empieza aquí.</span></div>
+    <div class="line"><span class="en"><span class="n">2</span>This class is hard. That's the point.</span><span class="es" lang="es">Esta clase es difícil. Esa es la idea.</span></div>
+    <div class="line"><span class="en"><span class="n">3</span>We hold you to a high standard because we know you can reach it.</span><span class="es" lang="es">Te exigimos mucho porque sabemos que puedes lograrlo.</span></div>
+  </section>
+
+  <div class="sect"><span class="en">Can you think like a computer?</span><span class="es" lang="es">¿Puedes pensar como una computadora?</span></div>
+  <nav class="games" aria-label="Challenges">
+    <a class="tile main" href="karel/index.html" draggable="false">
+      <span class="art" aria-hidden="true"><svg width="96" height="96" viewBox="0 0 96 96"><rect x="4" y="4" width="88" height="88" rx="8" fill="#eef2ff" stroke="#2a44d6" stroke-width="4"/><path d="M33 4v88M63 4v88M4 33h88M4 63h88" stroke="#c3ccef" stroke-width="2"/><circle cx="78" cy="18" r="8" fill="#001080"/><g transform="translate(48 48) scale(.27)"><path d="M-30 6 C-40 12 -47 6 -46 -6" fill="none" stroke="#001080" stroke-width="7" stroke-linecap="round"/><g fill="#001080"><ellipse cx="-20" cy="-20" rx="8" ry="6"/><ellipse cx="-20" cy="20" rx="8" ry="6"/><ellipse cx="10" cy="-20" rx="8" ry="6"/><ellipse cx="10" cy="20" rx="8" ry="6"/></g><ellipse cx="-6" cy="0" rx="28" ry="19" fill="#F08000" stroke="#001080" stroke-width="4"/><ellipse cx="19" cy="-15" rx="10" ry="6" fill="#001080" transform="rotate(-28 19 -15)"/><ellipse cx="19" cy="15" rx="10" ry="6" fill="#001080" transform="rotate(28 19 15)"/><circle cx="25" cy="0" r="15" fill="#F08000" stroke="#001080" stroke-width="4"/><ellipse cx="38" cy="0" rx="9" ry="8" fill="#ffe3c2" stroke="#001080" stroke-width="3"/><circle cx="45" cy="0" r="4.5" fill="#001080"/></g></svg></span>
+      <span class="txt">
+        <span class="name"><span class="en">What will Karel do?</span><span class="es" lang="es">¿Qué hará Karel?</span></span>
+        <span class="what"><span class="en">Read real JavaScript. Predict what Karel, a robot dog, does.</span><span class="es" lang="es">Lee JavaScript de verdad. Predice lo que hace Karel, un perro robot.</span></span>
+      </span>
+      <span class="go" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span>
+    </a>
+    <a class="tile" href="binary/index.html" draggable="false">
+      <span class="art" aria-hidden="true"><svg width="96" height="96" viewBox="0 0 96 96"><rect x="6" y="18" width="26" height="36" rx="5" fill="#fff" stroke="#F08000" stroke-width="3"/><g fill="#001080"><circle cx="14" cy="28" r="3"/><circle cx="24" cy="28" r="3"/><circle cx="14" cy="38" r="3"/><circle cx="24" cy="38" r="3"/></g><rect x="35" y="18" width="26" height="36" rx="5" fill="#0a1a8a"/><rect x="64" y="18" width="26" height="36" rx="5" fill="#fff" stroke="#F08000" stroke-width="3"/><circle cx="77" cy="33" r="3" fill="#001080"/><text x="19" y="80" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="22" font-weight="800" fill="#F08000">1</text><text x="48" y="80" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="22" font-weight="800" fill="#7383c8">0</text><text x="77" y="80" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="22" font-weight="800" fill="#F08000">1</text></svg></span>
+      <span class="txt">
+        <span class="name"><span class="en">Binary Challenge</span><span class="es" lang="es">Reto binario</span></span>
+        <span class="what"><span class="en">Make numbers with only 1s and 0s.</span><span class="es" lang="es">Forma números solo con unos y ceros.</span></span>
+      </span>
+      <span class="go" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span>
+    </a>
+    <a class="tile" href="cipher/index.html" draggable="false">
+      <span class="art" aria-hidden="true"><svg width="96" height="96" viewBox="0 0 96 96"><rect x="8" y="14" width="34" height="34" rx="7" fill="#fff3e6" stroke="#F08000" stroke-width="3"/><text x="25" y="40" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="24" font-weight="800" fill="#F08000">D</text><rect x="54" y="48" width="34" height="34" rx="7" fill="#001080"/><text x="71" y="74" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="24" font-weight="800" fill="#fff">A</text><path d="M30 56c2 14 10 20 20 20" fill="none" stroke="#2a44d6" stroke-width="4" stroke-linecap="round"/><path d="M44 70l6 6-8 3" fill="none" stroke="#2a44d6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="txt">
+        <span class="name"><span class="en">Crack the Code</span><span class="es" lang="es">Descifra el código</span></span>
+        <span class="what"><span class="en">Decode a secret message.</span><span class="es" lang="es">Descifra un mensaje secreto.</span></span>
+      </span>
+      <span class="go" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span>
+    </a>
+  </nav>
+
+  <section class="lower">
+    <button class="signup" id="btn-qr" type="button" aria-label="Show the sign-up code bigger">
+      <img src="assets/qr-signup.svg" alt="QR code for the sign-up form" draggable="false">
+      <span>
+        <span class="s1"><span class="en">Interested? Scan so Mr. Johnston knows.</span><span class="es" lang="es">¿Te interesa? Escanea para avisarle al Sr. Johnston.</span></span>
+        <span class="s2"><span class="en">This isn't registration: ask for <b>Fundamentals of Computer Science</b> at course selection.</span><span class="es" lang="es">No es la inscripción: pide <b>Fundamentals of Computer Science</b> al elegir tus materias.</span></span>
+        <span class="tapbig"><span class="en">Tap to make the code bigger.</span> <span lang="es">Toca para agrandar el código.</span></span>
+      </span>
+    </button>
+  </section>
+</main>
+
+<div class="qrbig" id="qrbig" role="dialog" aria-label="Sign-up code">
+  <div class="card">
+    <img src="assets/qr-signup.svg" alt="QR code for the sign-up form" draggable="false">
+    <span class="q1"><span class="en">Interested? Scan so Mr. Johnston knows.</span><span class="es" lang="es">¿Te interesa? Escanea para avisarle al Sr. Johnston.</span></span>
+    <span class="q2"><span class="en">This isn't registration: ask for <b>Fundamentals of Computer Science</b> at course selection.</span><span class="es" lang="es">No es la inscripción: pide <b>Fundamentals of Computer Science</b> al elegir tus materias.</span></span>
+    <button class="btn btn-ghost close" id="btn-qr-close" type="button" style="color:var(--navy);box-shadow:inset 0 0 0 2px var(--navy)"><span class="bi"><span class="en">Close</span><span class="es" lang="es" style="color:var(--orange-dark)">Cerrar</span></span></button>
+  </div>
+</div>
+<script>
+  // The big QR opens and closes in place (no reload, nothing fetched: it is the same image).
+  (function () {
+    var big = document.getElementById('qrbig');
+    document.getElementById('btn-qr').addEventListener('click', function () { big.classList.add('show'); });
+    big.addEventListener('click', function () { big.classList.remove('show'); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') big.classList.remove('show'); });
+  })();
+</script>
+</body>
+</html>

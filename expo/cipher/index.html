@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#000636">
+<title>Crack the Code · CS at CHS</title>
+<link rel="stylesheet" href="../assets/games.css">
+<style>
+.stage { --lw: 60px; --lg: 4px; --wg: 24px; --kw: 80px; --kh: 92px; }
+.stage.portrait { --kw: 78px; --kh: 92px; }
+
+/* ---------- the message: coded letters on top, the answer boxes below ---------- */
+.msg { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px var(--wg); padding: 12px 16px; border-radius: 22px; background: rgba(0, 2, 34, .55); box-shadow: inset 0 0 0 2px var(--line); }
+.word { display: flex; gap: var(--lg); }
+.lc { width: var(--lw); display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.lc .ct { width: 100%; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font: 800 30px/1 var(--mono); color: var(--orange2); background: rgba(240, 128, 0, .12); }
+.lc .ct.now { background: var(--orange); color: var(--navy); }
+.slot { appearance: none; -webkit-appearance: none; border: 0; margin: 0; padding: 0; width: 100%; height: 62px; border-radius: 12px; cursor: pointer; touch-action: manipulation;
+  display: flex; align-items: center; justify-content: center; font: 900 36px/1 var(--mono); color: #fff; background: rgba(255, 255, 255, .08); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .28); }
+.slot.active { box-shadow: inset 0 0 0 4px var(--orange), 0 0 16px rgba(240, 128, 0, .5); }
+.slot.bad { background: rgba(255, 98, 98, .25); box-shadow: inset 0 0 0 3px var(--bad); }
+.slot.good { background: rgba(59, 214, 130, .25); box-shadow: inset 0 0 0 3px var(--good); color: #eafff2; }
+.msg.long { --lw: 60px; --lg: 2px; --wg: 12px; padding: 12px 6px; margin: 0 -14px; }
+.msg-labels { display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: var(--muted); padding: 0 6px; }
+.msg-labels .es { margin-left: 6px; }
+
+/* ---------- the decoder strip: tap a key to write its bottom letter ---------- */
+.strip { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.key { flex: none; appearance: none; -webkit-appearance: none; border: 0; margin: 0; padding: 4px 0 6px; width: var(--kw); height: var(--kh); border-radius: 14px; cursor: pointer; touch-action: manipulation;
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between; background: rgba(255, 255, 255, .09); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .22); color: #fff; font: inherit; }
+.key .kc { font: 800 24px/1 var(--mono); color: var(--orange2); }
+.key .ka { font: 700 13px/1 var(--font); color: var(--dim); }
+.key .kr { font: 900 36px/1 var(--mono); color: #fff; transition: transform .2s; }
+.key:active { background: rgba(240, 128, 0, .3); }
+.key.hint { box-shadow: inset 0 0 0 4px var(--orange), 0 0 18px rgba(240, 128, 0, .55); background: rgba(240, 128, 0, .18); }
+.strip.slide .kr { animation: slide .22s ease-out; }
+@keyframes slide { from { transform: translateX(-14px); opacity: .2; } to { transform: none; opacity: 1; } }
+.strip-labels { display: flex; justify-content: center; gap: 26px; font-size: 15px; font-weight: 700; color: var(--muted); }
+.strip-labels b { color: var(--orange2); }
+.strip-labels .es { margin-left: 6px; }
+
+/* ---------- controls ---------- */
+.ctl { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.shiftbox { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 20px; background: rgba(255, 255, 255, .07); }
+.shiftbox .btn { min-width: 76px; min-height: 64px; font-size: 30px; padding: 0; }
+.shiftbox .val { min-width: 190px; text-align: center; line-height: 1.05; }
+.shiftbox .val .en { display: block; font-size: 19px; font-weight: 800; }
+.shiftbox .val .es { display: block; font-size: 15px; font-weight: 650; color: var(--es); }
+.shiftbox .val b { display: block; font: 900 40px/1 var(--font); color: var(--orange2); margin-top: 2px; }
+.ctl .btn-ghost { min-height: 64px; font-size: 19px; }
+
+/* ---------- play layout ---------- */
+.cp { position: absolute; inset: 2px 22px 12px; display: grid; grid-template-rows: auto auto auto auto 1fr; gap: 10px; align-content: start; }
+.portrait .cp { inset: 10px 24px 16px; gap: 18px; align-content: center; }
+.howto { display: flex; align-items: center; gap: 16px; }
+.howto .q .en { display: block; font-size: 23px; font-weight: 800; line-height: 1.15; }
+.howto .q .es { display: block; font-size: 18px; font-weight: 600; color: var(--es); line-height: 1.15; margin-top: 2px; }
+.cp-msg { display: flex; gap: 14px; align-items: flex-start; }
+.cp-msg .btn-clue { flex: none; width: 214px; min-height: 68px; }
+.cp-msg .msgcol { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.cp-msg .feedback:empty { display: none; }
+.cp-msg .feedback .en { display: inline; margin-right: 10px; }
+.cp-msg .feedback .es { display: inline; font-size: 17px; }
+.cp-msg .cluebox { padding: 8px 14px; }
+.cp-msg .cluebox .clue-t .en { font-size: 19px; }
+.cp-msg .cluebox .clue-t .es { font-size: 16px; }
+
+/* ---------- start screen ---------- */
+.c-start { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 4px 40px 24px; text-align: center; }
+.c-start .start-title .en { font-size: 64px; }
+.c-start .who { font-size: 21px; font-weight: 650; color: #dfe5ff; line-height: 1.25; max-width: 920px; }
+.c-start .who .es { display: block; font-size: 18px; }
+.attract { display: flex; gap: 8px; padding: 14px 22px; border-radius: 22px; background: rgba(0, 0, 30, .45); box-shadow: inset 0 0 0 2px var(--line); }
+.attract span { width: 54px; height: 70px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font: 900 40px/1 var(--mono); background: rgba(255, 255, 255, .08); color: var(--orange2); transition: color .3s, background .3s; }
+.attract span.sp { width: 22px; background: transparent; }
+.attract span.ok { color: #fff; background: rgba(59, 214, 130, .22); }
+.attract-cap { font-size: 18px; font-weight: 700; color: var(--muted); }
+.attract-cap .es { margin-left: 8px; }
+</style>
+</head>
+<body class="kiosk">
+<div id="stage" class="stage landscape">
+  <header class="topbar">
+    <a class="btn btn-ghost btn-menu" href="../index.html" draggable="false"><span class="ico" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></span><span class="bi"><span class="en">Menu</span><span class="es" lang="es">Menú</span></span></a>
+    <div class="brand">
+      <span class="logo-chip"><img src="../assets/img/chs-cs-eagle.png" alt="Canutillo High School Computer Science eagle" draggable="false"></span>
+      <div class="gtitle"><span class="en">Crack the Code · Caesar cipher</span><span class="es" lang="es">Descifra el código · Cifrado César</span></div>
+    </div>
+    <button class="btn btn-ghost btn-new" id="btn-new" type="button" hidden></button>
+  </header>
+  <ol class="pills" id="pills" aria-label="Challenges"></ol>
+
+  <section class="screen start-screen show" id="start" aria-label="Start">
+    <div class="c-start">
+      <div class="start-title"><span class="en">Crack the Code</span><span class="es" lang="es">Descifra el código</span></div>
+      <div class="attract" id="attract" aria-hidden="true"></div>
+      <div class="attract-cap" id="attract-cap"></div>
+      <div class="who"><span class="en">This is a Caesar cipher: every letter moved the same number of steps in the alphabet. Move them back to read the secret message.</span><span class="es" lang="es">Es un cifrado César: cada letra se movió el mismo número de lugares en el abecedario. Regrésalas para leer el mensaje secreto.</span></div>
+      <div class="levels-preview" id="lp"></div>
+      <button class="btn btn-big" id="btn-start" type="button"></button>
+      <div class="beat"><span class="en">Try the hardest challenge at our table.</span> <span class="es" lang="es">Prueba el reto más difícil en nuestra mesa.</span></div>
+    </div>
+  </section>
+
+  <section class="screen" id="play" aria-label="Challenge">
+    <div class="cp">
+      <div class="howto" id="howto"></div>
+      <div>
+        <div class="msg-labels"><span><span class="en">Coded message, then your answer</span><span class="es" lang="es">Mensaje cifrado y tu respuesta</span></span></div>
+        <div class="msg" id="msg"></div>
+      </div>
+      <div>
+        <div class="strip-labels"><span><b>Top:</b> coded letter <span class="es" lang="es"><b>Arriba:</b> letra cifrada</span></span><span><b>Bottom:</b> real letter <span class="es" lang="es"><b>Abajo:</b> letra real</span></span></div>
+        <div class="strip" id="strip" aria-label="Decoder strip"></div>
+      </div>
+      <div class="ctl">
+        <div class="shiftbox">
+          <button class="btn btn-ghost" id="btn-left" type="button" aria-label="Shift down"><span class="ico" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></span></button>
+          <div class="val" id="shiftval"></div>
+          <button class="btn btn-ghost" id="btn-right" type="button" aria-label="Shift up"><span class="ico" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></button>
+        </div>
+        <button class="btn btn-ghost" id="btn-del" type="button"></button>
+        <button class="btn btn-ghost" id="btn-clear" type="button"></button>
+      </div>
+      <div class="cp-msg">
+        <button class="btn btn-clue" id="btn-clue" type="button"></button>
+        <div class="msgcol">
+          <div class="feedback" id="fb" aria-live="polite"></div>
+          <div class="cluebox inline" id="cluebox" hidden aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<script src="../assets/games.js"></script>
+<script src="cipher.js"></script>
+</body>
+</html>

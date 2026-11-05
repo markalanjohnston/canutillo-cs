@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#000636">
+<title>Binary Challenge · CS at CHS</title>
+<link rel="stylesheet" href="../assets/games.css">
+<style>
+/* ---------- the bit cards ---------- */
+.stage { --cw: 166px; --ch: 214px; --gap: 22px; --ds: 24px; --dg: 9px; }
+.stage.portrait { --cw: 146px; --ch: 232px; --gap: 10px; --ds: 23px; --dg: 8px; }
+.row5 { display: grid; grid-template-columns: repeat(5, var(--cw)); gap: var(--gap); justify-content: center; }
+.bcard { appearance: none; -webkit-appearance: none; border: 0; margin: 0; padding: 0; background: transparent; width: var(--cw); height: var(--ch);
+  perspective: 900px; cursor: pointer; touch-action: manipulation; font: inherit; color: inherit; }
+.bcard .flip { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .38s cubic-bezier(.3, 1.25, .5, 1); }
+.bcard.on .flip { transform: rotateY(180deg); }
+.bcard .face { position: absolute; inset: 0; border-radius: 18px; -webkit-backface-visibility: hidden; backface-visibility: hidden;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+.bcard .face.off {
+  background:
+    radial-gradient(circle at 28% 30%, rgba(150, 170, 255, .32) 0 5px, transparent 6px),
+    radial-gradient(circle at 72% 66%, rgba(150, 170, 255, .32) 0 5px, transparent 6px),
+    linear-gradient(90deg, transparent 27%, rgba(150, 170, 255, .2) 27% 29.5%, transparent 29.5%),
+    linear-gradient(0deg, transparent 64.5%, rgba(150, 170, 255, .2) 64.5% 67%, transparent 67%),
+    linear-gradient(160deg, #0a1a8a, #040c4a);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .2), 0 10px 24px rgba(0, 0, 0, .45); }
+.bcard .face.on { transform: rotateY(180deg); background: #fff; box-shadow: 0 0 0 4px var(--orange), 0 0 34px rgba(240, 128, 0, .6); }
+.bcard .dots { display: grid; grid-template-columns: repeat(var(--c), var(--ds)); gap: var(--dg); }
+.bcard .dots i { width: var(--ds); height: var(--ds); border-radius: 50%; background: var(--navy); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .25); }
+.bcard .val { font: 900 40px/1 var(--font); color: var(--orange-dark); }
+.bcard:active .flip { scale: .97; }
+.bcard.good .face.on { box-shadow: 0 0 0 5px var(--good), 0 0 34px rgba(59, 214, 130, .7); }
+.places span { text-align: center; font: 800 22px/1 var(--font); color: var(--muted); }
+.bits b { text-align: center; font: 900 50px/1 var(--mono); color: rgba(255, 255, 255, .28); transition: color .2s; }
+.bits b.one { color: var(--orange2); text-shadow: 0 0 18px rgba(240, 128, 0, .55); }
+.legend { text-align: center; font-size: 16px; font-weight: 650; color: var(--muted); }
+.legend .es { margin-left: 8px; }
+
+/* ---------- play layout ---------- */
+.bp { position: absolute; inset: 4px 26px 12px; display: grid; grid-template-rows: 96px 1fr auto 30px; gap: 10px; }
+.portrait .bp { inset: 10px 26px 16px; grid-template-rows: auto 1fr auto 52px; gap: 16px; }
+.bp-top { display: flex; align-items: center; gap: 18px; }
+.portrait .bp-top { flex-wrap: wrap; justify-content: center; }
+.goal { flex: none; display: flex; align-items: center; gap: 14px; padding: 8px 20px; border-radius: 22px; background: rgba(255, 255, 255, .08); box-shadow: inset 0 0 0 3px rgba(240, 128, 0, .75); transition: background .2s, box-shadow .2s; }
+.goal .lbl .en { display: block; font-size: 21px; font-weight: 800; }
+.goal .lbl .es { display: block; font-size: 16px; font-weight: 650; color: var(--es); }
+.goal .num { font: 900 70px/1 var(--font); min-width: 88px; text-align: center; }
+.goal.hit { box-shadow: inset 0 0 0 3px var(--good); background: rgba(59, 214, 130, .16); }
+.chain { display: flex; align-items: center; gap: 6px; }
+.chain .c { min-width: 58px; padding: 4px 8px; border-radius: 12px; text-align: center; font: 900 30px/1.1 var(--font); background: rgba(255, 255, 255, .08); color: var(--muted); }
+.chain .c.now { background: var(--orange); color: var(--navy); }
+.chain .c.ok { background: rgba(59, 214, 130, .2); color: var(--good); }
+.chain .c.ok::before { content: "\2713\00a0"; font-size: 20px; }
+.howto { flex: 1; min-width: 0; font-size: 22px; font-weight: 750; line-height: 1.18; }
+.howto .es { display: block; font-size: 18px; font-weight: 600; margin-top: 2px; }
+.portrait .howto { flex-basis: 100%; text-align: center; order: 3; }
+.total { flex: none; display: flex; align-items: center; gap: 12px; padding: 8px 18px; border-radius: 22px; background: rgba(255, 255, 255, .08); }
+.total .lbl .en { display: block; font-size: 21px; font-weight: 800; }
+.total .lbl .es { display: block; font-size: 15px; font-weight: 650; color: var(--es); }
+.total .num { font: 900 62px/1 var(--font); min-width: 80px; text-align: center; color: #fff; }
+.total.hidden .num { color: var(--dim); }
+.cards-area { display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+.portrait .cards-area { gap: 12px; }
+.bp-msg { display: flex; align-items: center; gap: 14px; min-height: 76px; }
+.bp-msg .btn-clue { flex: none; width: 214px; min-height: 68px; }
+.bp-msg .msgcol { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.bp-msg .feedback:empty { display: none; }
+.bp-msg .feedback .en { display: inline; margin-right: 10px; }
+.bp-msg .feedback .es { display: inline; font-size: 17px; }
+.bp-msg .cluebox { padding: 8px 14px; }
+.bp-msg .cluebox .clue-t .en { font-size: 19px; }
+.bp-msg .cluebox .clue-t .es { font-size: 16px; }
+.bp-msg .btn-check { flex: none; min-width: 210px; min-height: 76px; font-size: 28px; }
+.portrait .bp-msg { flex-wrap: wrap; }
+.portrait .bp-msg .msgcol { order: 3; flex-basis: 100%; }
+.portrait .bp-msg .btn-check { margin-left: auto; }
+.foot { text-align: center; font-size: 19px; font-weight: 750; color: #dfe5ff; line-height: 1.2; }
+.foot .es { margin-left: 10px; font-weight: 600; }
+.portrait .foot .es { display: block; margin-left: 0; }
+
+/* ---------- start screen ---------- */
+.b-start { height: 100%; display: grid; grid-template-columns: 1fr auto; gap: 34px; align-items: center; padding: 4px 44px 22px; }
+.portrait .b-start { grid-template-columns: 1fr; align-content: center; justify-items: center; gap: 30px; padding: 14px 30px 30px; text-align: center; }
+.b-start .left { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+.portrait .b-start .left { align-items: center; }
+.b-start .start-title .en { font-size: 60px; white-space: nowrap; }
+.b-start .start-title .es { font-size: 32px; }
+.b-start .teach { font-size: 27px; }
+.b-start .who { font-size: 21px; font-weight: 650; color: #dfe5ff; line-height: 1.25; max-width: 560px; }
+.b-start .who .es { display: block; font-size: 18px; }
+.b-start .levels-preview { justify-content: flex-start; max-width: 560px; }
+.portrait .b-start .levels-preview { justify-content: center; }
+.b-start .beat .en, .b-start .beat .es { display: block; }
+.attract { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px 24px; border-radius: 24px; background: rgba(0, 0, 30, .45); box-shadow: inset 0 0 0 2px var(--line); }
+.attract .row5 { --cw: 76px; --ch: 104px; --gap: 8px; --ds: 11px; --dg: 4px; }
+.b-start .teach { font-size: 26px; max-width: 600px; }
+.attract .bcard { pointer-events: none; }
+.attract .bcard .val { font-size: 22px; }
+.attract .bcard .face { gap: 6px; border-radius: 12px; }
+.attract .bits b { font-size: 30px; }
+.attract .readout { font: 800 28px/1.1 var(--font); color: #fff; }
+.attract .readout code { font-family: var(--mono); color: var(--orange2); letter-spacing: 2px; }
+
+/* ---------- the bonus ---------- */
+.panel.bonus { width: 1040px; padding: 22px 30px 26px; }
+.portrait .panel.bonus { width: 770px; }
+.bonus .badge { display: inline-flex; align-items: center; gap: 10px; padding: 6px 16px; border-radius: 14px; background: #fff; color: var(--navy); font-weight: 900; box-shadow: 0 0 0 3px var(--orange); }
+.bonus .badge .bi .en { font-size: 19px; } .bonus .badge .bi .es { font-size: 14px; color: var(--orange-dark); }
+.bonus h2 .en { font-size: 40px !important; } .bonus h2 .es { font-size: 27px !important; }
+.bonus .row6 { display: grid; grid-template-columns: repeat(6, 132px); gap: 12px; justify-content: center; margin: 18px 0 6px; --cw: 132px; --ch: 150px; --ds: 13px; --dg: 5px; }
+.portrait .bonus .row6 { grid-template-columns: repeat(6, 108px); gap: 8px; --cw: 108px; --ch: 132px; --ds: 11px; --dg: 4px; }
+.bonus .row6 .bcard { pointer-events: none; }
+.bonus .row6 .bcard .val { font-size: 26px; }
+.bonus .row6 .bcard .face { gap: 6px; border-radius: 12px; }
+.bonus .row6.five { grid-template-columns: repeat(5, var(--cw)); }
+.bonus .row6 .slot6 { animation: drop .45s cubic-bezier(.2, 1.4, .4, 1); }
+.bonus .row6 .slot6.hide { display: none; }
+@keyframes drop { from { opacity: 0; transform: translateY(-30px) scale(.85); } to { opacity: 1; transform: none; } }
+.bcard.c32 { --ds: 10px; --dg: 4px; }
+.bonus .row6 .bits b { font-size: 34px; }
+.bonus .sum { font: 900 34px/1.1 var(--font); margin: 8px 0 4px; }
+.bonus .sum code { font-family: var(--mono); color: var(--orange2); letter-spacing: 3px; }
+.bonus .why { font-size: 22px; font-weight: 700; line-height: 1.25; margin: 6px auto 16px; max-width: 900px; }
+.bonus .why .es { display: block; font-size: 18px; font-weight: 600; }
+</style>
+</head>
+<body class="kiosk">
+<div id="stage" class="stage landscape">
+  <header class="topbar">
+    <a class="btn btn-ghost btn-menu" href="../index.html" draggable="false"><span class="ico" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></span><span class="bi"><span class="en">Menu</span><span class="es" lang="es">Menú</span></span></a>
+    <div class="brand">
+      <span class="logo-chip"><img src="../assets/img/chs-cs-eagle.png" alt="Canutillo High School Computer Science eagle" draggable="false"></span>
+      <div class="gtitle"><span class="en">Binary Challenge</span><span class="es" lang="es">Reto binario</span></div>
+    </div>
+    <button class="btn btn-ghost btn-new" id="btn-new" type="button" hidden></button>
+  </header>
+  <ol class="pills" id="pills" aria-label="Challenges"></ol>
+
+  <section class="screen start-screen show" id="start" aria-label="Start">
+    <div class="b-start">
+      <div class="left">
+        <div class="start-title"><span class="en">Binary Challenge</span><span class="es" lang="es">Reto binario</span></div>
+        <div class="teach"><span class="en">Computers store everything as 1s and 0s.</span><span class="es" lang="es">Las computadoras guardan todo como unos y ceros.</span></div>
+        <div class="who"><span class="en">Each card is ON (1) or OFF (0). Tap cards to make a number.</span><span class="es" lang="es">Cada tarjeta está encendida (1) o apagada (0). Toca las tarjetas para formar un número.</span></div>
+        <div class="levels-preview" id="lp"></div>
+        <button class="btn btn-big" id="btn-start" type="button"></button>
+        <div class="beat"><span class="en">Try the hardest challenge at our table.</span> <span class="es" lang="es">Prueba el reto más difícil en nuestra mesa.</span></div>
+      </div>
+      <div class="attract" id="attract" aria-hidden="true">
+        <div class="row5" id="a-cards"></div>
+        <div class="row5 bits" id="a-bits"></div>
+        <div class="readout" id="a-read"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="play" aria-label="Challenge">
+    <div class="bp">
+      <div class="bp-top">
+        <div class="goal" id="goal"></div>
+        <div class="howto" id="howto"></div>
+        <div class="total" id="total"></div>
+      </div>
+      <div class="cards-area">
+        <div class="row5 places" id="places" aria-hidden="true"></div>
+        <div class="row5" id="cards"></div>
+        <div class="row5 bits" id="bits" aria-label="Binary"></div>
+        <div class="legend"><span class="en">1 = ON, 0 = OFF</span><span class="es" lang="es">1 = encendida, 0 = apagada</span></div>
+      </div>
+      <div class="bp-msg">
+        <button class="btn btn-clue" id="btn-clue" type="button"></button>
+        <div class="msgcol">
+          <div class="feedback" id="fb" aria-live="polite"></div>
+          <div class="cluebox inline" id="cluebox" hidden aria-live="polite"></div>
+        </div>
+        <button class="btn btn-check" id="btn-check" type="button" hidden></button>
+      </div>
+      <div class="foot"><span class="en">Computers store everything as 1s and 0s.</span><span class="es" lang="es">Las computadoras guardan todo como unos y ceros.</span></div>
+    </div>
+  </section>
+
+  <div class="overlay" id="ov-bonus">
+    <div class="panel bonus" role="dialog">
+      <div class="badge"><span class="ico" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1b8a4c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span><span class="bi"><span class="en">You did the hardest challenge! Show a helper.</span><span class="es" lang="es">¡Superaste el reto más difícil! Muéstraselo a un ayudante.</span></span></div>
+      <h2 style="margin-top:14px"><span class="bi"><span class="en">Bonus: why does 32 need a sixth card?</span><span class="es" lang="es">Extra: ¿por qué el 32 necesita una sexta tarjeta?</span></span></h2>
+      <div class="row6" id="b-cards"></div>
+      <div class="row6 bits" id="b-bits"></div>
+      <div class="sum" id="b-sum"></div>
+      <div class="why" id="b-why"></div>
+      <div class="actions" id="b-actions"></div>
+    </div>
+  </div>
+</div>
+<script src="../assets/games.js"></script>
+<script src="binary.js"></script>
+</body>
+</html>

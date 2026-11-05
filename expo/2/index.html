@@ -1,0 +1,1356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Karel Challenge Loop</title>
+<link rel="icon" href="data:,">
+<!--
+  CTE Night, Thu 11/5/2026 · TV loop 2, "Challenge": the 55" TV's cross-room Karel puzzle.
+  Self-contained and offline: system fonts, inline CSS and JS, images from ../assets/ only. Every image is loaded
+  and decoded once, before the loop starts; after that nothing is fetched, and the page never reloads itself.
+
+  URL options
+    ?preview=N            slide N (counting from 1), frozen, question state
+    ?preview=N&answer=1   slide N, frozen, answer state
+    ?preview=N&clue=1     a Karel slide, frozen, with its clue showing
+    ?start=N              run the loop starting at slide N
+    ?reload=M             optional: reload between loop cycles once M minutes have passed (off unless set)
+
+  Karel puzzles live in the JSON block #tv-karel-data near the end of this file (the same data as
+  print/tv-karel-puzzles.json). Every answer on screen is computed by running the program in the KAREL simulator
+  below. The "answer" fields in the block are a cross-check only, written by the same simulator.
+-->
+<style>
+:root{
+  --navy:#001080;--deep:#000a4f;--abyss:#03050d;--panel:#060918;
+  --orange:#F08000;--orange2:#ffa634;--ink:#0a0c14;--mist:#d2daff;--dim:rgba(210,218,255,.62);
+  --bug:#e2302b;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Lato,"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
+  --mono:ui-monospace,Menlo,Monaco,Consolas,"Roboto Mono","DejaVu Sans Mono","Liberation Mono","Courier New",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body,*{cursor:none!important}
+html{font-size:min(1vw,1.77778vh)}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--abyss);color:#fff}
+body{font-family:var(--sans);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.defs{position:absolute;width:0;height:0;overflow:hidden}
+
+/* background: navy field, drifting grid, a warm glow */
+#bg{position:fixed;left:0;top:0;right:0;bottom:0;overflow:hidden;
+  background:radial-gradient(130% 100% at 15% 0%,#0b25c8 0%,#001080 34%,#000a4f 66%,#03050d 100%)}
+#bg .grid{position:absolute;left:-8rem;top:-8rem;right:-8rem;bottom:-8rem;
+  background-image:linear-gradient(rgba(255,255,255,.055) .1rem,rgba(255,255,255,0) .1rem),
+                   linear-gradient(90deg,rgba(255,255,255,.055) .1rem,rgba(255,255,255,0) .1rem);
+  background-size:5rem 5rem;animation:drift 30s linear infinite}
+@keyframes drift{to{transform:translate(5rem,5rem)}}
+#bg .glow{position:absolute;width:80rem;height:80rem;right:-30rem;bottom:-46rem;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(240,128,0,.24),rgba(240,128,0,0))}
+
+/* the 16:9 stage; 1rem = 1/100 of its width */
+#stage{position:absolute;left:50%;top:50%;width:100rem;height:56.25rem;margin-left:-50rem;margin-top:-28.125rem;opacity:0;transition:opacity .6s}
+#stage.ready{opacity:1}
+.slide{position:absolute;left:0;top:0;width:100rem;height:56.25rem;visibility:hidden}
+.slide.on{visibility:visible}
+.slide:not(.on) *{animation-play-state:paused!important}
+.noanim,.noanim *,.noanim *::before,.noanim *::after,
+.static *,.static *::before,.static *::after{transition:none!important;animation:none!important}
+.enter{opacity:0;transform:translateY(2rem)}
+.in .enter{opacity:1;transform:none;transition:opacity .45s ease,transform .7s cubic-bezier(.16,1,.3,1);transition-delay:var(--d,0s)}
+.fitc{width:100%}
+
+/* slide change: a navy band with orange edges sweeps across */
+#swipe{position:fixed;left:0;top:0;width:100%;height:100%;overflow:hidden;pointer-events:none;z-index:50}
+#swipe i{position:absolute;top:-10%;height:120%;left:-60vw;width:220vw;background:var(--deep);
+  border-right:3.2vw solid var(--orange);border-left:1.2vw solid var(--orange);transform:translateX(-175vw) skewX(-12deg)}
+#swipe.go i{animation:swipe .8s cubic-bezier(.45,0,.55,1) both}
+@keyframes swipe{from{transform:translateX(-175vw) skewX(-12deg)}to{transform:translateX(175vw) skewX(-12deg)}}
+.static #swipe{display:none}
+
+/* footer: brand tab and the ask */
+#foot{position:absolute;left:2.5rem;right:2.5rem;bottom:1.2rem;height:4.4rem;display:flex;align-items:center;
+  justify-content:space-between;z-index:8;transition:opacity .4s}
+#foot.off{opacity:0}
+.brand{display:flex;align-items:center;height:4.4rem;padding:0 1.3rem 0 .9rem;background:#fff;border-radius:1rem;
+  box-shadow:0 .6rem 1.6rem rgba(0,0,0,.35)}
+.brand .eagle{margin-right:.9rem}
+.brand b{display:block;color:var(--navy);font-weight:900;font-size:1.45rem;line-height:1.1;white-space:nowrap}
+.brand span{display:block;color:var(--navy);font-weight:600;font-size:1.2rem;line-height:1.15;opacity:.85;white-space:nowrap}
+.tag-r{text-align:right;white-space:nowrap;transition:opacity .3s;width:60rem;height:4.4rem;display:flex;flex-direction:column;justify-content:center;align-items:flex-end}
+.tag-r .fitc{width:auto;max-width:100%}
+.tag-r em{font-style:normal;color:var(--orange2)}
+.tag-r i{font-style:italic}
+.tag-r b{display:block;font-weight:900;font-size:1em;line-height:1.15}
+.tag-r span{display:block;font-weight:600;font-size:.82em;line-height:1.2;color:var(--mist)}
+#foot.notag .tag-r{opacity:0}
+.eagle{position:relative;display:block;overflow:hidden;flex:none}
+.eagle img{position:absolute;max-width:none}
+.eagle.noimg{display:none}
+
+/* countdown ring */
+.ring{position:absolute;z-index:7}
+.ring svg{position:absolute;left:0;top:0;width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+.ring .trk{fill:rgba(0,6,58,.72);stroke:rgba(255,255,255,.16);stroke-width:10;transition:fill .3s,stroke .3s}
+.ring .prg{fill:none;stroke:var(--orange);stroke-width:10;stroke-linecap:round;stroke-dasharray:326.73;stroke-dashoffset:0}
+.ring .num{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font-weight:900;
+  line-height:1;font-variant-numeric:tabular-nums;transition:color .2s,opacity .2s}
+.ring .ok{position:absolute;left:21%;top:21%;width:58%;height:58%;color:var(--ink);opacity:0;transform:scale(.3)}
+.ring .ok svg{transform:none}
+.ring .shock{position:absolute;left:0;top:0;width:100%;height:100%;border-radius:50%;border:.5rem solid var(--orange);opacity:0}
+.hurry .ring .num{color:var(--orange2)}
+.hurry .ring>svg{animation:beat .5s ease-in-out infinite alternate}
+@keyframes beat{from{transform:rotate(-90deg) scale(1)}to{transform:rotate(-90deg) scale(1.08)}}
+.revealed .ring .trk{fill:var(--orange);stroke:var(--orange)}
+.revealed .ring .prg,.revealed .ring .num{opacity:0}
+.revealed .ring .ok{opacity:1;transform:none;transition:transform .5s cubic-bezier(.2,1.6,.4,1) .05s,opacity .2s .05s}
+.revealed .ring .shock{animation:shock .8s ease-out both}
+@keyframes shock{from{opacity:.9;transform:scale(.9)}to{opacity:0;transform:scale(2.3)}}
+.stamp{position:absolute;right:-.4rem;top:50%;width:15rem;margin-top:-3.5rem;padding:.6rem 0 .7rem;border-radius:1rem;
+  background:#fff;color:var(--ink);text-align:center;box-shadow:0 1rem 2rem rgba(0,0,0,.45);opacity:0;
+  transform:rotate(-8deg) scale(1.8);z-index:2}
+.stamp b{display:block;font-weight:900;font-size:3.1rem;line-height:1}
+.stamp span{display:block;font-weight:800;font-size:1.6rem;line-height:1.15;color:var(--navy)}
+.timeup .stamp{opacity:1;transform:rotate(-8deg) scale(1);transition:transform .35s cubic-bezier(.2,1.5,.4,1),opacity .12s}
+
+/* questions (both puzzle frames) */
+.lead{position:absolute;white-space:nowrap;overflow:hidden;line-height:1.1;letter-spacing:-.01em}
+.lead b{font-weight:900}
+.lead span{font-weight:700;font-size:.58em;color:var(--mist);margin-left:.55em;letter-spacing:0}
+.q2{position:absolute;white-space:nowrap;overflow:hidden;line-height:1.2}
+.q2 b{font-weight:700;color:#e6ebff}
+.q2 span{font-weight:600;color:var(--mist);margin-left:1.1em}
+.q{position:absolute;font-weight:900;white-space:nowrap;overflow:hidden;line-height:1.14;letter-spacing:-.01em}
+.q-es{position:absolute;font-weight:600;white-space:nowrap;overflow:hidden;line-height:1.16;color:var(--mist)}
+
+/* ---------- Karel puzzle ---------- */
+.kwrap{position:absolute}
+.kw{position:absolute;top:0;background-color:#fff;border-radius:.5rem;
+  background-image:radial-gradient(circle,#b8c0df .26rem,rgba(184,192,223,0) .31rem),
+                   linear-gradient(to right,#dce1f2 .13rem,rgba(220,225,242,0) .13rem),
+                   linear-gradient(to bottom,#dce1f2 .13rem,rgba(220,225,242,0) .13rem);
+  box-shadow:0 0 0 .4rem rgba(255,255,255,.16),0 1.6rem 3.4rem rgba(0,0,0,.55)}
+.kw::after{content:"";position:absolute;left:0;top:0;right:0;bottom:0;border-radius:.5rem;
+  box-shadow:inset 0 0 0 .14rem #c8cfe8;pointer-events:none}
+.kw.shake{animation:shake .42s linear}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-.55rem)}40%{transform:translateX(.45rem)}
+  60%{transform:translateX(-.3rem)}80%{transform:translateX(.2rem)}}
+.rl,.cl{position:absolute;font-weight:800;font-size:1.9rem;line-height:1;color:var(--mist)}
+.rl{width:2rem;text-align:right;transform:translateY(-50%)}
+.cl{transform:translateX(-50%)}
+.ax{position:absolute;font-weight:800;font-size:1.05rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  white-space:nowrap;line-height:1}
+.ax.v{transform-origin:0 0;transform:rotate(-90deg)}
+.smark{position:absolute;border:.22rem dashed rgba(0,16,128,.32);border-radius:.7rem}
+.trail{position:absolute;left:0;top:0;width:100%;height:100%;z-index:1;overflow:visible}
+.trail line{stroke:var(--orange);stroke-width:15;stroke-linecap:round;opacity:.62;stroke-dasharray:100 400;
+  stroke-dashoffset:120;transition:stroke-dashoffset .5s cubic-bezier(.45,0,.25,1)}
+.trail line.on{stroke-dashoffset:0}
+.wall{position:absolute;background:var(--ink);border-radius:.35rem;z-index:3}
+.ball{position:absolute;border-radius:50%;z-index:2;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 34% 30%,#5569ee 0,#1a2fb4 30%,#001080 62%,#000a4f 100%);
+  box-shadow:0 .3rem .6rem rgba(0,0,0,.35);color:#fff;font-weight:900;line-height:1;
+  transform:scale(0);transition:transform .3s cubic-bezier(.2,1.5,.4,1)}
+.ball.on{transform:scale(1)}
+.ball.on.tuck{transform:translate(var(--tk),var(--tk)) scale(.52);z-index:5;box-shadow:0 0 0 .3rem #fff,0 .3rem .6rem rgba(0,0,0,.35)}
+.ball b{display:none}
+.ball.multi b{display:block}
+.ball::after{content:"";position:absolute;left:-17%;top:-17%;right:-17%;bottom:-17%;border-radius:50%;
+  box-shadow:0 0 0 .45rem var(--orange);opacity:0;transition:opacity .3s}
+.answered .ball.on::after{opacity:1}
+.karel{position:absolute;left:0;top:0;z-index:4;transition:transform .5s cubic-bezier(.45,0,.25,1)}
+.karel.fast{transition:transform .16s ease-out}
+.karel::before{content:"";position:absolute;left:-8%;top:-8%;width:116%;height:116%;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(240,128,0,.6),rgba(240,128,0,0));opacity:0;transition:opacity .4s}
+.answered .karel::before{opacity:1}
+.karel .dog{position:absolute;left:6%;top:6%;width:88%;height:88%}
+.boom{position:absolute;z-index:5;transform:scale(0);opacity:0;transition:transform .35s cubic-bezier(.2,1.6,.4,1),opacity .15s}
+.boom.on{transform:scale(1);opacity:1}
+.boom svg{display:block;width:100%;height:100%}
+.btag{position:absolute;z-index:6;white-space:nowrap;background:var(--bug);color:#fff;font-weight:900;font-size:1.8rem;
+  line-height:1;padding:.5rem .8rem;border-radius:.6rem;box-shadow:0 .5rem 1rem rgba(0,0,0,.3);
+  transform:translate(-50%,-50%) scale(0);transition:transform .35s cubic-bezier(.2,1.6,.4,1) .08s}
+.btag.on{transform:translate(-50%,-50%) scale(1)}
+.btag span{font-weight:700;opacity:.9}
+
+.code{position:absolute;background:var(--panel);border-radius:1.2rem;padding:1.2rem 1.6rem 1.2rem .5rem;
+  box-shadow:0 0 0 .2rem rgba(255,255,255,.13),0 1.6rem 3.4rem rgba(0,0,0,.55);font-family:var(--mono);color:#fff;
+  display:flex;flex-direction:column;justify-content:center;transition:opacity .3s}
+.ln{display:flex;align-items:baseline;white-space:pre;line-height:1.22;border-radius:.3rem;
+  transition:background .2s,box-shadow .2s,opacity .3s}
+.ln .no{flex:none;width:2.1em;padding-right:.55em;text-align:right;font-size:.74em;color:rgba(255,255,255,.34)}
+.ln .cd{flex:none;display:inline-block}
+.ln .gl{flex:none;margin-left:.6em;font-family:var(--sans);font-style:italic;font-weight:600;font-size:.5em;
+  color:var(--mist);white-space:nowrap}
+.code .kwd{color:var(--orange2)}
+.code .pn{color:#8f9be0}
+.ln.run{background:rgba(240,128,0,.34);box-shadow:inset .45rem 0 0 var(--orange)}
+.ln.crashln{background:rgba(226,48,43,.45);box-shadow:inset .45rem 0 0 var(--bug)}
+.ln.skip{opacity:.33}
+.tvid{position:absolute;right:1.1rem;top:.8rem;font-family:var(--sans);font-weight:800;font-size:1.05rem;
+  letter-spacing:.14em;color:rgba(255,255,255,.4)}
+
+.strip{position:absolute;border-radius:1rem;background:rgba(0,6,58,.7);box-shadow:inset 0 0 0 .14rem rgba(255,255,255,.1);
+  transition:opacity .3s}
+.strip .sx{position:absolute;left:0;top:0;right:0;bottom:0;display:flex;align-items:center;padding:0 1.4rem 0 1rem;
+  transition:opacity .45s,transform .45s}
+.strip .s2{opacity:0;transform:translateY(1rem)}
+.clued .strip .s1{opacity:0;transform:translateY(-1rem)}
+.clued .strip .s2{opacity:1;transform:none}
+.sc{flex:none;margin-right:1.2rem;border-radius:.7rem;padding:.55rem .8rem;text-align:center;font-weight:900;
+  font-size:1.2rem;letter-spacing:.1em;text-transform:uppercase;line-height:1.15;background:#fff;color:var(--navy)}
+.sc span{display:block;font-weight:700;opacity:.8}
+.s2 .sc{background:var(--orange);color:var(--ink)}
+.sc.cchip{max-width:10.5rem;text-transform:none;letter-spacing:0;padding:.5rem .75rem}
+.sc.cchip b{display:block;font-weight:900;text-transform:uppercase;letter-spacing:.1em}
+.sc.cchip span{display:block;font-weight:700;font-size:.86em;line-height:1.12;opacity:.9;margin-top:.1em}
+.stx{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:center}
+.stx b{display:block;font-weight:800;font-size:1em;line-height:1.15}
+.stx b,.stx span{text-wrap:balance}
+.stx span{display:block;font-weight:600;font-size:.86em;line-height:1.18;color:var(--mist);margin-top:.12em}
+
+.kans{position:absolute;background:#fff;color:var(--ink);border-radius:1.4rem;padding:1.4rem 2.2rem;
+  box-shadow:0 1.6rem 3.4rem rgba(0,0,0,.55);display:flex;flex-direction:column;justify-content:center;
+  opacity:0;transform:translateX(3rem) scale(.98)}
+.kp.answered .kans{opacity:1;transform:none;transition:opacity .35s ease,transform .55s cubic-bezier(.2,1.3,.4,1)}
+.kp.answered .code,.kp.answered .strip{opacity:0;transition:opacity .3s}
+.atag{display:inline-block;background:var(--orange);color:var(--ink);font-weight:900;font-size:.72em;letter-spacing:.12em;
+  text-transform:uppercase;padding:.35em .7em;border-radius:.5em}
+.ab{display:flex;align-items:flex-start;margin-top:.7em}
+.ab .ai{flex:none;width:2.3em;height:2.3em;margin-right:.75em;margin-top:.15em}
+.ab .ai svg{display:block;width:100%;height:100%}
+.ab .at{flex:1;min-width:0}
+.ab .big{font-weight:900;font-size:1.9em;line-height:1.04;color:var(--navy)}
+.ab .big.bad{color:var(--bug)}
+.ab .bes{font-weight:700;font-size:1.3em;line-height:1.12;color:#36417c}
+.ab .det{font-weight:800;font-size:1em;line-height:1.2;margin-top:.3em}
+.ab .des{font-weight:600;font-size:.9em;line-height:1.2;color:#454d78}
+
+/* ---------- generic puzzle frame (binary, pattern) ---------- */
+.gc .vis{position:absolute;left:2.5rem;right:2.5rem;top:12.8rem;height:26.4rem}
+.gc .band{position:absolute;left:2.5rem;right:2.5rem;top:40rem;height:9rem}
+.hint{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:1.2rem;background:rgba(0,6,58,.7);
+  box-shadow:inset 0 0 0 .14rem rgba(255,255,255,.1);display:flex;align-items:center;padding:0 2rem 0 1.4rem;
+  transition:opacity .35s,transform .35s}
+.hint .sc{font-size:1.4rem;background:var(--orange);color:var(--ink)}
+.hint .stx{font-size:2.6rem}
+.gc.answered .hint{opacity:0;transform:translateY(1rem)}
+.gans{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:1.2rem;background:linear-gradient(90deg,#F08000,#ff9c24);
+  color:var(--ink);display:flex;align-items:center;padding:0 2rem;opacity:0;transform:translateY(2.5rem)}
+.gc.answered .gans{opacity:1;transform:none;transition:transform .55s cubic-bezier(.2,1.4,.4,1),opacity .25s}
+.gtag{flex:none;font-weight:900;font-size:1.35rem;letter-spacing:.14em;line-height:1.3;text-transform:uppercase;margin-right:1.4rem}
+.gtag span{display:block;font-weight:700;opacity:.75}
+.gval{flex:none;min-width:12rem;height:7rem;padding:0 1.8rem;margin-right:2rem;border-radius:1rem;background:#fff;
+  color:var(--navy);font-weight:900;font-size:5.6rem;line-height:7rem;text-align:center;white-space:nowrap;
+  box-shadow:0 .4rem 0 rgba(0,0,0,.25);transform:scale(.5);opacity:0}
+.gc.answered .gval{transform:none;opacity:1;transition:transform .6s cubic-bezier(.2,1.6,.4,1) .15s,opacity .2s .15s}
+.gwhy{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:center}
+.gwhy b{display:block;font-weight:800;font-size:1em;line-height:1.16}
+.gwhy span{display:block;font-weight:600;font-size:.86em;line-height:1.18;color:rgba(10,12,20,.82);margin-top:.22em}
+.burst{position:absolute;left:24rem;top:50%;width:0;height:0}
+.burst i{position:absolute;left:-.55rem;top:-.55rem;width:1.1rem;height:1.1rem;border-radius:.2rem;background:#fff;opacity:0}
+.burst i:nth-child(3n){background:var(--navy)}
+.burst i:nth-child(4n){border-radius:50%}
+.answered .burst i{animation:pop .95s cubic-bezier(.2,.8,.3,1) var(--bd) both}
+@keyframes pop{0%{opacity:1;transform:translate(0,0) rotate(0) scale(.6)}
+  100%{opacity:0;transform:translate(var(--bx),var(--by)) rotate(var(--br)) scale(1)}}
+
+.bulbs{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;justify-content:center;align-items:flex-start}
+.bulb{width:15rem;margin:0 1.4rem;text-align:center}
+.bulb .bimg{width:11rem;height:15.4rem;margin:0 auto}
+.bulb .bimg svg{display:block;width:100%;height:100%;overflow:visible}
+.bulb .bval{font-weight:900;font-size:5.8rem;line-height:1.05;margin-top:.4rem}
+.bulb.off .bval{color:rgba(255,255,255,.42)}
+.bulb .bbit{display:inline-block;margin-top:.45rem;min-width:4.4rem;padding:.25rem .6rem;border-radius:.6rem;
+  font-family:var(--mono);font-weight:700;font-size:2.6rem;line-height:1.1;opacity:0;transform:translateY(-1rem)}
+.bulb.lit .bbit{background:var(--orange);color:var(--ink)}
+.bulb.off .bbit{background:rgba(255,255,255,.13);color:rgba(255,255,255,.75)}
+.gc.revealed .bbit{opacity:1;transform:none;transition:opacity .3s,transform .4s cubic-bezier(.2,1.4,.4,1);
+  transition-delay:calc(var(--i) * .12s)}
+.bsvg .glass{fill:#121944;stroke:#47529a;stroke-width:3}
+.bsvg .fil{fill:none;stroke:#47529a;stroke-width:3;stroke-linejoin:round}
+.bsvg .base{fill:#5b6496}
+.bsvg .halo{opacity:0}
+.lit .bsvg .glass{fill:url(#gGlass);stroke:#ffd27a}
+.lit .bsvg .fil{stroke:#fff3cf}
+.lit .bsvg .base{fill:#d6dbef}
+.lit .bsvg .halo{opacity:1;animation:hum 2.2s ease-in-out infinite alternate}
+@keyframes hum{from{opacity:.7}to{opacity:1}}
+
+.prow{position:absolute;left:0;right:0;top:9.6rem;display:flex;justify-content:center;align-items:center}
+.ptile{position:relative;flex:none;width:12.5rem;height:12.5rem;border-radius:1.5rem;background:#fff;color:var(--navy);
+  font-weight:900;font-size:7rem;line-height:12.5rem;text-align:center;box-shadow:0 .55rem 0 #8e9bd6,0 1.4rem 2.6rem rgba(0,0,0,.4)}
+.ptile.q{background:transparent;box-shadow:none;animation:qpulse 1.1s ease-in-out infinite alternate}
+@keyframes qpulse{from{transform:scale(1)}to{transform:scale(1.06)}}
+.gc.revealed .ptile.q{animation:none}
+.ptile.q .fr,.ptile.q .bk{position:absolute;left:0;top:0;width:100%;height:100%;border-radius:1.5rem;background:var(--orange);
+  color:#fff;text-shadow:0 .25rem 0 rgba(0,0,0,.22);box-shadow:0 .55rem 0 #a35400,0 1.4rem 2.6rem rgba(0,0,0,.4)}
+.ptile.q .bk{transform:scaleX(0)}
+.gc.revealed .ptile.q .fr{transform:scaleX(0);transition:transform .2s ease-in}
+.gc.revealed .ptile.q .bk{transform:scaleX(1);transition:transform .22s ease-out .2s}
+.pgap{flex:none;position:relative;width:3.2rem;height:12.5rem}
+.pgap .chev{position:absolute;left:50%;top:50%;width:1.6rem;height:1.6rem;margin:-.8rem 0 0 -1.1rem;
+  border-right:.45rem solid rgba(255,255,255,.45);border-top:.45rem solid rgba(255,255,255,.45);transform:rotate(45deg)}
+.pgap .arc{position:absolute;left:50%;bottom:100%;width:15.7rem;height:5.4rem;margin-left:-7.85rem;margin-bottom:.9rem;
+  opacity:0;transform:translateY(1rem)}
+.pgap .arc svg{position:absolute;left:0;bottom:0;width:100%;height:3.2rem;overflow:visible}
+.pgap .arc b{position:absolute;left:0;right:0;top:-1.4rem;text-align:center;font-weight:900;font-size:3.1rem;color:var(--orange2)}
+.gc.revealed .pgap .arc{opacity:1;transform:none;transition:opacity .3s,transform .4s;transition-delay:calc(var(--i) * .14s)}
+
+/* ---------- message slides ---------- */
+.box{position:absolute;display:flex;flex-direction:column;justify-content:center}
+.box p,.kans .det,.kans .des,.gwhy b,.gwhy span{text-wrap:balance}
+.trio .box{left:5rem;right:5rem;top:3.4rem;height:44.6rem}
+.t{position:relative;padding-left:.85em}
+.t::before{content:"";position:absolute;left:0;top:.12em;bottom:.12em;width:.16em;border-radius:.08em;background:var(--orange)}
+.t+.t{margin-top:.72em}
+.t .en{font-weight:900;font-size:1em;line-height:1.08}
+.t .es{font-weight:600;font-size:.62em;line-height:1.18;color:var(--mist);margin-top:.2em}
+.t em,.msg em{font-style:normal;color:var(--orange2)}
+.msg .box{left:4.5rem;top:3.4rem;width:56rem;height:44.6rem}
+.msg .en{font-weight:900;font-size:1em;line-height:1.06}
+.msg .es{font-weight:600;font-size:.56em;line-height:1.2;color:var(--mist);margin-top:.5em}
+.msg .en2{font-weight:800;font-size:.5em;line-height:1.22;margin-top:1.4em}
+.msg .es2{font-weight:600;font-size:.42em;line-height:1.22;color:var(--mist);margin-top:.25em}
+.msg .eyebrow{display:inline-block;align-self:flex-start;font-weight:900;font-size:.3em;letter-spacing:.16em;text-transform:uppercase;
+  background:var(--orange);color:var(--ink);padding:.4em .8em;border-radius:.5em;margin-bottom:1em}
+.dogi{display:inline-block;width:1.6em;height:1.6em;vertical-align:-.45em;margin-right:.35em;background:#fff;border-radius:.3em}
+.dogi svg{display:block;width:100%;height:100%}
+.noart .box{left:6rem;width:88rem;text-align:center}
+.noart .eyebrow{align-self:center}
+.art-card{position:absolute;right:5.5rem;top:3.6rem;width:28rem;height:42rem}
+.art-card .back{position:absolute;left:1.5rem;top:1.5rem;width:100%;height:100%;border-radius:2rem;background:var(--orange)}
+.art-card .pic{position:absolute;left:0;top:0;width:100%;height:100%;border-radius:2rem;overflow:hidden;background:#0b0e1c;
+  box-shadow:0 2rem 4rem rgba(0,0,0,.55)}
+.art-card img{display:block;width:100%;height:100%;object-fit:cover;transition:transform 9s linear}
+.in .art-card img{transform:scale(1.07)}
+.noart .art-card{display:none}
+
+.cta .box{left:4rem;top:3rem;width:54rem;height:50.25rem}
+.cta .h{font-weight:900;font-size:1.7em;line-height:1.02}
+.cta .hes{font-weight:700;font-size:1em;line-height:1.1;color:var(--mist);margin-top:.12em}
+.cta .s{font-weight:900;font-size:1em;line-height:1.1;color:var(--orange2);margin-top:.55em}
+.cta .ses{font-weight:600;font-size:.72em;line-height:1.18;color:var(--mist);margin-top:.18em}
+.cta .rule{height:.12em;width:4em;background:rgba(255,255,255,.35);border-radius:.06em;margin:1.05em 0 .95em}
+.cta .n{font-weight:800;font-size:.64em;line-height:1.22}
+.cta .n em{font-style:normal;color:#fff;border-bottom:.12em solid var(--orange)}
+.cta .nes{font-weight:600;font-size:.56em;line-height:1.24;color:var(--mist);margin-top:.35em}
+.cta .nes i{font-style:italic}
+.cta .s.fb,.cta .ses.fb{display:none}
+.cta.noqr .s.qr2,.cta.noqr .ses.qr2{display:none}
+.cta.noqr .s.fb,.cta.noqr .ses.fb{display:block}
+.ccard{position:absolute;right:2.5rem;top:2.5rem;width:36rem;height:51.25rem;border-radius:2rem;background:#fff;color:var(--navy);
+  box-shadow:0 2rem 4.4rem rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:2rem}
+.ccard .eagle{margin-bottom:.9rem}
+.ccard .cb b{display:block;font-weight:900;font-size:1.9rem;line-height:1.1}
+.ccard .cb span{display:block;font-weight:600;font-size:1.55rem;line-height:1.15;opacity:.85}
+.ccard .qrw{position:relative;width:25rem;height:25rem;margin:1.7rem 0 1.3rem}
+.ccard .qrw img{display:block;width:100%;height:100%}
+.ccard .qrw::after{content:"";position:absolute;left:-1rem;top:-1rem;right:-1rem;bottom:-1rem;border-radius:1.4rem;
+  border:.45rem solid var(--orange);animation:qrpulse 1.4s ease-in-out infinite alternate}
+@keyframes qrpulse{from{opacity:.35;transform:scale(.985)}to{opacity:1;transform:scale(1.015)}}
+.ccard .sc2 b{display:block;font-weight:900;font-size:2.6rem;line-height:1.05}
+.ccard .sc2 span{display:block;font-weight:700;font-size:2rem;line-height:1.12;color:#36417c}
+.noqr .qrw,.noqr .sc2{display:none}
+.cta.noqr .ccard{display:none}
+.cta.noqr .box{left:6rem;width:88rem;height:45rem;text-align:center}
+.cta.noqr .rule{margin-left:auto;margin-right:auto}
+
+#loading{position:fixed;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font-weight:800;
+  font-size:2.2rem;color:var(--mist);letter-spacing:.1em;z-index:60;transition:opacity .4s}
+#fsHint{position:fixed;right:1.5rem;top:1.5rem;z-index:70;background:rgba(0,0,0,.75);color:#fff;font-size:1.3rem;
+  font-weight:700;padding:.7rem 1.1rem;border-radius:.7rem;opacity:0;transition:opacity .3s;pointer-events:none}
+#fsHint.on{opacity:1}
+</style>
+</head>
+<body>
+<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <radialGradient id="gGlass" cx="50%" cy="38%" r="62%">
+      <stop offset="0" stop-color="#fffdf2"/><stop offset=".45" stop-color="#ffe18c"/><stop offset="1" stop-color="#f59a1b"/>
+    </radialGradient>
+    <radialGradient id="gHalo" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#ffc24d" stop-opacity=".8"/><stop offset=".55" stop-color="#ffa020" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#ff9000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
+<div id="bg"><div class="grid"></div><div class="glow"></div></div>
+<div id="stage"></div>
+<div id="swipe"><i></i></div>
+<div id="loading">Loading · Cargando</div>
+<div id="fsHint">Click or press F for full screen</div>
+
+<script type="application/json" id="tv-karel-data">
+{
+  "about": "CTE Night, Thu 11/5/2026. The Karel puzzles from TV loop 2 (site/2/index.html), as plain data for the laminated cards. Every answer here was computed by running the program in the loop's own simulator, the same code that animates the reveal on the TV. Do not edit answers by hand: change a puzzle in the page's #tv-karel-data block, then run node tools/tv2/gen-karel.js (it rewrites this file and the page block) and python3 tools/tv2/karel_check.py, so the cards and the TV always agree.",
+  "conventions": {
+    "world": "streets are rows and avenues are columns, both numbered from 1 at the bottom-left; on screen they read Row and Column (fila, columna)",
+    "facing": "East, North, West or South; turnLeft() turns counter-clockwise: East > North > West > South > East",
+    "walls": "each wall sits on one side (North, East, South or West) of the corner it names and blocks moves both ways",
+    "crash": "move() into a wall or the edge, or takeBall() on an empty corner, is a crash; the program stops on that line and balls already placed stay; putBall() never crashes",
+    "line_numbers": "line 1 is \"function start() {\"",
+    "balls": "balls (at the start) and answer.balls (at the end) list every corner that holds balls, with its count"
+  },
+  "question": {
+    "en": "How many balls, where, and does Karel crash?",
+    "es": "¿Cuántas pelotas quedan y dónde? ¿Karel choca?"
+  },
+  "puzzles": [
+    {
+      "id": "TV1",
+      "world": {
+        "streets": 5,
+        "avenues": 4
+      },
+      "start": {
+        "street": 1,
+        "avenue": 1,
+        "facing": "East"
+      },
+      "balls": [],
+      "walls": [],
+      "program": "function start() {\n    putBall();\n    move();\n    move();\n    putBall();\n}",
+      "clue": {
+        "en": "putBall() puts a ball right where Karel is.",
+        "es": "putBall() pone una pelota donde está Karel."
+      },
+      "answer": {
+        "karel_end": {
+          "street": 1,
+          "avenue": 3,
+          "facing": "East"
+        },
+        "balls": [
+          {
+            "street": 1,
+            "avenue": 1,
+            "count": 1
+          },
+          {
+            "street": 1,
+            "avenue": 3,
+            "count": 1
+          }
+        ],
+        "total_balls": 2,
+        "crashed": false,
+        "crash": null
+      },
+      "answer_text": {
+        "en": "2 balls: Row 1, Column 1 · Row 1, Column 3. No crash. Karel ends at Row 1, Column 3, facing East.",
+        "es": "2 pelotas: fila 1, columna 1 · fila 1, columna 3. No choca. Karel termina en la fila 1, columna 3, mirando al este."
+      }
+    },
+    {
+      "id": "TV2",
+      "world": {
+        "streets": 5,
+        "avenues": 4
+      },
+      "start": {
+        "street": 1,
+        "avenue": 1,
+        "facing": "East"
+      },
+      "balls": [],
+      "walls": [],
+      "program": "function start() {\n    move();\n    move();\n    turnLeft();\n    move();\n    putBall();\n}",
+      "clue": {
+        "en": "turnLeft() only turns. It doesn’t move Karel.",
+        "es": "turnLeft() solo gira. No mueve a Karel."
+      },
+      "answer": {
+        "karel_end": {
+          "street": 2,
+          "avenue": 3,
+          "facing": "North"
+        },
+        "balls": [
+          {
+            "street": 2,
+            "avenue": 3,
+            "count": 1
+          }
+        ],
+        "total_balls": 1,
+        "crashed": false,
+        "crash": null
+      },
+      "answer_text": {
+        "en": "1 ball: Row 2, Column 3. No crash. Karel ends at Row 2, Column 3, facing North.",
+        "es": "1 pelota: fila 2, columna 3. No choca. Karel termina en la fila 2, columna 3, mirando al norte."
+      }
+    },
+    {
+      "id": "TV3",
+      "world": {
+        "streets": 5,
+        "avenues": 4
+      },
+      "start": {
+        "street": 1,
+        "avenue": 1,
+        "facing": "East"
+      },
+      "balls": [],
+      "walls": [
+        {
+          "street": 1,
+          "avenue": 3,
+          "side": "East"
+        },
+        {
+          "street": 2,
+          "avenue": 3,
+          "side": "East"
+        }
+      ],
+      "program": "function start() {\n    move();\n    putBall();\n    move();\n    move();\n    putBall();\n}",
+      "clue": {
+        "en": "See the thick black line? That’s a wall.",
+        "es": "¿Ves la línea negra gruesa? Es una pared."
+      },
+      "answer": {
+        "karel_end": {
+          "street": 1,
+          "avenue": 3,
+          "facing": "East"
+        },
+        "balls": [
+          {
+            "street": 1,
+            "avenue": 2,
+            "count": 1
+          }
+        ],
+        "total_balls": 1,
+        "crashed": true,
+        "crash": {
+          "line": 5,
+          "command": "move()",
+          "reason": "wall"
+        }
+      },
+      "answer_text": {
+        "en": "1 ball: Row 1, Column 2. Crash on line 5: move() hits a wall. The program stops. Karel stops at Row 1, Column 3, facing East.",
+        "es": "1 pelota: fila 1, columna 2. Choca en la línea 5: move() choca con una pared. El programa se detiene. Karel se queda en la fila 1, columna 3, mirando al este."
+      }
+    },
+    {
+      "id": "TV4",
+      "world": {
+        "streets": 5,
+        "avenues": 4
+      },
+      "start": {
+        "street": 1,
+        "avenue": 1,
+        "facing": "East"
+      },
+      "balls": [
+        {
+          "street": 1,
+          "avenue": 3,
+          "count": 2
+        }
+      ],
+      "walls": [],
+      "program": "function start() {\n    move();\n    move();\n    takeBall();\n    move();\n    putBall();\n}",
+      "clue": {
+        "en": "Row 1, Column 3 starts with 2 balls. takeBall() picks up 1.",
+        "es": "La fila 1, columna 3 tiene 2 pelotas al inicio. takeBall() recoge una."
+      },
+      "answer": {
+        "karel_end": {
+          "street": 1,
+          "avenue": 4,
+          "facing": "East"
+        },
+        "balls": [
+          {
+            "street": 1,
+            "avenue": 3,
+            "count": 1
+          },
+          {
+            "street": 1,
+            "avenue": 4,
+            "count": 1
+          }
+        ],
+        "total_balls": 2,
+        "crashed": false,
+        "crash": null
+      },
+      "answer_text": {
+        "en": "2 balls: Row 1, Column 3 · Row 1, Column 4. No crash. Karel ends at Row 1, Column 4, facing East.",
+        "es": "2 pelotas: fila 1, columna 3 · fila 1, columna 4. No choca. Karel termina en la fila 1, columna 4, mirando al este."
+      }
+    },
+    {
+      "id": "TV5",
+      "world": {
+        "streets": 5,
+        "avenues": 4
+      },
+      "start": {
+        "street": 1,
+        "avenue": 1,
+        "facing": "East"
+      },
+      "balls": [],
+      "walls": [],
+      "program": "function start() {\n    putBall();\n    turnLeft();\n    move();\n    turnLeft();\n    move();\n}",
+      "clue": {
+        "en": "Two left turns. Which way is Karel facing now?",
+        "es": "Dos giros a la izquierda. ¿Hacia dónde mira Karel ahora?"
+      },
+      "answer": {
+        "karel_end": {
+          "street": 2,
+          "avenue": 1,
+          "facing": "West"
+        },
+        "balls": [
+          {
+            "street": 1,
+            "avenue": 1,
+            "count": 1
+          }
+        ],
+        "total_balls": 1,
+        "crashed": true,
+        "crash": {
+          "line": 6,
+          "command": "move()",
+          "reason": "edge"
+        }
+      },
+      "answer_text": {
+        "en": "1 ball: Row 1, Column 1. Crash on line 6: move() hits the edge. The program stops. Karel stops at Row 2, Column 1, facing West.",
+        "es": "1 pelota: fila 1, columna 1. Choca en la línea 6: move() choca con el borde. El programa se detiene. Karel se queda en la fila 2, columna 1, mirando al oeste."
+      }
+    }
+  ]
+}
+</script>
+
+<script>
+/* <karel-sim> : the class's Karel rules (content-brief.md, "Karel, exactly as the class writes it").
+   Streets are rows, avenues are columns, both from 1 at the bottom-left. turnLeft() turns counter-clockwise.
+   move() into a wall or the edge crashes; takeBall() on an empty corner crashes; putBall() never crashes.
+   A crash stops the program on that line. Line 1 is "function start() {". */
+var KAREL = (function () {
+  var DIRS = ['East', 'North', 'West', 'South'];
+  var STEP = { East: [0, 1], North: [1, 0], West: [0, -1], South: [-1, 0] };   /* [street, avenue] */
+  var OPP = { East: 'West', West: 'East', North: 'South', South: 'North' };
+  var ES = { East: 'este', North: 'norte', West: 'oeste', South: 'sur' };
+  function parse(program) {
+    var lines = program.split('\n');
+    if (lines[0] !== 'function start() {' || lines[lines.length - 1] !== '}') throw new Error('a program is function start() { ... }');
+    var cmds = [];
+    for (let i = 1; i < lines.length - 1; i++) {
+      var m = /^ {4}(move|turnLeft|putBall|takeBall)\(\);$/.exec(lines[i]);
+      if (!m) throw new Error('line ' + (i + 1) + ' is not a Karel command this loop knows: ' + lines[i]);
+      cmds.push({ name: m[1], line: i + 1 });
+    }
+    return { lines: lines, cmds: cmds };
+  }
+  function run(p) {
+    var cmds = parse(p.program).cmds, W = p.world, walls = {};
+    (p.walls || []).forEach(function (w) {
+      walls[w.street + ',' + w.avenue + ',' + w.side] = 1;
+      var d = STEP[w.side];
+      walls[(w.street + d[0]) + ',' + (w.avenue + d[1]) + ',' + OPP[w.side]] = 1;
+    });
+    var s = p.start.street, a = p.start.avenue, f = p.start.facing, balls = {}, steps = [], crash = null;
+    (p.balls || []).forEach(function (b) { var k = b.street + ',' + b.avenue; balls[k] = (balls[k] || 0) + b.count; });
+    for (let i = 0; i < cmds.length; i++) {
+      var c = cmds[i], k = s + ',' + a;
+      if (c.name === 'move') {
+        var d = STEP[f], ns = s + d[0], na = a + d[1];
+        var edge = ns < 1 || na < 1 || ns > W.streets || na > W.avenues;
+        if (edge || walls[s + ',' + a + ',' + f]) {
+          crash = { line: c.line, command: 'move()', reason: edge ? 'edge' : 'wall', street: s, avenue: a, facing: f };
+        } else { s = ns; a = na; }
+      } else if (c.name === 'turnLeft') {
+        f = DIRS[(DIRS.indexOf(f) + 1) % 4];
+      } else if (c.name === 'putBall') {
+        balls[k] = (balls[k] || 0) + 1;
+      } else if (c.name === 'takeBall') {
+        if (!balls[k]) crash = { line: c.line, command: 'takeBall()', reason: 'no ball', street: s, avenue: a, facing: f };
+        else if (--balls[k] === 0) delete balls[k];
+      }
+      var snap = {};
+      for (let key in balls) snap[key] = balls[key];
+      steps.push({ cmd: c, street: s, avenue: a, facing: f, balls: snap, crash: crash });
+      if (crash) break;
+    }
+    var list = Object.keys(balls).map(function (key) {
+      var n = key.split(',');
+      return { street: +n[0], avenue: +n[1], count: balls[key] };
+    }).sort(function (x, y) { return x.street - y.street || x.avenue - y.avenue; });
+    var total = list.reduce(function (n, b) { return n + b.count; }, 0);
+    return { steps: steps, crash: crash, end: { street: s, avenue: a, facing: f }, balls: list, total: total };
+  }
+  function answer(r) {
+    return {
+      karel_end: { street: r.end.street, avenue: r.end.avenue, facing: r.end.facing },
+      balls: r.balls.map(function (b) { return { street: b.street, avenue: b.avenue, count: b.count }; }),
+      total_balls: r.total,
+      crashed: !!r.crash,
+      crash: r.crash ? { line: r.crash.line, command: r.crash.command, reason: r.crash.reason } : null
+    };
+  }
+  function cap(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
+  function words(r) {
+    var n = r.total, c = r.crash, e = r.end;
+    var w = {
+      balls: { en: (n ? n : 'No') + ' ' + (n === 1 ? 'ball' : 'balls'), es: n ? n + ' ' + (n === 1 ? 'pelota' : 'pelotas') : 'Ninguna pelota' },
+      where: {
+        en: r.balls.map(function (b) { return 'Row ' + b.street + ', Column ' + b.avenue + (b.count > 1 ? ' (' + b.count + ')' : ''); }).join(' · '),
+        es: cap(r.balls.map(function (b) { return 'fila ' + b.street + ', columna ' + b.avenue + (b.count > 1 ? ' (' + b.count + ')' : ''); }).join(' · '))
+      },
+      crash: c ? { en: 'Crash on line ' + c.line, es: 'Choca en la línea ' + c.line } : { en: 'No crash', es: 'No choca' },
+      why: null,
+      end: c
+        ? { en: 'Karel stops at Row ' + e.street + ', Column ' + e.avenue + ', facing ' + e.facing,
+            es: 'Karel se queda en la fila ' + e.street + ', columna ' + e.avenue + ', mirando al ' + ES[e.facing] }
+        : { en: 'Karel ends at Row ' + e.street + ', Column ' + e.avenue + ', facing ' + e.facing,
+            es: 'Karel termina en la fila ' + e.street + ', columna ' + e.avenue + ', mirando al ' + ES[e.facing] }
+    };
+    if (c) w.why = {
+      'wall': { en: c.command + ' hits a wall. The program stops.', es: c.command + ' choca con una pared. El programa se detiene.' },
+      'edge': { en: c.command + ' hits the edge. The program stops.', es: c.command + ' choca con el borde. El programa se detiene.' },
+      'no ball': { en: c.command + ' finds no ball there. The program stops.', es: c.command + ' no encuentra pelota. El programa se detiene.' }
+    }[c.reason];
+    return w;
+  }
+  function text(r) {
+    var w = words(r);
+    var en = w.balls.en + (w.where.en ? ': ' + w.where.en : '') + '. ' + w.crash.en + (w.why ? ': ' + w.why.en : '.') + ' ' + w.end.en + '.';
+    var es = w.balls.es + (w.where.es ? ': ' + w.where.es.charAt(0).toLowerCase() + w.where.es.slice(1) : '') + '. ' + w.crash.es + (w.why ? ': ' + w.why.es : '.') + ' ' + w.end.es + '.';
+    return { en: en, es: es };
+  }
+  return { parse: parse, run: run, answer: answer, words: words, text: text, DIRS: DIRS, STEP: STEP, ES: ES };
+})();
+/* </karel-sim> */
+</script>
+
+<script>
+(function () {
+'use strict';
+var ERR = window.__errors = [];
+var ANSWERS = window.__answers = [];
+function report(e) { var m = (e && (e.stack || e.message)) || String(e); ERR.push(String(m).slice(0, 600)); try { console.error(e); } catch (_) {} }
+window.addEventListener('error', function (ev) { ERR.push('error: ' + ev.message); });
+window.addEventListener('unhandledrejection', function (ev) { var r = ev.reason; ERR.push('rejection: ' + ((r && r.message) || r)); });
+
+var Q = new URLSearchParams(location.search);
+function qnum(k) { var v = parseInt(Q.get(k), 10); return isFinite(v) ? v : null; }
+var PREVIEW = qnum('preview'), ANSWER = Q.get('answer') === '1', CLUE = Q.get('clue') === '1';
+var START = qnum('start'), RELOAD_MIN = qnum('reload');
+
+var IMG = '../assets/img/', QR_SRC = '../assets/qr-signup.svg';
+var KTHINK = 15, KSTEP = 700, KHOLD = 6500;      /* Karel: seconds to think, ms per line, ms to hold the answer */
+
+/* The loop, in order. Slide numbers for ?preview and ?start count from 1 down this list. */
+var SEQ = [
+  { kind: 'karel', id: 'TV1' },
+  { kind: 'trio', secs: 9 },
+  { kind: 'karel', id: 'TV2' },
+  { kind: 'binary', think: 10, show: 6.5, values: [16, 8, 4, 2, 1], on: [0, 1, 0, 1, 1] },
+  { kind: 'karel', id: 'TV3' },
+  { kind: 'computers', art: 'art-07.webp', pos: '30% 50%', secs: 7 },
+  { kind: 'cta', secs: 13 },
+  { kind: 'opener', art: 'art-03.webp', pos: '50% 22%', secs: 6 },
+  { kind: 'karel', id: 'TV4' },
+  { kind: 'pattern', think: 9, show: 6, seq: [1, 2, 4, 8, 16] },
+  { kind: 'trio', secs: 9 },
+  { kind: 'karel', id: 'TV5' },
+  { kind: 'harder', art: 'art-04.webp', pos: '50% 35%', secs: 7 },
+  { kind: 'cta', secs: 13 }
+];
+
+var GLOSS = { move: 'avanzar', turnLeft: 'girar a la izquierda', putBall: 'poner pelota', takeBall: 'recoger pelota' };
+var ANG = { East: 0, North: -90, West: -180, South: -270 };
+
+/* ---------- small helpers ---------- */
+function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function put(parent, child) { parent.appendChild(child); return child; }
+function at(e, x, y, w, h) { e.style.left = x + 'rem'; e.style.top = y + 'rem'; if (w != null) e.style.width = w + 'rem'; if (h != null) e.style.height = h + 'rem'; return e; }
+function fitAttr(e, base, box) { e.setAttribute('data-fit', base); if (box) e.setAttribute('data-box', ''); return e; }
+
+var CHECK = '<svg viewBox="0 0 100 100"><path d="M23 53 L43 72 L79 31" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function star(n, R, r) {
+  var d = '';
+  for (let i = 0; i < n * 2; i++) {
+    var t = Math.PI * i / n - Math.PI / 2, rr = i % 2 ? r : R;
+    d += (i ? 'L' : 'M') + (50 + rr * Math.cos(t)).toFixed(1) + ' ' + (50 + rr * Math.sin(t)).toFixed(1);
+  }
+  return d + 'Z';
+}
+var BOOM = '<svg viewBox="0 0 100 100"><path d="' + star(11, 49, 29) + '" fill="#e2302b" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>' +
+  '<path d="' + star(11, 29, 17) + '" fill="#ffd23a"/></svg>';
+var DOG = '<svg class="dog" viewBox="0 0 100 100" aria-hidden="true">' +
+  '<g stroke="#0a0c14" stroke-width="3.6" stroke-linejoin="round" stroke-linecap="round">' +
+  '<path d="M40 23 L36 9" fill="none"/><circle cx="35.5" cy="7.5" r="4.6" fill="#F08000"/>' +
+  '<rect x="50" y="41" width="41" height="25" rx="10" fill="#ffb54d"/>' +
+  '<rect x="11" y="20" width="57" height="53" rx="18" fill="#F08000"/>' +
+  '<path d="M19 27 C5 31 5 61 15 71 C24 65 29 48 29 32 Z" fill="#001080"/></g>' +
+  '<circle cx="88" cy="48" r="5.6" fill="#0a0c14"/>' +
+  '<rect x="42" y="31" width="15" height="11" rx="4" fill="#0a0c14"/><circle cx="53.2" cy="34.6" r="2.4" fill="#fff"/>' +
+  '<path d="M61 59 Q69 63.5 77 59" fill="none" stroke="#0a0c14" stroke-width="3.2" stroke-linecap="round"/></svg>';
+var BALLI = '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#001080"/><circle cx="36" cy="34" r="11" fill="#5569ee"/></svg>';
+var OKI = '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#F08000"/><path d="M27 52 L44 68 L74 35" fill="none" stroke="#0a0c14" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var BULB = '<svg class="bsvg" viewBox="0 0 100 140" aria-hidden="true"><circle class="halo" cx="50" cy="50" r="74" fill="url(#gHalo)"/>' +
+  '<path class="glass" d="M50 8C26 8 10 26 10 49c0 17 10 27 18 37 4 5 6 10 6 16v4h32v-4c0-6 2-11 6-16 8-10 18-20 18-37C90 26 74 8 50 8z"/>' +
+  '<path class="fil" d="M40 106V76l5-9 5 9 5-9 5 9v30"/><rect class="base" x="33" y="108" width="34" height="8" rx="3"/>' +
+  '<rect class="base" x="34" y="118" width="32" height="8" rx="3"/><path class="base" d="M41 128h18l-4 8h-10z"/></svg>';
+
+/* ---------- images: loaded once, decoded before the loop, never fetched again ---------- */
+var IMGS = [];
+function mkImg(src, onFail) {
+  var im = new Image(), rec = { im: im, src: src, onFail: onFail, errored: false, failed: false };
+  im.alt = ''; im.draggable = false;
+  im.addEventListener('error', function () { rec.errored = true; fail(rec); });
+  im.src = src; IMGS.push(rec);
+  return im;
+}
+function fail(rec) { if (rec.failed) return; rec.failed = true; try { if (rec.onFail) rec.onFail(); } catch (e) { report(e); } }
+function settleImages(ms) {
+  function one(rec) {
+    return new Promise(function (res) {
+      var im = rec.im;
+      function ok() { if (im.decode && im.naturalWidth > 0) im.decode().then(res, res); else res(); }
+      if (im.complete) ok();
+      else { im.addEventListener('load', ok, { once: true }); im.addEventListener('error', function () { res(); }, { once: true }); }
+    });
+  }
+  return Promise.race([Promise.all(IMGS.map(one)), wait(ms)]).then(function () {
+    IMGS.forEach(function (rec) {
+      var im = rec.im, svg = /\.svg($|\?)/i.test(rec.src);
+      if (!im.complete) { im.removeAttribute('src'); fail(rec); }          /* too slow: stop it, show the no-image look */
+      else if (rec.errored || (!svg && !im.naturalWidth)) fail(rec);
+    });
+  });
+}
+function eagle(h) {             /* the logo, cropped to its own outline (alpha box 9,312 to 1013,741 of 1024); never stretched */
+  var s = h / 429, box = el('span', 'eagle');
+  box.style.width = (1004 * s).toFixed(3) + 'rem'; box.style.height = h + 'rem';
+  var im = mkImg(IMG + 'chs-cs-eagle.png', function () { box.classList.add('noimg'); });
+  im.style.width = im.style.height = (1024 * s).toFixed(3) + 'rem';
+  im.style.left = (-9 * s).toFixed(3) + 'rem'; im.style.top = (-312 * s).toFixed(3) + 'rem';
+  box.appendChild(im);
+  return box;
+}
+function artCard(sec, file, pos) {
+  var card = el('div', 'art-card enter', '<div class="back"></div><div class="pic"></div>');
+  card.style.setProperty('--d', '.2s');
+  var im = mkImg(IMG + file, function () { sec.classList.add('noart'); });
+  if (pos) im.style.objectPosition = pos;
+  card.querySelector('.pic').appendChild(im);
+  return card;
+}
+
+/* ---------- text fitting: shrink, never grow, until nothing overflows ---------- */
+function fitOne(e) {
+  var base = parseFloat(e.getAttribute('data-fit'));
+  if (!(base > 0)) return;
+  var box = e.hasAttribute('data-box'), c = box ? e.firstElementChild : e, fs = base;
+  e.style.fontSize = fs + 'rem';
+  function over() {
+    if (!box) return e.scrollWidth > e.clientWidth + 1;
+    return c.offsetHeight > e.clientHeight - parseFloat(getComputedStyle(e).paddingTop) - parseFloat(getComputedStyle(e).paddingBottom) + 1 ||
+      c.scrollWidth > c.clientWidth + 1;
+  }
+  for (let k = 0; k < 50 && over(); k++) { fs *= 0.965; e.style.fontSize = fs.toFixed(3) + 'rem'; }
+}
+function fitAll() { Array.prototype.forEach.call(document.querySelectorAll('[data-fit]'), function (e) { try { fitOne(e); } catch (x) { report(x); } }); }
+function scaleRoot() { document.documentElement.style.fontSize = Math.min(innerWidth / 100, innerHeight / 56.25) + 'px'; }
+
+/* ---------- countdown ring ---------- */
+var RC = 2 * Math.PI * 52;
+function ring(parent, x, y, size) {
+  var r = at(el('div', 'ring enter'), x, y, size, size);
+  r.style.setProperty('--d', '.1s');
+  r.innerHTML = '<svg viewBox="0 0 120 120"><circle class="trk" cx="60" cy="60" r="52"/><circle class="prg" cx="60" cy="60" r="52"/></svg>' +
+    '<div class="num" style="font-size:' + (size * .44).toFixed(2) + 'rem"></div><div class="ok">' + CHECK + '</div><div class="shock"></div>' +
+    '<div class="stamp"><b>TIME!</b><span>¡TIEMPO!</span></div>';
+  parent.appendChild(r);
+  var prg = r.querySelector('.prg'), num = r.querySelector('.num');
+  return function (frac, secs) { prg.style.strokeDashoffset = (RC * (1 - frac)).toFixed(2); num.textContent = secs; };
+}
+function countdown(S, secs, onHalf) {
+  return new Promise(function (res) {
+    var dur = secs * 1000, t0 = performance.now(), half = false, hurry = false, done = false;
+    function frame() {
+      if (done) return;
+      var left = Math.max(0, dur - (performance.now() - t0));
+      S.setRing(left / dur, Math.ceil(left / 1000));
+      if (!half && left <= dur / 2) { half = true; if (onHalf) onHalf(); }
+      if (!hurry && left <= 3000) { hurry = true; S.el.classList.add('hurry'); }
+      if (left > 0) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    setTimeout(function () {
+      done = true; S.setRing(0, 0); S.el.classList.remove('hurry');
+      if (!half && onHalf) onHalf();
+      res();
+    }, dur);
+  });
+}
+function bursts(parent) {
+  var b = el('div', 'burst');
+  for (let i = 0; i < 16; i++) {
+    var t = (i / 16) * Math.PI * 2 + (i % 3) * .2, d = 7 + (i * 37 % 6);
+    var p = el('i');
+    p.style.setProperty('--bx', (Math.cos(t) * d).toFixed(2) + 'rem');
+    p.style.setProperty('--by', (Math.sin(t) * d * .7).toFixed(2) + 'rem');
+    p.style.setProperty('--br', ((i * 47) % 360) + 'deg');
+    p.style.setProperty('--bd', ((i % 4) * .04).toFixed(2) + 's');
+    b.appendChild(p);
+  }
+  parent.appendChild(b);
+}
+function resetClasses(sec, extra) {
+  sec.classList.add('noanim');
+  sec.classList.remove('in', 'revealed', 'answered', 'timeup', 'hurry', 'clued');
+  if (extra) extra();
+  void sec.offsetWidth;
+  sec.classList.remove('noanim');
+}
+
+/* ---------- Karel puzzle slide ---------- */
+var KDATA = null;
+function karelSlide(spec, idx, sec) {
+  var p = null;
+  KDATA.puzzles.forEach(function (x) { if (x.id === spec.id) p = x; });
+  if (!p) throw new Error('no Karel puzzle ' + spec.id);
+  var parsed = KAREL.parse(p.program), r = KAREL.run(p), w = KAREL.words(r), A = KAREL.answer(r);
+  if (!p.answer) report(new Error(p.id + ': no stored answer to cross-check'));
+  else if (JSON.stringify(p.answer) !== JSON.stringify(A)) report(new Error(p.id + ': stored answer differs from the simulation; the screen shows the simulation'));
+  ANSWERS.push({ slide: idx + 1, id: p.id, answer: A, text: KAREL.text(r) });
+
+  sec.className = 'slide kp';
+  var q = put(sec, at(el('h2', 'lead enter', '<b>Where does Karel stop?</b><span>¿Dónde se detiene Karel?</span>'), 2.5, .45, 85));
+  fitAttr(q, 4.7);
+  var qe = put(sec, at(el('p', 'q2 enter', '<b>How many balls, where, and does Karel crash?</b><span>¿Cuántas pelotas quedan y dónde? ¿Karel choca?</span>'), 2.5, 5.75, 85));
+  qe.style.setProperty('--d', '.08s'); fitAttr(qe, 2.05);
+  var setRing = ring(sec, 89.1, .45, 8.2);
+
+  /* the world */
+  var NS = p.world.streets, NA = p.world.avenues;
+  var c = Math.min(36 / NS, 37.5 / NA), WW = NA * c, WH = NS * c, LBL = 2.6;
+  var wrap = put(sec, at(el('div', 'kwrap enter'), 2.2, 8.8, LBL + WW, WH + 4));
+  wrap.style.setProperty('--d', '.14s');
+  var kw = put(wrap, at(el('div', 'kw'), LBL, 0, WW, WH));
+  kw.style.backgroundSize = c + 'rem ' + c + 'rem';
+  for (let s = 1; s <= NS; s++) put(wrap, at(el('div', 'rl', String(s)), 0, (NS - s + .5) * c));
+  for (let a = 1; a <= NA; a++) put(wrap, at(el('div', 'cl', String(a)), LBL + (a - .5) * c, WH + .45));
+  var axc = put(wrap, el('div', 'ax', 'Column · Columna'));
+  axc.style.left = (LBL + WW / 2) + 'rem'; axc.style.top = (WH + 2.75) + 'rem'; axc.style.transform = 'translateX(-50%)';
+  var axr = put(wrap, el('div', 'ax v', 'Row · Fila'));
+  axr.style.left = '-1.75rem'; axr.style.top = (WH / 2 + 4.6) + 'rem';
+  function cx(av) { return (av - .5) * c; }
+  function cy(st) { return (NS - st + .5) * c; }
+  var sm = put(kw, at(el('div', 'smark'), (p.start.avenue - 1) * c + c * .07, (NS - p.start.street) * c + c * .07, c * .86, c * .86));
+  var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'trail'); svg.setAttribute('viewBox', '0 0 ' + NA * 100 + ' ' + NS * 100);
+  kw.appendChild(svg);
+  var segs = [], ps = p.start.street, pa = p.start.avenue;
+  r.steps.forEach(function (st) {
+    if (st.cmd.name === 'move' && !st.crash) {
+      var ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      ln.setAttribute('x1', (pa - .5) * 100); ln.setAttribute('y1', (NS - ps + .5) * 100);
+      ln.setAttribute('x2', (st.avenue - .5) * 100); ln.setAttribute('y2', (NS - st.street + .5) * 100);
+      svg.appendChild(ln); segs.push(ln);
+    }
+    ps = st.street; pa = st.avenue;
+  });
+  (p.walls || []).forEach(function (wl) {
+    var t = Math.max(.6, c * .11), x0 = (wl.avenue - 1) * c, y0 = (NS - wl.street) * c, e = el('div', 'wall');
+    if (wl.side === 'East') at(e, x0 + c - t / 2, y0 - t / 2, t, c + t);
+    else if (wl.side === 'West') at(e, x0 - t / 2, y0 - t / 2, t, c + t);
+    else if (wl.side === 'North') at(e, x0 - t / 2, y0 - t / 2, c + t, t);
+    else at(e, x0 - t / 2, y0 + c - t / 2, c + t, t);
+    kw.appendChild(e);
+  });
+  var startMap = {}, ballEls = {};
+  (p.balls || []).forEach(function (b) { var k = b.street + ',' + b.avenue; startMap[k] = (startMap[k] || 0) + b.count; });
+  function ballEl(k) {
+    if (ballEls[k]) return ballEls[k];
+    var n = k.split(','), bs = c * .56;
+    var b = at(el('div', 'ball', '<b></b>'), cx(+n[1]) - bs / 2, cy(+n[0]) - bs / 2, bs, bs);
+    b.querySelector('b').style.fontSize = (bs * .5).toFixed(2) + 'rem';
+    b.style.setProperty('--tk', (c * .27).toFixed(2) + 'rem');
+    kw.appendChild(b); ballEls[k] = b; return b;
+  }
+  Object.keys(startMap).forEach(ballEl);
+  r.steps.forEach(function (st) { Object.keys(st.balls).forEach(ballEl); });
+  function setBalls(map) {
+    Object.keys(ballEls).forEach(function (k) {
+      var n = map[k] || 0, b = ballEls[k];
+      b.classList.toggle('on', n > 0); b.classList.toggle('multi', n > 1);
+      b.querySelector('b').textContent = n > 1 ? n : '';
+    });
+  }
+  var kar = put(kw, at(el('div', 'karel', DOG), 0, 0, c, c));
+  function tuck(st, av) { Object.keys(ballEls).forEach(function (k) { ballEls[k].classList.toggle('tuck', k === st + ',' + av); }); }
+  function place(st, av, ang) { kar.style.transform = 'translate(' + ((av - 1) * c).toFixed(3) + 'rem,' + ((NS - st) * c).toFixed(3) + 'rem) rotate(' + ang + 'deg)'; }
+  var boom = null, btag = null;
+  if (r.crash) {
+    var bx = cx(r.crash.avenue), by = cy(r.crash.street);
+    if (r.crash.command === 'move()') { var dd = KAREL.STEP[r.crash.facing]; bx += dd[1] * c * .5; by -= dd[0] * c * .5; }
+    var bsz = c * 1.05;
+    boom = put(kw, at(el('div', 'boom', BOOM), bx - bsz / 2, by - bsz / 2, bsz, bsz));
+    var ty = by - c * .95 < c * .45 ? by + c * .95 : by - c * .95;
+    btag = put(kw, at(el('div', 'btag', 'CRASH! <span>¡CHOCA!</span>'), Math.min(Math.max(bx, c * 1.2), WW - c * 1.2), ty));
+  }
+
+  /* the code, with a Spanish gloss beside each command */
+  var colX = 2.2 + LBL + WW + 3.4, colW = 97.5 - colX, L = parsed.lines.length;
+  var code = put(sec, at(el('div', 'code enter'), colX, 8.8, colW, 30.8));
+  code.style.setProperty('--d', '.2s');
+  var fc = put(code, el('div', 'fitc')), widest = 0, rows = [];
+  parsed.lines.forEach(function (t, i) { if (i > 0 && i < L - 1) widest = Math.max(widest, t.length); });
+  parsed.lines.forEach(function (t, i) {
+    var h, g = '';
+    if (i === 0) h = '<span class="kwd">function</span> start<span class="pn">() {</span>';
+    else if (i === L - 1) h = '<span class="pn">}</span>';
+    else {
+      var m = /^( *)(\w+)\(\);$/.exec(t);
+      h = m[1] + m[2] + '<span class="pn">();</span>';
+      g = '<span class="gl">= ' + GLOSS[m[2]] + '</span>';
+    }
+    var row = put(fc, el('div', 'ln', '<span class="no">' + (i + 1) + '</span><span class="cd"' + (i > 0 && i < L - 1 ? ' style="width:' + widest + 'ch"' : '') + '>' + h + '</span>' + g));
+    rows.push(row);
+  });
+  put(code, el('div', 'tvid', esc(p.id.replace(/^TV(\d+)$/, 'TV puzzle $1'))));
+  fitAttr(code, Math.min(3.9, (30.8 - 2.4) / (L * 1.22)).toFixed(2), true);
+
+  /* start line, then the clue at half time */
+  var strip = put(sec, at(el('div', 'strip enter'), colX, 40.4, colW, 8));
+  strip.style.setProperty('--d', '.26s');
+  var s1 = put(strip, el('div', 'sx s1', '<div class="sc">Start<span>Inicio</span></div>'));
+  var t1 = put(s1, el('div', 'stx', '<div class="fitc"><b>Karel starts at Row ' + p.start.street + ', Column ' + p.start.avenue + ', facing ' + p.start.facing + '.</b>' +
+    '<span>Karel empieza en la fila ' + p.start.street + ', columna ' + p.start.avenue + ', mirando al ' + KAREL.ES[p.start.facing] + '.</span></div>'));
+  fitAttr(t1, 2.2, true);
+  var s2 = put(strip, el('div', 'sx s2', '<div class="sc cchip"><b>Clue</b><span>¿Necesitas una pista?</span></div>'));
+  var t2 = put(s2, el('div', 'stx', '<div class="fitc"><b>' + esc(p.clue.en) + '</b><span>' + esc(p.clue.es) + '</span></div>'));
+  fitAttr(t2, 2.2, true);
+
+  /* the answer */
+  var ans = put(sec, at(el('div', 'kans'), colX, 8.8, colW, 39.6));
+  var ah = '<div class="fitc"><span class="atag">Answer · Respuesta</span>' +
+    '<div class="ab"><div class="ai">' + BALLI + '</div><div class="at"><div class="big">' + esc(w.balls.en) + '</div><div class="bes">' + esc(w.balls.es) + '</div>' +
+    (w.where.en ? '<div class="det">' + esc(w.where.en) + '</div><div class="des">' + esc(w.where.es) + '</div>' : '') + '</div></div>' +
+    '<div class="ab"><div class="ai">' + (r.crash ? BOOM : OKI) + '</div><div class="at"><div class="big' + (r.crash ? ' bad' : '') + '">' + esc(w.crash.en) + '</div><div class="bes">' + esc(w.crash.es) + '</div>' +
+    (w.why ? '<div class="det">' + esc(w.why.en) + '</div><div class="des">' + esc(w.why.es) + '</div>' : '') + '</div></div>' +
+    '<div class="ab"><div class="ai">' + DOG + '</div><div class="at"><div class="det">' + esc(w.end.en) + '.</div><div class="des">' + esc(w.end.es) + '.</div></div></div></div>';
+  ans.innerHTML = ah;
+  fitAttr(ans, 2.3, true);
+
+  function reset() {
+    resetClasses(sec, function () {
+      place(p.start.street, p.start.avenue, ANG[p.start.facing]);
+      segs.forEach(function (sg) { sg.classList.remove('on'); });
+      setBalls(startMap); tuck(p.start.street, p.start.avenue);
+      if (boom) { boom.classList.remove('on'); btag.classList.remove('on'); }
+      kw.classList.remove('shake'); kar.classList.remove('fast');
+      rows.forEach(function (rw) { rw.classList.remove('run', 'crashln', 'skip'); });
+      setRing(1, KTHINK);
+    });
+  }
+  function markCrash(line) {
+    rows.forEach(function (rw, i) { if (i + 1 > line && i < rows.length - 1) rw.classList.add('skip'); });
+    rows[line - 1].classList.add('crashln');
+    boom.classList.add('on'); btag.classList.add('on');
+  }
+  function final() {
+    place(r.end.street, r.end.avenue, ANG[r.end.facing]);
+    segs.forEach(function (sg) { sg.classList.add('on'); });
+    var fm = {}; r.balls.forEach(function (b) { fm[b.street + ',' + b.avenue] = b.count; });
+    setBalls(fm); tuck(r.end.street, r.end.avenue);
+    if (r.crash) markCrash(r.crash.line);
+  }
+  async function animate() {
+    var ang = ANG[p.start.facing], k = 0, prev = null;
+    for (let i = 0; i < r.steps.length; i++) {
+      var st = r.steps[i], row = rows[st.cmd.line - 1];
+      if (prev) prev.classList.remove('run');
+      row.classList.add('run'); prev = row;
+      if (st.crash) {
+        if (st.crash.command === 'move()') {
+          var d = KAREL.STEP[st.crash.facing];
+          kar.classList.add('fast');
+          place(st.street + d[0] * .3, st.avenue + d[1] * .3, ang);
+          await wait(170);
+          place(st.street, st.avenue, ang);
+        }
+        kw.classList.add('shake');
+        row.classList.remove('run');
+        markCrash(st.crash.line);
+        await wait(260);
+        kar.classList.remove('fast');
+        await wait(900);
+        return;
+      }
+      if (st.cmd.name === 'move') { place(st.street, st.avenue, ang); segs[k++].classList.add('on'); tuck(st.street, st.avenue); }
+      else if (st.cmd.name === 'turnLeft') { ang -= 90; place(st.street, st.avenue, ang); }
+      else setBalls(st.balls);
+      await wait(KSTEP);
+    }
+    if (prev) prev.classList.remove('run');
+    await wait(250);
+  }
+  var S = { el: sec, kind: 'puzzle', think: KTHINK, reset: reset, setRing: setRing };
+  S.final = function () { sec.classList.add('revealed', 'answered'); final(); };
+  S.play = async function () {
+    await wait(650);
+    await countdown(S, KTHINK, function () { sec.classList.add('clued'); });
+    sec.classList.add('timeup'); await wait(850);
+    sec.classList.remove('timeup'); sec.classList.add('revealed');
+    await animate();
+    sec.classList.add('answered');
+    await wait(KHOLD);
+  };
+  S.clue = function () { sec.classList.add('clued'); };
+  return S;
+}
+
+/* ---------- binary and pattern slides ---------- */
+function genericFrame(sec, qen, qes, think) {
+  sec.className = 'slide gc';
+  fitAttr(put(sec, at(el('h2', 'q enter', esc(qen)), 2.5, 1.3, 82)), 4.8);
+  var qe = put(sec, at(el('p', 'q-es enter', esc(qes)), 2.5, 6.95, 82));
+  qe.style.setProperty('--d', '.08s'); fitAttr(qe, 3.1);
+  var setRing = ring(sec, 87.4, 1.1, 10.1);
+  var vis = put(sec, el('div', 'vis enter')); vis.style.setProperty('--d', '.16s');
+  var band = put(sec, el('div', 'band'));
+  return { vis: vis, band: band, setRing: setRing };
+}
+function hintAndAnswer(band, hint, val, why) {
+  var h = put(band, el('div', 'hint enter', '<div class="sc cchip"><b>Clue</b><span>¿Necesitas una pista?</span></div>'));
+  h.style.setProperty('--d', '.24s');
+  fitAttr(put(h, el('div', 'stx', '<div class="fitc"><b>' + esc(hint.en) + '</b><span>' + esc(hint.es) + '</span></div>')), 2.6, true);
+  var a = put(band, el('div', 'gans', '<div class="gtag">Answer<span>Respuesta</span></div><div class="gval">' + esc(val) + '</div>'));
+  fitAttr(put(a, el('div', 'gwhy', '<div class="fitc"><b>' + esc(why.en) + '</b><span>' + esc(why.es) + '</span></div>')), 2.5, true);
+  bursts(a);
+}
+function genericSlide(sec, think, show, build) {
+  var S = { el: sec, kind: 'puzzle', think: think };
+  build(S);
+  S.reset = function () { resetClasses(sec, function () { S.setRing(1, think); }); };
+  S.final = function () { sec.classList.add('revealed', 'answered'); };
+  S.play = async function () {
+    await wait(650);
+    await countdown(S, think);
+    sec.classList.add('timeup'); await wait(850);
+    sec.classList.remove('timeup'); sec.classList.add('revealed');
+    await wait(700);
+    sec.classList.add('answered');
+    await wait(show * 1000 - 700);
+  };
+  return S;
+}
+function binarySlide(spec, idx, sec) {
+  var lit = spec.values.filter(function (v, i) { return spec.on[i]; });
+  var n = lit.reduce(function (x, y) { return x + y; }, 0), bits = spec.on.join('');
+  ANSWERS.push({ slide: idx + 1, id: 'binary', answer: n, bits: bits });
+  return genericSlide(sec, spec.think, spec.show, function (S) {
+    var f = genericFrame(sec, 'What number is this?', '¿Qué número es este?');
+    S.setRing = f.setRing;
+    var row = put(f.vis, el('div', 'bulbs'));
+    spec.values.forEach(function (v, i) {
+      var b = put(row, el('div', 'bulb ' + (spec.on[i] ? 'lit' : 'off'), '<div class="bimg">' + BULB + '</div><div class="bval">' + v + '</div><div class="bbit">' + spec.on[i] + '</div>'));
+      b.style.setProperty('--i', i);
+    });
+    hintAndAnswer(f.band, { en: 'Each light that’s ON adds its number.', es: 'Cada foco encendido suma su número.' }, String(n),
+      { en: lit.join(' + ') + ' = ' + n + '. Computers represent numbers with 1s and 0s: that’s binary.',
+        es: 'Las computadoras representan números con unos y ceros: eso es el sistema binario.' });
+  });
+}
+function patternSlide(spec, idx, sec) {
+  var q = spec.seq, k = q[1] / q[0], ok = q.every(function (v, i) { return i === 0 || v === q[i - 1] * k; });
+  if (!ok || k !== 2) report(new Error('pattern: not a doubling sequence'));
+  var next = q[q.length - 1] * k;
+  ANSWERS.push({ slide: idx + 1, id: 'pattern', answer: next });
+  return genericSlide(sec, spec.think, spec.show, function (S) {
+    var f = genericFrame(sec, 'What comes next?', '¿Qué número sigue?');
+    S.setRing = f.setRing;
+    var row = put(f.vis, el('div', 'prow'));
+    q.forEach(function (v, i) {
+      put(row, el('div', 'ptile', String(v)));
+      var g = put(row, el('div', 'pgap', '<i class="chev"></i><div class="arc"><b>×' + k + '</b><svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M6 38 Q50 -14 94 38" fill="none" stroke="#ffa634" stroke-width="5" stroke-linecap="round" vector-effect="non-scaling-stroke" style="stroke-width:.45rem"/></svg></div>'));
+      g.style.setProperty('--i', i);
+    });
+    put(row, el('div', 'ptile q', '<div class="fr">?</div><div class="bk">' + next + '</div>'));
+    hintAndAnswer(f.band, { en: 'Look at how each number grows.', es: 'Fíjate cómo crece cada número.' }, String(next),
+      { en: 'Each number doubles (×' + k + '). These are powers of two, used in binary.',
+        es: 'Cada número se duplica (×' + k + '). Estas son potencias de dos y se usan en el sistema binario.' });
+  });
+}
+
+/* ---------- message slides ---------- */
+function holdSlide(sec, secs) {
+  return { el: sec, kind: 'msg', reset: function () { resetClasses(sec); }, final: function () {}, play: function () { return wait(secs * 1000); } };
+}
+function trioSlide(spec, idx, sec) {
+  sec.className = 'slide trio';
+  var box = fitAttr(put(sec, el('div', 'box')), 4.9, true);
+  box.innerHTML = '<div class="fitc">' +
+    '<div class="t enter" style="--d:.1s"><p class="en">Never coded? Good. <em>Start here.</em></p><p class="es">¿Nunca has programado? Perfecto. Empieza aquí.</p></div>' +
+    '<div class="t enter" style="--d:.9s"><p class="en">This class is hard. <em>That’s the point.</em></p><p class="es">Esta clase es difícil. Esa es la idea.</p></div>' +
+    '<div class="t enter" style="--d:1.7s"><p class="en">We hold you to a high standard because <em>we know you can reach it.</em></p><p class="es">Te exigimos mucho porque sabemos que puedes lograrlo.</p></div></div>';
+  return holdSlide(sec, spec.secs);
+}
+function msgSlide(sec, spec, html, base) {
+  sec.className = 'slide msg';
+  var box = fitAttr(put(sec, el('div', 'box')), base, true);
+  box.innerHTML = '<div class="fitc">' + html + '</div>';
+  sec.appendChild(artCard(sec, spec.art, spec.pos));
+  return holdSlide(sec, spec.secs);
+}
+function openerSlide(spec, idx, sec) {
+  return msgSlide(sec, spec,
+    '<p class="eyebrow enter">Karel puzzles · Retos de Karel</p>' +
+    '<p class="en enter" style="--d:.1s">Can you think like a computer?</p>' +
+    '<p class="es enter" style="--d:.2s">¿Puedes pensar como una computadora?</p>' +
+    '<p class="en2 enter" style="--d:.35s"><span class="dogi">' + DOG + '</span>Karel is a robot dog. It does exactly what the code says.</p>' +
+    '<p class="es2 enter" style="--d:.42s">Karel es un perro robot. Hace exactamente lo que dice el código.</p>', 7.4);
+}
+function computersSlide(spec, idx, sec) {
+  return msgSlide(sec, spec,
+    '<p class="en enter" style="--d:.1s">Computers do exactly what you type, <em>not what you had in mind.</em></p>' +
+    '<p class="es enter" style="--d:.3s">Las computadoras hacen exactamente lo que escribes, no lo que tenías en mente.</p>', 6.4);
+}
+function harderSlide(spec, idx, sec) {
+  var S = msgSlide(sec, spec,
+    '<p class="en enter" style="--d:.1s">Want a harder one? <em>Just ask.</em></p>' +
+    '<p class="es enter" style="--d:.22s">¿Quieres un reto más difícil? Pídelo.</p>' +
+    '<p class="en2 enter" style="--d:.4s">Try the hardest challenge at our table.</p>' +
+    '<p class="es2 enter" style="--d:.48s">Prueba el reto más difícil en nuestra mesa.</p>', 7.6);
+  return S;
+}
+function ctaSlide(spec, idx, sec) {
+  sec.className = 'slide cta';
+  var box = fitAttr(put(sec, el('div', 'box')), 4.4, true);
+  box.innerHTML = '<div class="fitc">' +
+    '<p class="h enter" style="--d:.05s">Interested?</p><p class="hes enter" style="--d:.1s">¿Te interesa?</p>' +
+    '<p class="s qr2 enter" style="--d:.2s">Scan so Mr. Johnston knows.</p><p class="ses qr2 enter" style="--d:.25s">Escanea para avisarle al Sr. Johnston.</p>' +
+    '<p class="s fb enter" style="--d:.2s">Tell us at our table.</p><p class="ses fb enter" style="--d:.25s">Avísanos en nuestra mesa.</p>' +
+    '<div class="rule enter" style="--d:.32s"></div>' +
+    '<p class="n enter" style="--d:.4s">This isn’t registration: ask for <em>Fundamentals of Computer Science</em> at course selection.</p>' +
+    '<p class="nes enter" style="--d:.46s">No es la inscripción: pide <i>Fundamentals of Computer Science</i> al elegir tus materias.</p></div>';
+  var card = put(sec, el('div', 'ccard enter'));
+  card.style.setProperty('--d', '.15s');
+  card.appendChild(eagle(7));
+  put(card, el('div', 'cb', '<b>Computer Science at CHS</b><span>Ciencias de la Computación en CHS</span>'));
+  var qw = put(card, el('div', 'qrw'));
+  qw.appendChild(mkImg(QR_SRC, function () { sec.classList.add('noqr'); }));
+  put(card, el('div', 'sc2', '<b>Scan here</b><span>Escanea aquí</span>'));
+  var S = holdSlide(sec, spec.secs);
+  S.nofoot = true;
+  return S;
+}
+var BUILD = { karel: karelSlide, trio: trioSlide, binary: binarySlide, pattern: patternSlide, opener: openerSlide,
+  computers: computersSlide, harder: harderSlide, cta: ctaSlide };
+
+/* ---------- the loop ---------- */
+var stage = document.getElementById('stage'), foot, slides = [], cur = null;
+function buildAll() {
+  KDATA = JSON.parse(document.getElementById('tv-karel-data').textContent);
+  SEQ.forEach(function (spec, i) {
+    var sec = put(stage, el('section', 'slide'));
+    try { slides.push(BUILD[spec.kind](spec, i, sec)); }
+    catch (e) { report(e); sec.remove(); }
+  });
+  foot = put(stage, el('footer'));
+  foot.id = 'foot';
+  var brand = put(foot, el('div', 'brand'));
+  brand.appendChild(eagle(3.4));
+  put(brand, el('div', '', '<b>Computer Science at CHS</b><span>Ciencias de la Computación en CHS</span>'));
+  fitAttr(put(foot, el('div', 'tag-r', '<div class="fitc"><b>At course selection, ask for <em>Fundamentals of Computer Science</em></b>' +
+    '<span>Pidan <i>Fundamentals of Computer Science</i> al elegir sus materias</span></div>')), 1.7, true);
+}
+function chrome(i) {
+  foot.classList.toggle('off', !!slides[i].nofoot && !slides[i].el.classList.contains('noqr'));
+  foot.classList.toggle('notag', !!slides[i].notag);
+}
+var swipeEl = document.getElementById('swipe');
+function swipe() { swipeEl.classList.remove('go'); void swipeEl.offsetWidth; swipeEl.classList.add('go'); }
+async function show(i, first) {
+  var S = slides[i];
+  if (S !== cur) S.reset();
+  if (!first) { swipe(); await wait(400); }
+  if (cur && cur !== S) cur.el.classList.remove('on');
+  S.el.classList.add('on');
+  chrome(i);
+  void S.el.offsetWidth;
+  S.el.classList.add('in');
+  cur = S;
+  window.__state = { slide: i + 1, at: Date.now() };
+}
+async function loop(i) {
+  var reloadAt = RELOAD_MIN ? Date.now() + RELOAD_MIN * 60000 : 0, first = true;
+  for (;;) {
+    try { await show(i, first); await slides[i].play(); }
+    catch (e) { report(e); await wait(1000); }
+    first = false;
+    i = (i + 1) % slides.length;
+    if (i === 0 && reloadAt && Date.now() >= reloadAt) { location.reload(); return; }
+  }
+}
+function showStatic(n) {
+  document.body.classList.add('static');
+  var i = Math.max(0, Math.min(slides.length - 1, n - 1)), S = slides[i];
+  S.reset();
+  S.el.classList.add('on', 'in');
+  chrome(i);
+  if (S.kind === 'puzzle') {
+    if (ANSWER) S.final();
+    else { S.setRing(.6, Math.round(S.think * .6)); if (CLUE && S.clue) S.clue(); }
+  }
+  window.__state = { slide: i + 1, mode: ANSWER ? 'answer' : 'question', static: true };
+}
+
+/* full screen: click or F. A hint shows only while the mouse moves (the cursor itself stays hidden). */
+function fullscreen() {
+  var d = document.documentElement, f = d.requestFullscreen || d.webkitRequestFullscreen;
+  if (!isFull() && f) { try { var r = f.call(d); if (r && r.catch) r.catch(function () {}); } catch (e) {} }
+}
+document.addEventListener('click', fullscreen);
+document.addEventListener('keydown', function (e) { if (e.key === 'f' || e.key === 'F') fullscreen(); });
+var hintT = null, hintEl = document.getElementById('fsHint');
+function isFull() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+function hideHint() { clearTimeout(hintT); hintEl.classList.remove('on'); }
+document.addEventListener('mousemove', function () {
+  if (isFull()) { hideHint(); return; }
+  hintEl.classList.add('on'); clearTimeout(hintT);
+  hintT = setTimeout(hideHint, 2500);
+});
+document.addEventListener('fullscreenchange', hideHint);
+document.addEventListener('webkitfullscreenchange', hideHint);
+window.addEventListener('resize', function () { scaleRoot(); fitAll(); });
+window.__refit = fitAll;
+
+async function main() {
+  scaleRoot();
+  buildAll();
+  await settleImages(PREVIEW != null ? 8000 : 25000);
+  fitAll();
+  var ld = document.getElementById('loading');
+  if (ld) ld.parentNode.removeChild(ld);
+  stage.classList.add('ready');
+  if (PREVIEW != null) { document.body.classList.add('static'); showStatic(PREVIEW); return; }
+  loop(START ? Math.max(0, Math.min(slides.length - 1, START - 1)) : 0);
+}
+main().catch(report);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#000636">
+<title>What will Karel do? · CS at CHS</title>
+<link rel="stylesheet" href="../assets/games.css">
+<style>
+/* ---------- start screen ---------- */
+.k-start { height: 100%; display: grid; grid-template-columns: 1fr auto; gap: 30px; align-items: center; padding: 4px 40px 22px; }
+.portrait .k-start { grid-template-columns: 1fr; grid-template-rows: auto auto; padding: 14px 30px 30px; gap: 30px; align-content: center; justify-items: center; }
+.k-start .left { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; text-align: left; }
+.portrait .k-start .left { align-items: center; text-align: center; }
+.k-start .start-title .en { font-size: 58px; white-space: nowrap; }
+.k-start .start-title .es { font-size: 32px; }
+.k-start .teach { font-size: 27px; }
+.k-start .who { font-size: 21px; font-weight: 650; color: #dfe5ff; line-height: 1.25; max-width: 600px; }
+.k-start .who .es { display: block; font-size: 18px; }
+.k-start .levels-preview { justify-content: flex-start; max-width: 620px; }
+.portrait .k-start .levels-preview { justify-content: center; }
+.k-start .beat .en, .k-start .beat .es { display: block; }
+.attract { pointer-events: none; display: flex; flex-direction: column; gap: 14px; align-items: center; justify-content: center; padding: 18px 20px; border-radius: 24px; background: rgba(0, 0, 30, .5); box-shadow: inset 0 0 0 2px var(--line); }
+.portrait .attract { flex-direction: row; }
+.attract .code { font: 600 17px/23px var(--mono); }
+.attract .world { --board: 236px; }
+
+/* ---------- play layout ---------- */
+.kp { position: absolute; inset: 6px 14px 14px; display: grid; gap: 12px 14px;
+  grid-template-columns: 456px 358px 1fr; grid-template-rows: 70px 358px 1fr;
+  grid-template-areas: "code prompt prompt" "code world ctrl" "code msg msg"; }
+.portrait .kp { grid-template-columns: 358px 1fr; grid-template-rows: auto 374px 358px 1fr;
+  grid-template-areas: "prompt prompt" "code code" "world ctrl" "msg msg"; }
+.kp .world { --board: 310px; }
+.portrait .kp .world { --board: 310px; }
+.kp-prompt .q { flex: 1; min-width: 0; }
+.kp-prompt .tag { margin-left: auto; }
+.kp-prompt { grid-area: prompt; display: flex; align-items: center; gap: 14px; min-width: 0; }
+.kp-prompt .q .en { display: block; font-size: 26px; font-weight: 850; line-height: 1.1; }
+.kp-prompt .q .es { display: block; font-size: 20px; font-weight: 650; color: var(--es); line-height: 1.15; margin-top: 3px; }
+.kp-code { grid-area: code; min-height: 0; display: flex; flex-direction: column; border-radius: 20px; background: rgba(0, 2, 34, .62); box-shadow: inset 0 0 0 2px var(--line); overflow: hidden; }
+.code-head { flex: none; display: flex; justify-content: space-between; align-items: center; height: 34px; padding: 0 14px; background: rgba(255, 255, 255, .07); font-size: 16px; font-weight: 800; color: var(--muted); }
+.code-head .es { font-weight: 600; }
+.code-body { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.portrait .code-body { flex-direction: row; }
+.code { flex: none; padding: 8px 6px 6px; font: 600 19px/25px var(--mono); }
+.portrait .code { flex: 1; font-size: 18px; line-height: 22px; padding: 8px 4px; }
+.cl { display: flex; border-radius: 8px; transition: background .12s; }
+.cl .ln { flex: none; width: 34px; text-align: right; padding-right: 12px; color: var(--dim); font-weight: 500; }
+.cl .ct { white-space: pre; color: #e9edff; min-height: 1em; }
+.cl.on { background: rgba(240, 128, 0, .3); box-shadow: inset 5px 0 0 var(--orange); }
+.cl.on.crash { background: rgba(255, 70, 70, .38); box-shadow: inset 5px 0 0 var(--bad); }
+.tk-kw { color: #ffa94a; } .tk-cmd { color: #8fe3ff; } .tk-ufn { color: #ffd76a; } .tk-num { color: #b8f5a0; }
+.tk-cmt { color: #8a96c8; font-style: italic; } .tk-pun { color: #c9d1ff; } .tk-var { color: #f3c6ff; } .tk-cnd { color: #9ff0c8; }
+.code.long { font-size: 18px; line-height: 22.5px; }
+.portrait .code.long { font-size: 17px; line-height: 20.5px; }
+.side { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 7px; padding: 8px 12px 8px; border-top: 2px solid var(--line); }
+.portrait .side { flex: none; width: 362px; border-top: 0; border-left: 2px solid var(--line); padding: 9px 10px; gap: 6px; }
+.portrait .gloss { gap: 5px; }
+.portrait .gloss .chip { font-size: 14.5px; padding: 3px 8px; }
+.portrait .rules { font-size: 14px; }
+.gloss { display: flex; flex-wrap: wrap; gap: 6px; }
+.gloss .chip { display: inline-flex; align-items: baseline; flex-wrap: wrap; gap: 0 6px; padding: 4px 9px; border-radius: 10px; background: rgba(255, 255, 255, .07); font-size: 15px; font-weight: 650; line-height: 1.25; color: #e6eaff; }
+.gloss .chip code { font-weight: 700; color: #8fe3ff; white-space: nowrap; }
+.gloss .chip code .tk-kw { color: #ffa94a; } .gloss .chip code .tk-ufn { color: #ffd76a; }
+.gloss .chip .es { color: var(--es); font-weight: 650; }
+.gloss .chip.fresh { box-shadow: inset 0 0 0 2px var(--orange); background: rgba(240, 128, 0, .14); }
+.gloss .new { align-self: center; padding: 0 5px; border-radius: 5px; background: var(--orange); color: var(--navy); font: 800 10.5px/15px var(--font); }
+.rules { font-size: 14.5px; line-height: 1.25; color: #dfe5ff; font-weight: 600; }
+.rules div + div { margin-top: 4px; }
+.rules .es { color: var(--es); }
+.rules b { color: #ffb3b3; }
+
+/* ---------- the world ---------- */
+.kp-world { grid-area: world; }
+.world { --board: 360px; --cell: calc(var(--board) / var(--cols)); position: relative; width: calc(var(--board) + 48px); height: calc(var(--board) + 48px); }
+.world .board { position: absolute; left: 48px; top: 0; width: var(--board); height: var(--board); background: #eef2ff; border-radius: 6px; box-shadow: 0 0 0 4px #2a44d6, 0 12px 30px rgba(0, 0, 0, .45); }
+.world .cells { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(var(--cols), 1fr); grid-template-rows: repeat(var(--rows), 1fr); }
+.cell { appearance: none; -webkit-appearance: none; border: 0; margin: 0; padding: 0; background: transparent; box-shadow: inset 0 0 0 1px #c3ccef; cursor: pointer; touch-action: manipulation; position: relative; }
+.cell::after { content: ""; position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: #aebbe8; }
+.cell:active { background: rgba(240, 128, 0, .2); }
+.world.locked .cell { cursor: default; }
+.world .ax-y { position: absolute; left: 22px; top: 0; width: 24px; height: var(--board); display: flex; flex-direction: column; }
+.world .ax-y span, .world .ax-x span { flex: 1; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--muted); font-size: 16px; }
+.world .ax-yt { position: absolute; left: 0; top: 0; width: 20px; height: var(--board); display: flex; align-items: center; justify-content: center; }
+.world .ax-yt span { display: block; white-space: nowrap; transform: rotate(-90deg); font-size: 13px; font-weight: 700; color: var(--dim); }
+.world .ax-x { position: absolute; left: 48px; top: calc(var(--board) + 4px); width: var(--board); height: 22px; display: flex; }
+.world .ax-xt { position: absolute; left: 48px; top: calc(var(--board) + 27px); width: var(--board); text-align: center; font-size: 13px; font-weight: 700; color: var(--dim); }
+.board .pos { position: absolute; left: 0; top: 0; width: var(--cell); height: var(--cell); pointer-events: none;
+  transform: translate(calc(var(--x) * var(--cell)), calc(var(--y) * var(--cell))); display: flex; align-items: center; justify-content: center; }
+.board .karel { z-index: 4; transition: transform .34s ease-in-out; }
+.board .karel .dog { width: 92%; height: 92%; transition: transform .3s ease-in-out; }
+.board .karel .dog svg { width: 100%; height: 100%; display: block; }
+.board .karel.bump .dog svg { animation: bump .55s ease-in-out; }
+@keyframes bump { 0%, 100% { transform: translateX(0); } 40% { transform: translateX(22%); } 60% { transform: translateX(16%); } }
+.board .bang { z-index: 6; display: none; }
+.board .bang.show { display: flex; }
+.board .bang b { padding: 4px 10px; border-radius: 10px; background: var(--bad); color: #fff; font: 900 20px/1.05 var(--font); text-align: center; box-shadow: 0 4px 12px rgba(0, 0, 0, .4); transform: rotate(-8deg); white-space: nowrap; }
+.board .bang b .es { display: block; font-size: 14px; color: #fff; }
+.board .bc { z-index: 2; }
+.board .bc .b { width: 54%; height: 54%; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 34% 30%, #7d93ff 0 12%, #2440d8 38%, #001080 70%, #000a58);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, .45); color: #fff; font: 900 22px var(--font); transition: transform .3s, width .3s, height .3s; }
+.board .bc.under .b { width: 30%; height: 30%; transform: translate(95%, 95%); font-size: 13px; }
+.board .bm { z-index: 1; }
+.board .bm i { width: 66%; height: 66%; border-radius: 50%; border: 4px dashed var(--orange); background: rgba(240, 128, 0, .13); }
+.board .bm.dim i { border-width: 3px; opacity: .6; }
+.board .bm.ok i { border-color: var(--good); border-style: solid; }
+.board .bm.no i { border-color: var(--bad); border-style: solid; }
+.board .miss { z-index: 1; }
+.board .miss i { width: 70%; height: 70%; border-radius: 50%; border: 4px solid var(--bad); }
+.board .ghost { z-index: 3; display: none; }
+.board .ghost.show { display: flex; }
+.board .ghost .ring { position: absolute; inset: 5%; border-radius: 14px; border: 4px dashed var(--orange); background: rgba(240, 128, 0, .12); }
+.board .ghost.no .ring { border-color: var(--bad); border-style: solid; }
+.board .ghost .gdog { width: 78%; height: 78%; opacity: .5; }
+.board .ghost .gdog svg { width: 100%; height: 100%; display: block; }
+.board .ghost .q { position: relative; font: 900 32px var(--font); color: var(--orange); }
+
+/* ---------- controls ---------- */
+.kp-ctrl { grid-area: ctrl; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.kp-ctrl .hint { font-size: 18px; font-weight: 700; line-height: 1.15; }
+.kp-ctrl .hint .es { display: block; font-size: 15px; font-weight: 600; }
+.kp-ctrl .hint b { color: var(--orange2); }
+.kp-ctrl .step { display: inline-flex; align-self: flex-start; padding: 4px 10px; border-radius: 10px; background: rgba(255, 255, 255, .1); font-weight: 800; font-size: 15px; line-height: 1.1; }
+.kp-ctrl .step .es { font-size: 12.5px; }
+.compass { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 60px); gap: 5px; }
+.compass .btn { min-height: 60px; min-width: 0; padding: 2px; font-size: 15px; border-radius: 14px; flex-direction: column; gap: 0; }
+.compass .btn .bi > .es { font-size: 12px; }
+.compass .btn .ico svg { width: 22px; height: 22px; }
+.compass .n { grid-column: 2; grid-row: 1; } .compass .w { grid-column: 1; grid-row: 2; }
+.compass .e { grid-column: 3; grid-row: 2; } .compass .s { grid-column: 2; grid-row: 3; }
+.compass .c { grid-column: 2; grid-row: 2; display: flex; align-items: center; justify-content: center; border-radius: 14px; background: rgba(255, 255, 255, .06); }
+.compass .c svg { width: 52px; height: 52px; opacity: .85; }
+.compass.no .btn.selected { box-shadow: 0 0 0 4px var(--bad), 0 8px 20px rgba(0, 0, 0, .35); }
+.btn-crash { width: 100%; min-height: 60px; font-size: 20px; background: rgba(255, 98, 98, .16); color: #fff; box-shadow: inset 0 0 0 2px rgba(255, 140, 140, .7); }
+.btn-crash .bi > .es { color: #ffd0d0; }
+.btn-crash.selected { background: var(--bad); color: #fff; box-shadow: 0 0 0 4px #fff, 0 8px 20px rgba(0, 0, 0, .35); }
+.btn-crash.selected .bi > .es { color: #fff; }
+.btn-crash.no.selected { box-shadow: 0 0 0 4px var(--bad), 0 0 0 7px #fff; }
+.btn-check { width: 100%; min-height: 72px; font-size: 26px; }
+.kp-ctrl .row2 { display: flex; gap: 8px; }
+.kp-ctrl .row2 .btn { flex: 1; min-width: 0; font-size: 18px; padding: 6px 8px; }
+.count-box { display: flex; align-items: center; gap: 12px; padding: 8px 14px; border-radius: 16px; background: rgba(255, 255, 255, .08); }
+.count-box b { font: 900 52px/1 var(--font); color: var(--orange2); min-width: 44px; text-align: center; }
+.count-box .bi { font-size: 18px; font-weight: 750; }
+.run-status { padding: 10px 12px; border-radius: 16px; background: rgba(255, 255, 255, .07); min-height: 118px; }
+.run-status .rs-h { font-size: 15px; font-weight: 800; color: var(--muted); }
+.run-status .rs-c { margin-top: 4px; font: 700 21px/1.2 var(--mono); color: #8fe3ff; }
+.run-status .rs-g { font-size: 17px; font-weight: 650; color: var(--es); }
+.run-status .rs-p { margin-top: 6px; font-size: 16px; font-weight: 650; line-height: 1.2; }
+.run-status .rs-p .es { display: block; color: var(--es); font-size: 14px; }
+
+.kp-msg { grid-area: msg; display: flex; gap: 12px; align-items: flex-start; min-width: 0; }
+.kp-msg .btn-clue { flex: none; width: 200px; min-height: 68px; }
+.kp-msg .msgcol { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.kp-msg .feedback { min-height: 0; font-size: 19px; line-height: 1.2; }
+.kp-msg .feedback:empty { display: none; }
+.kp-msg .feedback .en { display: inline; margin-right: 10px; }
+.kp-msg .feedback .es { display: inline; font-size: 16.5px; }
+.kp-msg .feedback .marks { margin-top: 1px; font-size: 15px; }
+.kp-msg .feedback .marks .es { font-size: 14px; }
+.kp-msg .cluebox { min-width: 0; padding: 7px 12px 8px; flex-direction: column; align-items: flex-start; gap: 3px; }
+.kp-msg .cluebox .clue-t .en { font-size: 17.5px; line-height: 1.18; }
+.kp-msg .cluebox .clue-t .es { font-size: 15px; line-height: 1.18; }
+.kp-msg .cluebox .clue-act { min-height: 62px; margin-top: 4px; }
+.kp-msg .btn-clue { gap: 8px; font-size: 19px; padding: 6px 12px; }
+.kp-msg .cluebox .clue-t .en { font-size: 19px; }
+.kp-msg .cluebox .clue-t .es { font-size: 16px; }
+.portrait .kp-msg .btn-clue { width: 220px; }
+</style>
+</head>
+<body class="kiosk">
+<div id="stage" class="stage landscape">
+  <header class="topbar">
+    <a class="btn btn-ghost btn-menu" href="../index.html" draggable="false"><span class="ico" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></span><span class="bi"><span class="en">Menu</span><span class="es" lang="es">Menú</span></span></a>
+    <div class="brand">
+      <span class="logo-chip"><img src="../assets/img/chs-cs-eagle.png" alt="Canutillo High School Computer Science eagle" draggable="false"></span>
+      <div class="gtitle"><span class="en">What will Karel do?</span><span class="es" lang="es">¿Qué hará Karel?</span></div>
+    </div>
+    <button class="btn btn-ghost btn-new" id="btn-new" type="button" hidden></button>
+  </header>
+  <ol class="pills" id="pills" aria-label="Challenges"></ol>
+
+  <section class="screen start-screen show" id="start" aria-label="Start">
+    <div class="k-start">
+      <div class="left">
+        <div class="start-title"><span class="en">What will Karel do?</span><span class="es" lang="es">¿Qué hará Karel?</span></div>
+        <div class="teach"><span class="en">Can you think like a computer?</span><span class="es" lang="es">¿Puedes pensar como una computadora?</span></div>
+        <div class="who"><span class="en">Karel is a robot dog. Read the code, then predict what Karel does.</span><span class="es" lang="es">Karel es un perro robot. Lee el código y predice lo que hace Karel.</span></div>
+        <div class="levels-preview" id="lp"></div>
+        <button class="btn btn-big" id="btn-start" type="button"></button>
+        <div class="beat"><span class="en">Try the hardest challenge at our table.</span> <span class="es" lang="es">Prueba el reto más difícil en nuestra mesa.</span></div>
+      </div>
+      <div class="attract" id="attract" aria-hidden="true">
+        <div class="code" id="a-code"></div>
+        <div class="world" id="a-world"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="play" aria-label="Challenge">
+    <div class="kp">
+      <div class="kp-prompt" id="prompt"></div>
+      <div class="kp-code">
+        <div class="code-head"><span class="bi row"><span class="en">The code</span><span class="es" lang="es">El código</span></span><span>JavaScript · CodeHS</span></div>
+        <div class="code-body">
+          <div class="code" id="code" aria-label="Karel program"></div>
+          <div class="side">
+            <div class="gloss" id="gloss"></div>
+            <div class="rules" id="rules"></div>
+          </div>
+        </div>
+      </div>
+      <div class="kp-world"><div class="world" id="world"></div></div>
+      <div class="kp-ctrl" id="ctrl"></div>
+      <div class="kp-msg">
+        <button class="btn btn-clue" id="btn-clue" type="button"></button>
+        <div class="msgcol">
+          <div class="feedback" id="fb" aria-live="polite"></div>
+          <div class="cluebox inline" id="cluebox" hidden aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<script src="../assets/games.js"></script>
+<script src="karel.js"></script>
+</body>
+</html>

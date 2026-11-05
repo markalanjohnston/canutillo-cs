@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Familias / Families · Computer Science at CHS</title>
+<link rel="icon" href="data:,">
+<!--
+  TV loop v3, "Familias / Families": a calm, bilingual loop for parents at CTE Night (Thu 11/5/2026).
+  Facts and wording come only from ../../content-brief.md (v2). Works offline: no CDNs, no web fonts, relative paths.
+  URL options:  ?preview=N  one slide, static, final state     ?start=N  begin the loop at slide N
+                ?reload=M   reload between cycles once M minutes have passed. Off by default: the page never
+                            reloads itself, and nothing is fetched after the images are decoded at load.
+  Keys (optional): right/left arrow = next/previous slide, space = pause.
+-->
+<style>
+:root{
+  --navy:#001080; --orange:#F08000; --gold:#FFA21F;
+  --ink:#0d1550; --muted:#4a5482; --soft:#66709b; --tint:#F2F4FB; --line:#D6DCF0; --orange-tint:#FFF1E0;
+  --u:min(1vw, 1.7778vh);
+  --fade:1.4s;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#fff}
+html,body,*{cursor:none !important}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","Noto Sans",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  -webkit-user-select:none;user-select:none;
+}
+b,strong{font-weight:700}
+.nw{white-space:nowrap}
+
+/* ---------- slides and the 16:9 stage (letterboxed inside any screen shape) ---------- */
+.slide{position:fixed;top:0;left:0;right:0;bottom:0;opacity:0;z-index:0;background:#fff;overflow:hidden}
+.slide.dark{
+  color:#fff;
+  background:radial-gradient(ellipse 85% 75% at 80% 0%,#14299f 0%,rgba(20,41,159,0) 62%),
+             linear-gradient(165deg,#00128c 0%,#001080 42%,#000a5c 100%);
+}
+.slide::before{content:"";position:absolute;top:0;left:0;right:0;height:calc(var(--u)*.5);background:var(--orange);z-index:3}
+.slide.off{opacity:1;z-index:1}
+.slide.on{opacity:1;z-index:2;transition:opacity var(--fade) ease-in-out}
+.stage{position:absolute;left:50%;top:50%;width:calc(var(--u)*100);height:calc(var(--u)*56.25);transform:translate(-50%,-50%)}
+.copy{position:absolute;left:calc(var(--u)*5);right:calc(var(--u)*5);top:calc(var(--u)*4.6);bottom:calc(var(--u)*5.6);display:flex;flex-direction:column;justify-content:center}
+
+/* gentle entrance for each block of the incoming slide */
+.rise{opacity:0;transform:translateY(calc(var(--u)*1.1))}
+.on .rise,.off .rise{opacity:1;transform:none}
+.on .rise{transition:opacity .9s ease,transform 1.1s cubic-bezier(.2,.7,.2,1);transition-delay:calc(.35s + var(--d,0) * .16s)}
+
+/* ---------- type: English and Spanish always share one class (equal size, weight and color) ---------- */
+.t-ask{font-size:calc(var(--u)*4.4);font-weight:700;line-height:1.1;letter-spacing:-.012em;text-wrap:balance}
+.t-h1{font-size:calc(var(--u)*3.4);font-weight:700;line-height:1.12;letter-spacing:-.01em;text-wrap:balance}
+.t-h2{font-size:calc(var(--u)*3.0);font-weight:700;line-height:1.14;text-wrap:balance}
+.t-small{font-size:calc(var(--u)*1.65);line-height:1.3}
+.t-note{font-size:calc(var(--u)*1.45);line-height:1.35}
+.light .t-ask,.light .t-h1,.light .t-h2{color:var(--navy)}
+.hl{background:linear-gradient(transparent 64%,rgba(240,128,0,.42) 64%,rgba(240,128,0,.42) 92%,transparent 92%)}
+.dark .hl{background:none;color:var(--gold)}
+
+/* bilingual pairs: side by side (.cols) or stacked (.stack) */
+.cols{display:grid;grid-template-columns:1fr 1fr;column-gap:calc(var(--u)*4)}
+.cols>[lang=es]{position:relative}
+.cols>[lang=es]::before{content:"";position:absolute;left:calc(var(--u)*-2.07);top:.12em;bottom:.12em;width:calc(var(--u)*.14);background:var(--line)}
+.dark .cols>[lang=es]::before{background:rgba(255,255,255,.24)}
+.stack>[lang=es]{margin-top:.3em}
+.sep{opacity:.55;padding:0 .35em}
+
+.kicker{display:flex;align-items:center;gap:calc(var(--u)*1);font-size:calc(var(--u)*1.6);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--navy)}
+.kicker::before{content:"";flex:none;width:calc(var(--u)*2.6);height:calc(var(--u)*.45);background:var(--orange);border-radius:9px}
+.dark .kicker{color:#FFB04D}
+
+.chip{display:inline-block;font-weight:700;border-radius:calc(var(--u)*.8);padding:.28em .7em .3em;line-height:1.15}
+.chip.go{background:var(--orange);color:var(--navy)}
+
+.ic{display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ic .acc{stroke:var(--orange)}
+.dark .ic .acc{stroke:var(--gold)}
+
+/* ---------- art cards (decorative; if an image fails, the brand gradient and motif remain) ---------- */
+.art{position:absolute;overflow:hidden;border-radius:calc(var(--u)*1.4);
+  background:radial-gradient(circle at 30% 18%,rgba(240,128,0,.28),rgba(240,128,0,0) 48%),linear-gradient(160deg,#0c22a3,#000a5c);
+  box-shadow:0 calc(var(--u)*.6) calc(var(--u)*2.2) rgba(0,10,70,.22)}
+.art .motif{position:absolute;top:0;left:0;width:100%;height:100%;color:rgba(255,255,255,.16)}
+.art img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;transform:scale(1.001);transform-origin:50% 40%}
+.on .art img{transform:scale(1.06);transition:transform 16s linear}
+.off .art img{transform:scale(1.06)}
+.art.fail img{display:none}
+.art::after{content:"";position:absolute;left:0;right:0;bottom:0;height:calc(var(--u)*.5);background:var(--orange)}
+.with-art{right:calc(var(--u)*41)}
+.art.right{right:calc(var(--u)*5);top:calc(var(--u)*4.6);bottom:calc(var(--u)*5.6);width:calc(var(--u)*31)}
+
+/* ---------- footer: the eagle, the program, and where we are in the loop ---------- */
+.foot{position:absolute;left:calc(var(--u)*5);right:calc(var(--u)*5);bottom:calc(var(--u)*1.7);height:calc(var(--u)*2.6);display:flex;align-items:center;gap:calc(var(--u)*1.2);font-size:calc(var(--u)*1.25);font-weight:700;color:var(--navy)}
+.dark .foot{color:#fff}
+.foot .mini{display:block;width:calc(var(--u)*5.6);height:calc(var(--u)*2.47);flex:none}
+.dark .foot .mini{background:#fff;border-radius:calc(var(--u)*1.3);width:calc(var(--u)*6.8);height:calc(var(--u)*2.7);padding:calc(var(--u)*.12) calc(var(--u)*.6)}
+.foot .mini img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 52.4%}
+.foot .mini.fail{display:none}
+.foot .dots{margin-left:auto;display:flex;align-items:center;gap:calc(var(--u)*.55)}
+.foot .dots i{display:block;width:calc(var(--u)*.7);height:calc(var(--u)*.7);border-radius:9px;background:rgba(0,16,128,.2)}
+.dark .foot .dots i{background:rgba(255,255,255,.3)}
+.foot .dots i.cur{width:calc(var(--u)*2.2);background:var(--orange)}
+.foot.dots-only .brand,.foot.dots-only .mini{display:none}
+
+/* eagle logo, cropped to the drawing (the PNG has wide transparent margins top and bottom) */
+.eagle{display:block;overflow:hidden;flex:none}
+.eagle img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 52.4%}
+.eagle.fail{display:none}
+
+/* ---------- rows: icon | English | Spanish ---------- */
+.rows{list-style:none;display:grid;grid-template-columns:calc(var(--u)*4.6) 1fr 1fr;column-gap:calc(var(--u)*2.6);row-gap:calc(var(--u)*1.5);align-items:start}
+.rows>li{display:contents}
+.rows .ic{width:calc(var(--u)*4.4);height:calc(var(--u)*4.4);color:var(--navy);margin-top:calc(var(--u)*-.35)}
+.dark .rows .ic{color:#fff}
+.rows>li>[lang=es],.hdgrid>[lang=es]{position:relative}
+.rows>li>[lang=es]::before,.hdgrid>[lang=es]::before{content:"";position:absolute;left:calc(var(--u)*-1.37);top:.1em;bottom:.1em;width:calc(var(--u)*.14);background:var(--line)}
+.dark .rows>li>[lang=es]::before,.dark .hdgrid>[lang=es]::before{background:rgba(255,255,255,.24)}
+.hdgrid{display:grid;grid-template-columns:calc(var(--u)*4.6) 1fr 1fr;column-gap:calc(var(--u)*2.6)}
+
+/* ---------- 1 · opening: the ask ---------- */
+#s1 .top{display:flex;align-items:center;gap:calc(var(--u)*2.6)}
+#s1 .eagle{width:calc(var(--u)*18);height:calc(var(--u)*7.95)}
+#s1 .hello p:first-child{font-size:calc(var(--u)*2.5);font-weight:700;color:var(--navy);line-height:1.2}
+#s1 .hello p+p{margin-top:calc(var(--u)*.6);font-size:calc(var(--u)*1.7);font-weight:700;color:var(--muted)}
+#s1 .ask{margin-top:calc(var(--u)*2.8)}
+#s1 .ask [lang=es]{margin-top:.42em}
+#s1 .talk{margin-top:calc(var(--u)*2.8);display:flex;align-items:flex-start;gap:calc(var(--u)*2)}
+#s1 .talk .ic{width:calc(var(--u)*4.2);height:calc(var(--u)*4.2);flex:none;color:var(--navy)}
+#s1 .talk .cols{flex:1}
+#s1 .talk p{font-size:calc(var(--u)*2.3);line-height:1.25}
+
+/* ---------- 2 · the trio (always together, equal size, in order) ---------- */
+#s2 .trio{display:grid;row-gap:calc(var(--u)*2.4)}
+#s2 .line{border-left:calc(var(--u)*.55) solid var(--orange);padding-left:calc(var(--u)*2.2)}
+#s2 .line p{font-size:calc(var(--u)*3.15);font-weight:700;line-height:1.16;text-wrap:balance}
+
+/* ---------- 3 · what do they learn ---------- */
+#s3 .q{margin-bottom:calc(var(--u)*2.8)}
+#s3 .a p{font-size:calc(var(--u)*2.9);line-height:1.24;color:var(--ink)}
+#s3 .a [lang=es]{margin-top:.45em}
+#s3 .art img{object-position:42% 50%}
+
+/* ---------- 4 · this year ---------- */
+#s4 .wrap{position:absolute;left:calc(var(--u)*4.5);right:calc(var(--u)*4.5);top:calc(var(--u)*3.8)}
+#s4 .hdgrid,#s4 .rows{grid-template-columns:calc(var(--u)*4) 1fr 1fr;column-gap:calc(var(--u)*2.4)}
+#s4 h2{font-size:calc(var(--u)*2.8)}
+#s4 .sub{margin-top:calc(var(--u)*.8);color:var(--muted);font-weight:700}
+#s4 .sub p{font-size:calc(var(--u)*1.55)}
+#s4 .rows{margin-top:calc(var(--u)*1.9);row-gap:calc(var(--u)*1.1)}
+#s4 .rows .ic{width:calc(var(--u)*3.8);height:calc(var(--u)*3.8)}
+#s4 .rows p{font-size:calc(var(--u)*1.85);line-height:1.25}
+
+/* ---------- 5 · foundation ---------- */
+#s5 .wrap{position:absolute;left:calc(var(--u)*5);right:calc(var(--u)*5);top:calc(var(--u)*4.4)}
+#s5 h2{font-size:calc(var(--u)*3.0)}
+#s5 .sub{margin-top:calc(var(--u)*1.4)}
+#s5 .sub p{font-size:calc(var(--u)*1.85);line-height:1.3}
+#s5 .tiles{margin-top:calc(var(--u)*2.2);display:grid;grid-template-columns:repeat(3,1fr);gap:calc(var(--u)*1.6)}
+#s5 .tile{background:var(--tint);border-radius:calc(var(--u)*1.2);padding:calc(var(--u)*1.3) calc(var(--u)*1.6);display:flex;align-items:center;gap:calc(var(--u)*1.5);min-height:calc(var(--u)*9)}
+#s5 .tile .ic{width:calc(var(--u)*4.6);height:calc(var(--u)*4.6);flex:none;color:var(--navy)}
+#s5 .tile p{font-size:calc(var(--u)*2.0);font-weight:700;line-height:1.16;color:var(--navy)}
+#s5 .tile p+p{margin-top:.28em}
+
+/* ---------- 6 · careers and pay (each figure carries its source on the same line, same size) ---------- */
+#s6 .main{margin-top:calc(var(--u)*2.6)}
+#s6 .main p{font-size:calc(var(--u)*2.95);line-height:1.24}
+#s6 .main b{color:var(--gold);white-space:nowrap}
+#s6 .more{margin-top:calc(var(--u)*3);padding-top:calc(var(--u)*2.6);border-top:calc(var(--u)*.14) solid rgba(255,255,255,.24)}
+#s6 .more p{font-size:calc(var(--u)*2.3);line-height:1.28}
+#s6 .more b{color:var(--gold)}
+#s6 .gloss{margin-top:calc(var(--u)*3);color:#D5DBFF}
+
+/* ---------- 7 · more careers ---------- */
+#s7 .wrap{position:absolute;left:calc(var(--u)*4.5);right:calc(var(--u)*4.5);top:calc(var(--u)*4.6)}
+#s7 h2{font-size:calc(var(--u)*3.0)}
+#s7 .rows{margin-top:calc(var(--u)*3);row-gap:calc(var(--u)*2.4)}
+#s7 .rows p{font-size:calc(var(--u)*2.15);line-height:1.28}
+#s7 .rows b{color:var(--navy)}
+#s7 .cyber{margin-top:calc(var(--u)*3);padding-top:calc(var(--u)*2);border-top:calc(var(--u)*.14) solid var(--line)}
+#s7 .cyber .ic{width:calc(var(--u)*3);height:calc(var(--u)*3);margin-top:calc(var(--u)*-.2)}
+#s7 .cyber p{font-size:calc(var(--u)*1.45);line-height:1.32;color:var(--muted)}
+
+/* ---------- 8 · planned pathway: year 1 solid and bold, years 2-4 lighter ---------- */
+#s8 .wrap{position:absolute;left:calc(var(--u)*4.5);right:calc(var(--u)*4.5);top:calc(var(--u)*4)}
+#s8 .g3{display:grid;grid-template-columns:calc(var(--u)*18.6) 1fr 1fr;column-gap:calc(var(--u)*2.6);padding-right:calc(var(--u)*1)}
+#s8 .g3>[lang=es]{position:relative}
+#s8 h2{font-size:calc(var(--u)*3.0)}
+#s8 .path{margin-top:calc(var(--u)*1.8);display:grid;row-gap:calc(var(--u)*.5)}
+#s8 .yr{padding-top:calc(var(--u)*.8);padding-bottom:calc(var(--u)*.8);border-radius:calc(var(--u)*1)}
+#s8 .badge{display:flex;align-items:flex-start;gap:calc(var(--u)*1);padding-left:calc(var(--u)*1)}
+#s8 .n{flex:none;width:calc(var(--u)*3.3);height:calc(var(--u)*3.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:calc(var(--u)*1.85)}
+#s8 .yl{font-size:calc(var(--u)*1.45);font-weight:700;line-height:1.2}
+#s8 .yl .chip{margin-top:calc(var(--u)*.45);font-size:calc(var(--u)*1.25)}
+#s8 .yr p{font-size:calc(var(--u)*1.75);line-height:1.24}
+#s8 .yr p small{font-size:1em}
+#s8 .yr p .o{display:block;margin-top:calc(var(--u)*.3)}
+#s8 .g3>p[lang=es]::before{content:"";position:absolute;left:calc(var(--u)*-1.37);top:.1em;bottom:.1em;width:calc(var(--u)*.14);background:var(--line)}
+/* year 1: solid */
+#s8 .one{background:var(--orange-tint)}
+#s8 .one .n{background:var(--orange);color:var(--navy)}
+#s8 .one .yl{color:var(--navy)}
+#s8 .one .yl .chip span{display:block}
+#s8 .one p{color:var(--ink)}
+#s8 .one p b{color:var(--navy);font-weight:800}
+#s8 .one p small{color:var(--muted);font-weight:700}
+/* years 2-4: planned, lighter */
+#s8 .plan .n{border:calc(var(--u)*.2) dashed #9aa3c7;color:var(--soft);font-weight:700}
+#s8 .plan .yl{color:var(--soft)}
+#s8 .plan .chip{border:calc(var(--u)*.14) dashed #9aa3c7;color:var(--soft);font-weight:700}
+#s8 .plan p{color:var(--soft)}
+#s8 .plan p b{font-weight:400}
+#s8 .notes{margin-top:calc(var(--u)*1.4);align-items:start}
+#s8 .notes .ic{width:calc(var(--u)*3.3);height:calc(var(--u)*3.3);color:var(--navy);margin-left:calc(var(--u)*1)}
+#s8 .notes p{font-size:calc(var(--u)*1.6);line-height:1.28;font-weight:700;color:var(--navy)}
+
+/* ---------- 9 · AP ---------- */
+#s9 .names{margin-top:calc(var(--u)*2.8);display:flex;flex-direction:column;align-items:flex-start;gap:calc(var(--u)*1.1)}
+#s9 .names span{background:#fff;color:var(--navy);font-weight:700;font-size:calc(var(--u)*2.15);border-radius:calc(var(--u)*.9);padding:.32em .75em}
+#s9 .main{margin-top:calc(var(--u)*3.2)}
+#s9 .main p{font-size:calc(var(--u)*2.8);font-weight:700;line-height:1.22}
+#s9 .main [lang=es]{margin-top:.5em}
+#s9 .art img{object-position:60% 40%}
+
+/* ---------- 10 · endorsements ---------- */
+#s10 .wrap{position:absolute;left:calc(var(--u)*5);right:calc(var(--u)*5);top:calc(var(--u)*4.6)}
+#s10 h2{font-size:calc(var(--u)*2.9)}
+#s10 .lead{margin-top:calc(var(--u)*1.2)}
+#s10 .lead p{font-size:calc(var(--u)*2.0);line-height:1.28}
+#s10 .opts{margin-top:calc(var(--u)*2.3);display:grid;grid-template-columns:1fr auto 1fr;gap:calc(var(--u)*2);align-items:stretch}
+#s10 .opt{background:var(--tint);border-radius:calc(var(--u)*1.3);padding:calc(var(--u)*1.7) calc(var(--u)*2);border-top:calc(var(--u)*.5) solid var(--orange);display:flex;gap:calc(var(--u)*1.5);align-items:flex-start}
+#s10 .opt>.ic{width:calc(var(--u)*4.2);height:calc(var(--u)*4.2);flex:none;color:var(--navy);margin-top:calc(var(--u)*-.1)}
+#s10 .opt .name{font-size:calc(var(--u)*2.9);font-weight:800;color:var(--navy);line-height:1.12}
+#s10 .opt .name+.name{margin-top:.12em}
+#s10 .opt .det{margin-top:calc(var(--u)*1)}
+#s10 .opt .det p{font-size:calc(var(--u)*1.75);line-height:1.27}
+#s10 .opt .det p+p{margin-top:.35em}
+#s10 .or{align-self:center;font-size:calc(var(--u)*2.3);font-weight:700;color:var(--navy);text-align:center;line-height:1.2}
+#s10 .pos{margin-top:calc(var(--u)*2.1)}
+#s10 .pos p{font-size:calc(var(--u)*1.45);line-height:1.3;color:var(--muted)}
+
+/* ---------- 11 · meet Mr. Johnston ---------- */
+#s11 .wrap{position:absolute;left:calc(var(--u)*4.5);right:calc(var(--u)*4.5);top:calc(var(--u)*4.4)}
+#s11 h2{font-size:calc(var(--u)*3.0)}
+#s11 .rows{margin-top:calc(var(--u)*2.6);row-gap:calc(var(--u)*1.3)}
+#s11 .rows p{font-size:calc(var(--u)*2.0);line-height:1.25}
+#s11 .rows .sw{grid-column:1 / span 3;height:calc(var(--u)*.14);background:rgba(255,255,255,.24);margin:calc(var(--u)*.3) 0}
+#s11 .rows .soft p{font-weight:700}
+
+/* ---------- 12 · belonging: pioneers ---------- */
+#s12 .wrap{position:absolute;left:calc(var(--u)*5);right:calc(var(--u)*5);top:calc(var(--u)*4.6)}
+#s12 h2{margin-top:calc(var(--u)*1.3);font-size:calc(var(--u)*3.0)}
+#s12 .people{margin-top:calc(var(--u)*2.6);display:grid;grid-template-columns:1.22fr .88fr 1fr;gap:calc(var(--u)*1.6)}
+#s12 .person{background:var(--tint);border-radius:calc(var(--u)*1.3);padding:calc(var(--u)*1.7) calc(var(--u)*1.9);border-top:calc(var(--u)*.55) solid var(--orange)}
+#s12 .person .who{font-size:calc(var(--u)*2.5);font-weight:800;color:var(--navy);line-height:1.05}
+#s12 .person p{font-size:calc(var(--u)*1.82);line-height:1.3}
+#s12 .person .who+p{margin-top:calc(var(--u)*1.1)}
+#s12 .person p+p{margin-top:calc(var(--u)*.9)}
+
+/* ---------- 13 · clubs ---------- */
+#s13 .clubs{margin-top:calc(var(--u)*3);display:grid;gap:calc(var(--u)*1.8)}
+#s13 .club{background:var(--tint);border-radius:calc(var(--u)*1.3);padding:calc(var(--u)*1.8) calc(var(--u)*2.2);display:flex;gap:calc(var(--u)*1.8);align-items:flex-start}
+#s13 .club .ic{width:calc(var(--u)*5);height:calc(var(--u)*5);flex:none;color:var(--navy);margin-top:calc(var(--u)*.2)}
+#s13 .club .chip{font-size:calc(var(--u)*1.35);margin-bottom:calc(var(--u)*.9)}
+#s13 .club .name{font-size:calc(var(--u)*2.8);font-weight:800;color:var(--navy);line-height:1.12}
+#s13 .club .name+.name{margin-top:.12em}
+#s13 .club .gl{font-size:calc(var(--u)*1.8);line-height:1.28;margin-top:calc(var(--u)*.6)}
+#s13 .art img{object-position:50% 30%}
+
+/* ---------- 14 · closing: the ask, then the interest QR ---------- */
+#s14 .t-ask{font-size:calc(var(--u)*4.2)}
+#s14 .ask [lang=es]{margin-top:.42em}
+#s14 .scan{margin-top:calc(var(--u)*2.6);display:flex;align-items:center;gap:calc(var(--u)*3)}
+#s14 .qr{flex:none;width:calc(var(--u)*18.5);height:calc(var(--u)*18.5);background:#fff;border-radius:calc(var(--u)*1.4);padding:calc(var(--u)*1.5);box-shadow:0 calc(var(--u)*.6) calc(var(--u)*2.4) rgba(0,0,30,.35);position:relative}
+#s14 .qr img{display:block;width:100%;height:100%;object-fit:contain}
+#s14 .qr .alt{display:none;position:absolute;top:calc(var(--u)*1.5);left:calc(var(--u)*1.5);right:calc(var(--u)*1.5);bottom:calc(var(--u)*1.5);border:calc(var(--u)*.22) dashed var(--navy);border-radius:calc(var(--u)*.8);color:var(--navy);align-items:center;justify-content:center;flex-direction:column;gap:.5em;font-size:calc(var(--u)*1.8);font-weight:700;line-height:1.2;text-align:center;padding:.8em}
+#s14 .qr.fail img{display:none}
+#s14 .qr.fail .alt{display:flex}
+#s14 .say .int p{font-size:calc(var(--u)*2.6);font-weight:700;line-height:1.2}
+#s14 .say .int [lang=es]{margin-top:.3em}
+#s14 .say .reg{margin-top:calc(var(--u)*2);padding-top:calc(var(--u)*1.8);border-top:calc(var(--u)*.14) solid rgba(255,255,255,.24)}
+#s14 .say .reg p{font-size:calc(var(--u)*2.0);line-height:1.28}
+#s14 .say .reg [lang=es]{margin-top:.35em}
+
+/* pause marker (space bar) */
+#paused{position:fixed;right:calc(var(--u)*1.2);top:calc(var(--u)*1.2);z-index:9;display:none;gap:calc(var(--u)*.35)}
+#paused i{display:block;width:calc(var(--u)*.45);height:calc(var(--u)*1.6);background:var(--orange);border-radius:2px}
+html.paused #paused{display:flex}
+
+/* preview: one slide, final state, no motion */
+html.preview *,html.preview *::before,html.preview *::after{transition:none !important;animation:none !important}
+@media (prefers-reduced-motion: reduce){
+  .rise{transform:none !important}
+  .on .art img,.off .art img{transform:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+
+<!-- inline icons (nothing to fetch) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+ <defs>
+  <symbol id="i-paw" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><ellipse cx="12" cy="15.7" rx="4.7" ry="4"/><ellipse cx="5.6" cy="10.4" rx="1.9" ry="2.2"/><ellipse cx="9.4" cy="6.4" rx="1.9" ry="2.3"/><ellipse cx="14.6" cy="6.4" rx="1.9" ry="2.3"/><ellipse cx="18.4" cy="10.4" rx="1.9" ry="2.2"/></g></symbol>
+  <symbol id="i-bug" viewBox="0 0 24 24"><rect x="7.4" y="8.6" width="9.2" height="12.2" rx="4.6"/><path d="M9.4 8.7a2.6 2.6 0 0 1 5.2 0"/><path d="M10.4 6.5 8.8 4.3M13.6 6.5l1.6-2.2"/><path d="M7.4 12.6H4.4M7.4 16.4H4.6M16.6 12.6h3M16.6 16.4h2.8M8 19.4l-2.1 1.7M16 19.4l2.1 1.7"/><path class="acc" d="M12 11.6v8.6"/></symbol>
+  <symbol id="i-web" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="16" rx="2.2"/><path d="M2.5 8.4h19"/><path class="acc" d="M9.4 11.9 7 14.3l2.4 2.4M14.6 11.9 17 14.3l-2.4 2.4"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9.1 18.2h5.8M9.9 21.1h4.2"/><path d="M12 2.9a6 6 0 0 0-3.7 10.7c.8.7 1.2 1.4 1.2 2.3v.5h5v-.5c0-.9.4-1.6 1.2-2.3A6 6 0 0 0 12 2.9z"/><path class="acc" d="M12 6.4v3.4"/></symbol>
+  <symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M3.6 7.4h4.7a2.5 2.5 0 1 1 4.4 0h4.7v4.6a2.5 2.5 0 1 1 0 4.4v4.6H3.6z"/><path class="acc" d="M7.2 12.4h3.6"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><path d="M12 4.3 12.97 1.75 15.03 2.16 14.95 4.89 17.44 6.56 19.94 5.43 21.1 7.18 19.11 9.05 19.7 12 22.25 12.97 21.84 15.03 19.11 14.95 17.44 17.44 18.57 19.94 16.82 21.1 14.95 19.11 12 19.7 11.03 22.25 8.97 21.84 9.05 19.11 6.56 17.44 4.06 18.57 2.9 16.82 4.89 14.95 4.3 12 1.75 11.03 2.16 8.97 4.89 9.05 6.56 6.56 5.43 4.06 7.18 2.9 9.05 4.89Z"/><circle class="acc" cx="12" cy="12" r="3.3"/></symbol>
+  <symbol id="i-health" viewBox="0 0 24 24"><path d="M12 20.4s-7.7-4.6-9.3-9.5C1.6 7.5 3.8 4.6 7.1 4.6c2 0 3.6 1.1 4.9 2.9 1.3-1.8 2.9-2.9 4.9-2.9 3.3 0 5.5 2.9 4.4 6.3-1.6 4.9-9.3 9.5-9.3 9.5z"/><path class="acc" d="M5.6 11.8h3l1.5-2.8 2.5 5.6 1.5-2.8h4.3"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3.4 20.4h17.2"/><path d="M7 16.9v-4.6M12 16.9V7.1" stroke-width="2.6"/><path class="acc" d="M17 16.9V9.6" stroke-width="2.6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2.8 19.5 6v5.6c0 4.6-3.2 8.3-7.5 9.8-4.3-1.5-7.5-5.2-7.5-9.8V6z"/><path class="acc" d="m8.6 12.1 2.4 2.4 4.6-4.8"/></symbol>
+  <symbol id="i-rocket" viewBox="0 0 24 24"><path d="M12 2.7c3.2 2.1 4.8 5.6 4.8 9.6l-2 4.6H9.2l-2-4.6c0-4 1.6-7.5 4.8-9.6z"/><circle cx="12" cy="10" r="1.7"/><path d="M7.2 12.5 4.5 15.5l2.9 1.7M16.8 12.5l2.7 3-2.9 1.7"/><path class="acc" d="M10.4 19.6 12 22l1.6-2.4"/></symbol>
+  <symbol id="i-case" viewBox="0 0 24 24"><rect x="3" y="7.4" width="18" height="12.6" rx="2.2"/><path d="M8.8 7.4V5.6c0-.9.7-1.6 1.6-1.6h3.2c.9 0 1.6.7 1.6 1.6v1.8M3 12.8h18"/><path class="acc" d="M10.6 12.8v1.9h2.8v-1.9"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.6 14.53 9.12 21.51 9.51 16.09 13.93 17.88 20.69 12 16.9 6.12 20.69 7.91 13.93 2.49 9.51 9.47 9.12Z"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><path d="M1.8 9.2 12 4.2l10.2 5-10.2 5z"/><path d="M6 11.3v4.6c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.6"/><path class="acc" d="M22.2 9.2v5.4"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7.6 3.8h8.8v5.4a4.4 4.4 0 0 1-8.8 0z"/><path d="M7.6 5.8H4.7v1.4a3.5 3.5 0 0 0 3.3 3.5M16.4 5.8h2.9v1.4a3.5 3.5 0 0 1-3.3 3.5M12 13.6v3.4"/><path class="acc" d="M8.4 20.6h7.2M9.6 17h4.8v3.6H9.6z"/></symbol>
+  <symbol id="i-robot" viewBox="0 0 24 24"><rect x="4.4" y="8" width="15.2" height="11.6" rx="2.6"/><path d="M12 8V5.2"/><circle class="acc" cx="12" cy="4" r="1.2"/><circle cx="9.2" cy="13" r="1.3"/><circle cx="14.8" cy="13" r="1.3"/><path d="M9.6 16.6h4.8M4.4 12.4H2.7M19.6 12.4h1.7"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.4s-7.7-4.6-9.3-9.5C1.6 7.5 3.8 4.6 7.1 4.6c2 0 3.6 1.1 4.9 2.9 1.3-1.8 2.9-2.9 4.9-2.9 3.3 0 5.5 2.9 4.4 6.3-1.6 4.9-9.3 9.5-9.3 9.5z"/><path class="acc" d="M9.4 10.6h5.2M12 8v5.2"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="M8.5 7 3.5 12l5 5M15.5 7l5 5-5 5"/><path class="acc" d="m13.6 4.6-3.2 14.8"/></symbol>
+  <symbol id="i-medal" viewBox="0 0 24 24"><path d="m8 2.8 3 6.1M16 2.8l-3 6.1"/><circle cx="12" cy="15" r="5.6"/><path class="acc" d="m12 12 1 2 2.2.3-1.6 1.5.4 2.2-2-1-2 1 .4-2.2-1.6-1.5 2.2-.3z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4.5 4.4h15a1.8 1.8 0 0 1 1.8 1.8v8.5a1.8 1.8 0 0 1-1.8 1.8H11l-4.6 3.6v-3.6H4.5a1.8 1.8 0 0 1-1.8-1.8V6.2a1.8 1.8 0 0 1 1.8-1.8z"/><path class="acc" d="M7.5 9.2h9M7.5 12.2h6"/></symbol>
+  <symbol id="i-headset" viewBox="0 0 24 24"><path d="M4.4 13.6v-1.9a7.6 7.6 0 0 1 15.2 0v1.9"/><rect x="2.9" y="13" width="4.1" height="6.1" rx="1.4"/><rect x="17" y="13" width="4.1" height="6.1" rx="1.4"/><path class="acc" d="M19 19.2c0 1.4-1.6 2.2-4 2.2h-1.6"/></symbol>
+  <symbol id="i-diploma" viewBox="0 0 24 24"><rect x="2.5" y="4.4" width="19" height="13" rx="1.6"/><path d="M6 8.4h8M6 11.4h5.5"/><circle class="acc" cx="16.8" cy="12.3" r="2.6"/><path class="acc" d="m15.3 14.6-.6 5.2 2.1-1.2 2.1 1.2-.6-5.2"/></symbol>
+  <symbol id="motif" viewBox="0 0 300 450" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M-10 120h90l30 30h70l25-25h110"/><path d="M-10 210h60l40 40h120l30-30h70"/><path d="M40 450V330l30-30v-40"/><path d="M160 450V360l-25-25v-50"/><path d="M250 450V300l20-20V150l-30-30V40"/><path d="M110 -10v70l25 25"/></g><g fill="currentColor"><circle cx="210" cy="150" r="9"/><circle cx="70" cy="260" r="9"/><circle cx="135" cy="285" r="9"/><circle cx="240" cy="40" r="9"/><circle cx="135" cy="85" r="9"/></g><circle cx="80" cy="120" r="11" fill="#F08000"/></symbol>
+ </defs>
+</svg>
+
+<div id="paused" aria-hidden="true"><i></i><i></i></div>
+
+<!-- 1 · Opening: the ask, biggest type in the loop -->
+<section class="slide light" id="s1" data-dur="10" data-foot="dots">
+ <div class="stage">
+  <div class="copy">
+   <div class="top rise" style="--d:0">
+    <div class="eagle"><img src="../assets/img/chs-cs-eagle.png" alt="Canutillo Eagles Computer Science logo" onerror="this.parentNode.classList.add('fail')"></div>
+    <div class="hello"><p><span lang="en">Welcome, families</span><span class="sep">·</span><span lang="es">Bienvenidas, familias</span></p><p><span lang="en">Computer Science at CHS</span><span class="sep">·</span><span lang="es">Ciencias de la Computación en CHS</span></p></div>
+   </div>
+   <div class="ask rise" style="--d:1"><p class="t-ask" lang="en">At course selection next week, ask for <span class="hl nw">Fundamentals of Computer Science.</span></p><p class="t-ask" lang="es">Pidan <span class="hl nw">Fundamentals of Computer Science</span> al elegir sus materias.</p></div>
+   <div class="talk rise" style="--d:2"><svg class="ic"><use href="#i-chat"/></svg><div class="cols"><p lang="en">Talk to Mr. Johnston and his students at the table</p><p lang="es">Hablen con el Sr. Johnston y sus estudiantes en la mesa</p></div></div>
+  </div>
+ </div>
+</section>
+
+<!-- 2 · The trio: always together, equal size, in this order -->
+<section class="slide dark" id="s2" data-dur="10">
+ <div class="stage">
+  <div class="copy">
+   <div class="trio">
+    <div class="line cols rise" style="--d:0"><p lang="en">Never coded? Good. Start here.</p><p lang="es">¿Su hijo o hija nunca ha programado? Qué bueno. Aquí puede empezar.</p></div>
+    <div class="line cols rise" style="--d:1"><p lang="en">This class is hard. That's the point.</p><p lang="es">Esta clase es difícil. Esa es la idea.</p></div>
+    <div class="line cols rise" style="--d:2"><p lang="en">We hold you to a high standard because we know you can reach it.</p><p lang="es">Les exigimos mucho porque sabemos que sí pueden.</p></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- 3 · What do they learn? (the families' one-line summary) -->
+<section class="slide light" id="s3" data-dur="8">
+ <div class="stage">
+  <div class="copy with-art">
+   <div class="q stack rise" style="--d:0"><p class="t-h1" lang="en">What do they learn?</p><p class="t-h1" lang="es">¿Qué se aprende?</p></div>
+   <div class="a rise" style="--d:1"><p lang="en">To give instructions, find mistakes and solve problems.</p><p lang="es">A dar instrucciones, encontrar errores y resolver problemas.</p></div>
+  </div>
+  <figure class="art right rise" style="--d:1"><svg class="motif" aria-hidden="true"><use href="#motif"/></svg><img src="../assets/img/art-07.webp" alt="" onerror="this.parentNode.classList.add('fail')"></figure>
+ </div>
+</section>
+
+<!-- 4 · What students do this year -->
+<section class="slide light" id="s4" data-dur="12">
+ <div class="stage">
+  <div class="wrap">
+   <div class="hdgrid rise" style="--d:0"><div></div><h2 class="t-h2" lang="en">What students do this year</h2><h2 class="t-h2" lang="es">Lo que hacen los estudiantes este año</h2></div>
+   <div class="hdgrid sub rise t-small" style="--d:1"><div></div><p lang="en"><span class="nw">Fundamentals of Computer Science</span> · 1 high school credit · No prerequisites</p><p lang="es"><span class="nw">Fundamentals of Computer Science</span> · 1 crédito de preparatoria · Sin requisitos previos</p></div>
+   <ul class="rows">
+    <li class="rise" style="--d:2"><svg class="ic"><use href="#i-paw"/></svg><p lang="en"><b>Program Karel</b>, a robot dog, in JavaScript: commands, functions, loops, if/else</p><p lang="es"><b>Programar a Karel</b>, un perro robot, en JavaScript: comandos, funciones, loops (ciclos), if/else (si / si no)</p></li>
+    <li class="rise" style="--d:3"><svg class="ic"><use href="#i-bug"/></svg><p lang="en"><b>Debug:</b> find out why the code did exactly what you said, which wasn't what you meant</p><p lang="es"><b>Debug (depurar):</b> descubrir por qué el código hizo exactamente lo que le dijeron, y no lo que querían decir</p></li>
+    <li class="rise" style="--d:4"><svg class="ic"><use href="#i-web"/></svg><p lang="en"><b>Make their first web page</b> in HTML</p><p lang="es"><b>Crear su primera página web</b> en HTML</p></li>
+    <li class="rise" style="--d:5"><svg class="ic"><use href="#i-bulb"/></svg><p lang="en"><b>Design a product</b> from scratch and pitch it, like a real tech company</p><p lang="es"><b>Diseñar un producto</b> desde cero y presentar una propuesta, como se hace en una empresa de tecnología</p></li>
+    <li class="rise" style="--d:6"><svg class="ic"><use href="#i-puzzle"/></svg><p lang="en"><b>Bell work</b> to start every class: a short puzzle or prediction</p><p lang="es"><b>Actividad de inicio</b> en cada clase: un breve acertijo o predicción</p></li>
+   </ul>
+  </div>
+ </div>
+</section>
+
+<!-- 5 · A foundation for more -->
+<section class="slide light" id="s5" data-dur="10">
+ <div class="stage">
+  <div class="wrap">
+   <div class="cols rise" style="--d:0"><h2 class="t-h1" lang="en">A foundation for more than computer science</h2><h2 class="t-h1" lang="es">Una base para mucho más que la computación</h2></div>
+   <div class="cols sub rise" style="--d:1"><p lang="en">The same thinking (breaking problems down, logic, finding and fixing mistakes) carries into:</p><p lang="es">La misma forma de pensar (dividir un problema en partes, la lógica, encontrar y corregir errores) se aplica en:</p></div>
+   <div class="tiles">
+    <div class="tile rise" style="--d:2"><svg class="ic"><use href="#i-gear"/></svg><div><p lang="en">Engineering</p><p lang="es">Ingeniería</p></div></div>
+    <div class="tile rise" style="--d:2.5"><svg class="ic"><use href="#i-health"/></svg><div><p lang="en">Medicine and health tech</p><p lang="es">Medicina y tecnología de la salud</p></div></div>
+    <div class="tile rise" style="--d:3"><svg class="ic"><use href="#i-chart"/></svg><div><p lang="en">Data science</p><p lang="es">Ciencia de datos</p></div></div>
+    <div class="tile rise" style="--d:3.5"><svg class="ic"><use href="#i-shield"/></svg><div><p lang="en">Cybersecurity</p><p lang="es">Ciberseguridad</p></div></div>
+    <div class="tile rise" style="--d:4"><svg class="ic"><use href="#i-rocket"/></svg><div><p lang="en">Aerospace</p><p lang="es">Industria aeroespacial</p></div></div>
+    <div class="tile rise" style="--d:4.5"><svg class="ic"><use href="#i-case"/></svg><div><p lang="en">Business</p><p lang="es">Negocios</p></div></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- 6 · Careers and pay: one line, source on the same line at the same size -->
+<section class="slide dark" id="s6" data-dur="10">
+ <div class="stage">
+  <div class="copy">
+   <p class="kicker rise" style="--d:0"><span lang="en">Careers and pay in Texas</span><span class="sep">·</span><span lang="es">Empleos y salarios en Texas</span></p>
+   <div class="main cols rise" style="--d:1"><p lang="en">Software developers in Texas: median wage <b>$127,000 a year</b> (Texas Workforce Commission, via TEA; retrieved 2024).</p><p lang="es">Desarrolladores de software en Texas: mediana salarial de <b>$127,000 al año</b> (Texas Workforce Commission, vía TEA; consultado en 2024).</p></div>
+   <div class="more cols rise" style="--d:2"><p lang="en">This is the median for all software developers in Texas, not a starting salary.</p><p lang="es">Es la mediana de todos los desarrolladores de software en Texas, no un sueldo de entrada.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- 7 · More careers (same rule) -->
+<section class="slide light" id="s7" data-dur="10">
+ <div class="stage">
+  <div class="wrap">
+   <div class="hdgrid rise" style="--d:0"><div></div><h2 class="t-h1" lang="en">More computer jobs in Texas</h2><h2 class="t-h1" lang="es">Más empleos en computación en Texas</h2></div>
+   <ul class="rows">
+    <li class="rise" style="--d:1"><svg class="ic"><use href="#i-code"/></svg><p lang="en">Software developers: <b>12,350</b> openings a year and <b>36%</b> <span class="nw">ten-year</span> growth.</p><p lang="es">Desarrolladores de software: <b>12,350</b> vacantes de empleo al año y <b>36%</b> de crecimiento en diez años.</p></li>
+    <li class="rise" style="--d:1.5"><svg class="ic"><use href="#i-code"/></svg><p lang="en">Computer programmers: median wage <b>$99,177</b>.</p><p lang="es">Programadores de computadoras: mediana salarial de <b>$99,177</b>.</p></li>
+    <li class="rise" style="--d:2"><svg class="ic"><use href="#i-headset"/></svg><p lang="en">Computer user support specialists: median wage <b>$51,823</b>, <b>21%</b> growth.</p><p lang="es">Especialistas en soporte técnico de computadoras: mediana salarial de <b>$51,823</b> y <b>21%</b> de crecimiento.</p></li>
+   </ul>
+    <div class="cols rise" style="--d:3"><p lang="en" class="t-small">Source for all three: Texas Workforce Commission, via TEA; retrieved 2024. Medians, not starting salaries.</p><p lang="es" class="t-small">Fuente de los tres: Texas Workforce Commission, vía TEA; consultado en 2024. Son medianas, no sueldos de entrada.</p></div>
+   
+  </div>
+ </div>
+</section>
+
+<!-- 8 · Planned pathway: year 1 solid and bold; years 2-4 lighter, each tagged Planned -->
+<section class="slide light" id="s8" data-dur="13">
+ <div class="stage">
+  <div class="wrap">
+   <div class="g3 rise" style="--d:0"><div></div><h2 class="t-h1" lang="en">Planned pathway</h2><h2 class="t-h1" lang="es">Ruta planeada</h2></div>
+   <div class="path">
+    <div class="yr g3 one rise" style="--d:1">
+     <div class="badge"><span class="n">1</span><div class="yl">Year 1 · Año 1<br><span class="chip go"><span lang="en">Start here</span><span lang="es">Empieza aquí</span></span></div></div>
+     <p lang="en"><b>Fundamentals of Computer Science</b> <small>(CHS or Alderete MS)</small><span class="o">or <b>Principles of Information Technology</b> <small>(Canutillo MS)</small></span></p>
+     <p lang="es"><b>Fundamentos de Ciencias de la Computación</b> <small>(CHS o Alderete MS)</small><span class="o">o <b>Principios de Tecnología de la Información</b> <small>(Canutillo MS)</small></span></p>
+    </div>
+    <div class="yr g3 plan rise" style="--d:2">
+     <div class="badge"><span class="n">2</span><div class="yl">Year 2 · Año 2<br><span class="chip"><span lang="en">Planned</span><span class="sep">·</span><span lang="es">Planeado</span></span></div></div>
+     <p lang="en"><b>Computer Science I</b><span class="o">or <b>AP Computer Science Principles</b></span></p>
+     <p lang="es"><b>Ciencias de la Computación I</b><span class="o">o <b>AP Principios de Ciencias de la Computación</b></span></p>
+    </div>
+    <div class="yr g3 plan rise" style="--d:3">
+     <div class="badge"><span class="n">3</span><div class="yl">Year 3 · Año 3<br><span class="chip"><span lang="en">Planned</span><span class="sep">·</span><span lang="es">Planeado</span></span></div></div>
+     <p lang="en"><b>Game Programming and Design</b></p>
+     <p lang="es"><b>Programación y Diseño de Videojuegos</b></p>
+    </div>
+    <div class="yr g3 plan rise" style="--d:4">
+     <div class="badge"><span class="n">4</span><div class="yl">Year 4 · Año 4<br><span class="chip"><span lang="en">Planned</span><span class="sep">·</span><span lang="es">Planeado</span></span></div></div>
+     <p lang="en"><b>AP Computer Science A</b><span class="o">or <b>Computer Science II</b></span></p>
+     <p lang="es"><b>AP Ciencias de la Computación A</b><span class="o">o <b>Ciencias de la Computación II</b></span></p>
+    </div>
+   </div>
+   <div class="g3 notes rise" style="--d:5"><svg class="ic"><use href="#i-chat"/></svg><p lang="en">Already took one of these in middle school? Ask Mr. Johnston about your next step.</p><p lang="es">¿Su hijo o hija ya llevó alguna de estas materias? Pregúntenle al Sr. Johnston qué sigue.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- 9 · AP, always in full -->
+<section class="slide dark" id="s9" data-dur="9">
+ <div class="stage">
+  <div class="copy with-art">
+   <div class="stack rise" style="--d:0"><h2 class="t-h1" lang="en">Two AP courses are in the plan</h2><h2 class="t-h1" lang="es">Dos cursos AP están en el plan</h2></div>
+   <div class="names rise" style="--d:1"><span>AP Computer Science Principles</span><span>AP Computer Science A</span></div>
+   <div class="main rise" style="--d:2"><p lang="en">Passing an AP exam can earn college credit at many colleges.</p><p lang="es">Aprobar un examen AP puede dar créditos universitarios en muchas universidades.</p></div>
+  </div>
+  <figure class="art right rise" style="--d:1"><svg class="motif" aria-hidden="true"><use href="#motif"/></svg><img src="../assets/img/art-08.webp" alt="" onerror="this.parentNode.classList.add('fail')"></figure>
+ </div>
+</section>
+
+<!-- 10 · Endorsements (and the program-of-study note) -->
+<section class="slide light" id="s10" data-dur="10">
+ <div class="stage">
+  <div class="wrap">
+   <div class="cols rise" style="--d:0"><h2 class="t-h1" lang="en">Endorsements</h2><h2 class="t-h1" lang="es">Endorsements (endosos)</h2></div>
+   <div class="cols lead rise" style="--d:0.5"><p lang="en">Completing this program of study, once all its courses are offered, can fulfill one of these:</p><p lang="es">Completar este programa de estudios, cuando se ofrezcan todos sus cursos, puede cumplir uno de estos:</p></div>
+   <div class="opts">
+    <div class="opt rise" style="--d:1"><svg class="ic"><use href="#i-diploma"/></svg><div><p class="name">STEM</p>
+     <div class="det"><p lang="en">Science, technology, engineering and math, when the math and science requirements are met</p><p lang="es">Ciencias, tecnología, ingeniería y matemáticas, cuando se cumplen los requisitos de matemáticas y ciencias</p></div></div></div>
+    <p class="or rise" style="--d:1.5"><span lang="en">or</span><br><span lang="es">o</span></p>
+    <div class="opt rise" style="--d:2"><svg class="ic"><use href="#i-case"/></svg><div><p class="name" lang="en">Business and Industry</p><p class="name" lang="es">Negocios e Industria</p></div></div>
+   </div>
+   <div class="cols pos rise" style="--d:3"><p lang="en">Each course in the planned pathway is on the state's Programming and Software Development program of study.</p><p lang="es">Cada curso de la ruta planeada forma parte del programa de estudios estatal de Programación y Desarrollo de Software.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- 11 · Meet Mr. Johnston (public software line only, never named) -->
+<section class="slide dark" id="s11" data-dur="11">
+ <div class="stage">
+  <div class="wrap">
+   <div class="hdgrid rise" style="--d:0"><div></div><h2 class="t-h1" lang="en">Meet Mr. Johnston</h2><h2 class="t-h1" lang="es">Conozcan al Sr. Johnston</h2></div>
+   <ul class="rows">
+    <li class="rise" style="--d:1"><svg class="ic"><use href="#i-star"/></svg><p lang="en">U.S. Air Force veteran</p><p lang="es">Veterano de la Fuerza Aérea de EE. UU.</p></li>
+    <li class="rise" style="--d:1.5"><svg class="ic"><use href="#i-cap"/></svg><p lang="en">MBA · 12th year teaching</p><p lang="es">MBA · 12.º año como maestro</p></li>
+    <li class="rise" style="--d:2"><svg class="ic"><use href="#i-trophy"/></svg><p lang="en">Coached VEX Robotics teams to the World Championship (2022)</p><p lang="es">Entrenó a equipos de VEX Robotics que llegaron al Campeonato Mundial (2022)</p></li>
+    <li class="rise" style="--d:2.5"><svg class="ic"><use href="#i-robot"/></svg><p lang="en">Former district Director of Robotics</p><p lang="es">Exdirector de Robótica del distrito</p></li>
+    <li class="rise" style="--d:3"><svg class="ic"><use href="#i-heart"/></svg><p lang="en">Founder of West Robotics, a <span class="nw">501(c)(3)</span> nonprofit</p><p lang="es">Fundador de West Robotics, una organización sin fines de lucro <span class="nw">501(c)(3)</span></p></li>
+    <li class="sw rise" style="--d:3.5"></li>
+    <li class="soft rise" style="--d:4"><svg class="ic"><use href="#i-code"/></svg><p lang="en">He designs, codes and runs his own web software for schools: the same skills this pathway starts teaching.</p><p lang="es">Diseña, programa y administra su propio software web para escuelas: son las mismas habilidades que este programa empieza a enseñar.</p></li>
+   </ul>
+  </div>
+ </div>
+</section>
+
+<!-- 12 · Belonging: pioneers (text only, exact brief facts) -->
+<section class="slide light" id="s12" data-dur="12">
+ <div class="stage">
+  <div class="wrap">
+   <p class="kicker rise" style="--d:0"><span lang="en">Pioneers</span><span class="sep">·</span><span lang="es">Pioneros</span></p>
+   <div class="cols rise" style="--d:0"><h2 class="t-h1" lang="en">Your child belongs here</h2><h2 class="t-h1" lang="es">Su hijo o hija tiene un lugar aquí</h2></div>
+   <div class="people">
+    <div class="person rise" style="--d:1"><p class="who">Ellen Ochoa</p><p lang="en">Engineer and inventor. The first Hispanic woman in space (1993), later director of NASA's Johnson Space Center.</p><p lang="es">Ingeniera e inventora. La primera mujer hispana en el espacio (1993) y, después, directora del Centro Espacial Johnson de la NASA.</p></div>
+    <div class="person rise" style="--d:2"><p class="who">Ada Lovelace</p><p lang="en">Published the first algorithm meant for a machine, in 1843.</p><p lang="es">Publicó el primer algoritmo pensado para una máquina, en 1843.</p></div>
+    <div class="person rise" style="--d:3"><p class="who">Luis von Ahn</p><p lang="en">Born in Guatemala. <span class="nw">Co-invented</span> CAPTCHA and reCAPTCHA and <span class="nw">co-founded</span> Duolingo.</p><p lang="es">Nació en Guatemala. Coinventor de CAPTCHA y reCAPTCHA, y cofundador de Duolingo.</p></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- 13 · Clubs in the works -->
+<section class="slide light" id="s13" data-dur="8">
+ <div class="stage">
+  <div class="copy with-art">
+   <div class="stack rise" style="--d:0"><h2 class="t-h1" lang="en">Clubs in the works</h2><h2 class="t-h1" lang="es">Clubes en proceso</h2></div>
+   <div class="clubs">
+    <div class="club rise" style="--d:1"><svg class="ic"><use href="#i-code"/></svg><div><span class="chip go"><span lang="en">In the works</span><span class="sep">·</span><span lang="es">En proceso</span></span><p class="name">Girls Who Code</p></div></div>
+    <div class="club rise" style="--d:2"><svg class="ic"><use href="#i-medal"/></svg><div><span class="chip go"><span lang="en">In the works</span><span class="sep">·</span><span lang="es">En proceso</span></span><p class="name" lang="en">TSA programming challenges</p><p class="name" lang="es">Retos de programación de TSA</p><p class="gl"><span lang="en">Technology Student Association</span><span class="sep">·</span><span lang="es">Asociación de Estudiantes de Tecnología</span></p></div></div>
+   </div>
+  </div>
+  <figure class="art right rise" style="--d:1"><svg class="motif" aria-hidden="true"><use href="#motif"/></svg><img src="../assets/img/art-03.webp" alt="" onerror="this.parentNode.classList.add('fail')"></figure>
+ </div>
+</section>
+
+<!-- 14 · Closing: the ask, then the interest QR (never "sign up": it isn't registration) -->
+<section class="slide dark" id="s14" data-dur="12">
+ <div class="stage">
+  <div class="copy">
+   <div class="ask rise" style="--d:0"><p class="t-ask" lang="en">At course selection next week, ask for <span class="hl nw">Fundamentals of Computer Science.</span></p><p class="t-ask" lang="es">Pidan <span class="hl nw">Fundamentals of Computer Science</span> al elegir sus materias.</p></div>
+   <div class="scan rise" style="--d:1">
+    <div class="qr"><img src="../assets/qr-signup.svg" alt="QR code for Mr. Johnston's interest form" onerror="this.parentNode.classList.add('fail')"><div class="alt"><span lang="en">Use the tablet at our table</span><span lang="es">Usa la tableta en nuestra mesa</span></div></div>
+    <div class="say">
+     <div class="int"><p lang="en">Interested? Scan so Mr. Johnston knows.</p><p lang="es">¿Les interesa? Escaneen para avisarle al Sr. Johnston.</p></div>
+     <div class="reg"><p lang="en">This isn't registration: ask for Fundamentals of Computer Science at course selection.</p><p lang="es">No es la inscripción: pidan Fundamentals of Computer Science al elegir sus materias.</p></div>
+    </div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<script>
+(function () {
+  'use strict';
+  var errs = window.__tvErrors = [];
+  window.addEventListener('error', function (e) { errs.push(String(e && e.message || e)); });
+
+  var root = document.documentElement;
+  function setU() {
+    var u = Math.min(window.innerWidth / 100, window.innerHeight * 1.7778 / 100);
+    root.style.setProperty('--u', u + 'px');
+  }
+  setU();
+  window.addEventListener('resize', setU);
+
+  var q = new URLSearchParams(window.location.search);
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var N = slides.length;
+  var FADE = 1400;
+
+  // footer on every slide: the eagle, the program name, and where we are in the loop
+  slides.forEach(function (s, k) {
+    var dots = '';
+    for (var j = 0; j < N; j++) dots += '<i' + (j === k ? ' class="cur"' : '') + '></i>';
+    var only = s.getAttribute('data-foot') === 'dots';
+    s.querySelector('.stage').insertAdjacentHTML('beforeend',
+      '<div class="foot' + (only ? ' dots-only' : '') + '">' +
+      (only ? '' : '<span class="mini"><img src="../assets/img/chs-cs-eagle.png" alt="" onerror="this.parentNode.classList.add(\'fail\')"></span>' +
+      '<span class="brand"><span lang="en">Computer Science at CHS</span><span class="sep">·</span><span lang="es">Ciencias de la Computación en CHS</span></span>') +
+      '<span class="dots">' + dots + '</span></div>');
+  });
+
+  // every image is loaded and decoded before the loop starts; nothing is fetched after that
+  function ready() {
+    var imgs = Array.prototype.slice.call(document.images);
+    var all = Promise.all(imgs.map(function (img) {
+      return new Promise(function (res) {
+        function dec() { if (img.decode) img.decode().then(res, res); else res(); }
+        if (img.complete) dec();
+        else { img.addEventListener('load', dec); img.addEventListener('error', res); }
+      });
+    }));
+    return Promise.race([all, new Promise(function (res) { setTimeout(res, 15000); })]);
+  }
+
+  function num(name) { var v = parseInt(q.get(name), 10); return isNaN(v) ? 0 : v; }
+  function clamp(n) { return Math.max(0, Math.min(N - 1, n)); }
+  function dur(k) { return (parseFloat(slides[k].getAttribute('data-dur')) || 9) * 1000; }
+
+  var cur = -1, timer = null, sweep = null, paused = false, t0 = Date.now();
+  var reloadMin = parseFloat(q.get('reload'));
+
+  function show(n) {
+    var prev = cur;
+    cur = n;
+    slides.forEach(function (s, k) { if (k !== n && k !== prev) { s.classList.remove('on'); s.classList.remove('off'); } });
+    if (prev >= 0 && prev !== n) { slides[prev].classList.remove('on'); slides[prev].classList.add('off'); }
+    slides[n].classList.remove('off');
+    slides[n].classList.add('on');
+    clearTimeout(sweep);
+    sweep = setTimeout(function () {
+      slides.forEach(function (s, k) { if (k !== cur) s.classList.remove('off'); });
+    }, FADE + 150);
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    if (!paused) timer = setTimeout(advance, dur(cur));
+  }
+
+  function advance() {
+    try {
+      var n = cur + 1;
+      if (n >= N) {
+        n = 0;
+        if (reloadMin > 0 && Date.now() - t0 > reloadMin * 60000) reloadNow();
+      }
+      show(n);
+    } catch (e) { errs.push(String(e)); }
+    schedule();
+  }
+
+  // only with ?reload=M: start over from slide 1, and only if the page itself can be reached
+  function reloadNow() {
+    var url = window.location.href.replace(/([?&])start=\d+&?/, '$1').replace(/[?&]$/, '');
+    if (window.location.protocol === 'file:') { window.location.replace(url); return; }
+    try {
+      fetch(url, { method: 'HEAD', cache: 'no-store' })
+        .then(function (r) { if (r.ok) window.location.replace(url); })
+        .catch(function () {});
+    } catch (e) {}
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (root.classList.contains('preview') || cur < 0) return;
+    if (e.key === 'ArrowRight') { show((cur + 1) % N); schedule(); }
+    else if (e.key === 'ArrowLeft') { show((cur - 1 + N) % N); schedule(); }
+    else if (e.key === ' ' || e.key === 'Spacebar') {
+      paused = !paused;
+      root.classList.toggle('paused', paused);
+      schedule();
+      e.preventDefault();
+    }
+  });
+
+  ready().then(function () {
+    var p = num('preview');
+    if (p) {                       // one slide, static, final state
+      root.classList.add('preview');
+      show(clamp(p - 1));
+      return;
+    }
+    show(clamp((num('start') || 1) - 1));
+    schedule();
+  });
+})();
+</script>
+</body>
+</html>
